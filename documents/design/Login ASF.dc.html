@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=IBM+Plex+Sans:wght@400;450;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #F7F5F0; }
+  body { font-family: "IBM Plex Sans", system-ui, sans-serif; color: #171B21; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #8C6F3F; text-decoration: none; }
+  a:hover { color: #6F5730; text-decoration: underline; }
+  input::placeholder { color: #A9A296; }
+  @keyframes fadeUp { from { transform: translateY(8px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+  @keyframes spin { to { transform: rotate(360deg) } }
+</style>
+</helmet>
+
+<div style="display: flex; min-height: 100vh; width: 100%">
+
+  <aside style="flex: 0 0 46%; background: #14181E; padding: 46px 52px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden">
+    <div style="position: absolute; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(199,154,78,0.13), transparent 68%); top: -160px; right: -180px"></div>
+
+    <div style="display: flex; align-items: center; gap: 12px; position: relative">
+      <span style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid #2B313A; color: #FBF9F4; display: grid; place-items: center; font-family: Newsreader, serif; font-size: 15px; letter-spacing: 0.03em">ASF</span>
+      <span style="display: flex; flex-direction: column; line-height: 1.25">
+        <span style="font-family: Newsreader, serif; font-size: 17px; color: #FBF9F4; text-transform: uppercase; letter-spacing: 0.05em">ASF Advogados</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #7C8593">Associados</span>
+      </span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 24px; position: relative; max-width: 420px">
+      <h1 style="margin: 0; font-family: Newsreader, serif; font-size: 40px; font-weight: 400; line-height: 1.16; letter-spacing: -0.02em; color: #FBF9F4">O momento comercial da advocacia, sob controle.</h1>
+      <p style="margin: 0; font-size: 14.5px; line-height: 1.7; color: #A8AFB9">Funis configuráveis, histórico unificado de contato e trilha de auditoria — do primeiro contato ao contrato assinado, dentro dos limites do Código de Ética da OAB e da LGPD.</p>
+      <div style="display: flex; gap: 28px; padding-top: 6px">
+        <div style="display: flex; flex-direction: column; gap: 5px">
+          <span style="font-family: Newsreader, serif; font-size: 26px; color: #C79A4E; line-height: 1">24</span>
+          <span style="font-size: 11.5px; color: #7C8593">Estados atendidos</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px">
+          <span style="font-family: Newsreader, serif; font-size: 26px; color: #C79A4E; line-height: 1">3.000+</span>
+          <span style="font-size: 11.5px; color: #7C8593">Clientes atendidos</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px">
+          <span style="font-family: Newsreader, serif; font-size: 26px; color: #C79A4E; line-height: 1">2</span>
+          <span style="font-size: 11.5px; color: #7C8593">Áreas de atuação</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 9px; position: relative">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #4E9C87"></span>
+      <span style="font-size: 11.5px; color: #7C8593">Acesso registrado na trilha de auditoria · sessão expira em 8h</span>
+    </div>
+  </aside>
+
+  <main style="flex: 1; display: grid; place-items: center; padding: 40px 32px">
+    <div style="width: 100%; max-width: 392px; display: flex; flex-direction: column; gap: 22px; animation: fadeUp 220ms ease-out">
+
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h2 style="margin: 0; font-family: Newsreader, serif; font-size: 28px; font-weight: 500; letter-spacing: -0.015em">{{ tituloEtapa }}</h2>
+        <p style="margin: 0; font-size: 13.5px; line-height: 1.55; color: #77808E">{{ subEtapa }}</p>
+      </div>
+
+      <sc-if value="{{ etapaCredenciais }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 14px">
+          <label style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.11em; text-transform: uppercase; color: #77808E">E-mail profissional</span>
+            <input value="{{ email }}" onChange="{{ setEmail }}" type="email" placeholder="nome@asfadvogados.adv.br" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; padding: 12px 13px; border: 1px solid {{ bordaEmail }}; border-radius: 9px; outline: none; background: #FFFFFF; color: #171B21" style-focus="border-color: #C79A4E" />
+          </label>
+
+          <label style="display: flex; flex-direction: column; gap: 6px">
+            <span style="display: flex; align-items: center; justify-content: space-between">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.11em; text-transform: uppercase; color: #77808E">Senha</span>
+              <a href="#recuperar" onClick="{{ recuperar }}" style="font-size: 11.5px">Esqueci minha senha</a>
+            </span>
+            <span style="display: flex; align-items: center; gap: 8px; border: 1px solid {{ bordaSenha }}; border-radius: 9px; background: #FFFFFF; padding-right: 10px">
+              <input value="{{ senha }}" onChange="{{ setSenha }}" type="{{ tipoSenha }}" placeholder="••••••••" style="flex: 1; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; padding: 12px 13px; border: 0; border-radius: 9px; outline: none; background: transparent; color: #171B21" />
+              <button onClick="{{ toggleSenha }}" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 11.5px; padding: 5px 9px; border-radius: 6px; border: 1px solid #E7E3DA; background: #FBFAF7; color: #3C4450; cursor: pointer">{{ rotuloSenha }}</button>
+            </span>
+          </label>
+
+          <sc-if value="{{ erro }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 10px; align-items: flex-start; background: #FCF5F3; border: 1px solid #E6C9C2; border-radius: 8px; padding: 10px 12px">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #9B3B2F; padding-top: 2px; flex: 0 0 auto">Erro</span>
+              <span style="font-size: 12.5px; line-height: 1.5; color: #3C4450">{{ erro }}</span>
+            </div>
+          </sc-if>
+
+          <span style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+            <button onClick="{{ toggleLembrar }}" style="display: flex; align-items: center; gap: 8px; border: 0; background: transparent; cursor: pointer; padding: 0">
+              <span style="width: 17px; height: 17px; border-radius: 5px; border: 1.5px solid {{ lembrarBorda }}; background: {{ lembrarBg }}; color: #FBF9F4; font-size: 10px; display: grid; place-items: center">{{ lembrarMarca }}</span>
+              <span style="font-size: 12.5px; color: #3C4450">Manter sessão neste dispositivo</span>
+            </button>
+          </span>
+
+          <button onClick="{{ entrar }}" style="display: flex; align-items: center; justify-content: center; gap: 9px; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 13px; border-radius: 9px; border: 1px solid #171B21; background: #171B21; color: #FBF9F4; cursor: pointer" style-hover="background: #23282F">
+            <sc-if value="{{ carregando }}" hint-placeholder-val="{{ false }}">
+              <span style="width: 13px; height: 13px; border-radius: 50%; border: 2px solid rgba(251,249,244,0.3); border-top-color: #FBF9F4; animation: spin 700ms linear infinite; display: block"></span>
+            </sc-if>
+            <span>{{ rotuloEntrar }}</span>
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ etapaMfa }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; gap: 9px">
+            <sc-for list="{{ digitos }}" as="d" hint-placeholder-count="6">
+              <span style="flex: 1; height: 52px; border: 1px solid {{ d.borda }}; border-radius: 9px; background: #FFFFFF; display: grid; place-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 20px; color: #171B21">{{ d.valor }}</span>
+            </sc-for>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px">
+            <sc-for list="{{ teclas }}" as="t" hint-placeholder-count="12">
+              <button onClick="{{ t.press }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; padding: 13px 0; border-radius: 9px; border: 1px solid #E7E3DA; background: #FFFFFF; color: {{ t.cor }}; cursor: pointer" style-hover="border-color: #C79A4E">{{ t.label }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ erro }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 10px; align-items: flex-start; background: #FCF5F3; border: 1px solid #E6C9C2; border-radius: 8px; padding: 10px 12px">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #9B3B2F; padding-top: 2px; flex: 0 0 auto">Erro</span>
+              <span style="font-size: 12.5px; line-height: 1.5; color: #3C4450">{{ erro }}</span>
+            </div>
+          </sc-if>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+            <button onClick="{{ voltar }}" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; padding: 9px 13px; border-radius: 8px; border: 1px solid #E3DFD6; background: #FFFFFF; color: #3C4450; cursor: pointer">Voltar</button>
+            <span style="font-size: 12px; color: #77808E">Código de teste: <strong style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; color: #3C4450">204815</strong></span>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ etapaOk }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; align-items: center; gap: 12px; background: #F1F6F4; border: 1px solid #CCE0DA; border-radius: 10px; padding: 14px 16px">
+            <span style="width: 30px; height: 30px; border-radius: 50%; background: #14574F; color: #FBF9F4; display: grid; place-items: center; font-size: 14px; flex: 0 0 30px">✓</span>
+            <span style="display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 13px; color: #171B21">Autenticação concluída</span>
+              <span style="font-size: 11.5px; color: #6E7C78">Perfil Gestor · acesso registrado na auditoria</span>
+            </span>
+          </div>
+          <a href="Prototipo CRM Juridico.dc.html" style="text-align: center; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 13px; border-radius: 9px; border: 1px solid #171B21; background: #171B21; color: #FBF9F4; text-decoration: none" style-hover="background: #23282F">Abrir o CRM</a>
+          <button onClick="{{ sair }}" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; padding: 10px; border-radius: 8px; border: 1px solid #E3DFD6; background: #FFFFFF; color: #3C4450; cursor: pointer">Entrar com outra conta</button>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #E7E3DA; padding-top: 18px">
+        <p style="margin: 0; font-size: 11.5px; line-height: 1.6; color: #9AA2AE">Acesso restrito a colaboradores do escritório. O uso é monitorado e registrado; o conteúdo dos casos é protegido por sigilo profissional e visível apenas ao advogado responsável.</p>
+        <span style="font-size: 11.5px; color: #9AA2AE">Problemas de acesso? <a href="#suporte" onClick="{{ suporte }}">Fale com o administrador</a></span>
+      </div>
+    </div>
+  </main>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #171B21; color: #FBF9F4; font-size: 12.5px; padding: 11px 18px; border-radius: 999px; box-shadow: 0 8px 24px rgba(23,27,33,0.22); z-index: 30">{{ toast }}</div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:820}}">
+class Component extends DCLogic {
+  state = {
+    etapa: "credenciais", email: "camila.moraes@asfadvogados.adv.br", senha: "",
+    verSenha: false, lembrar: true, erro: null, carregando: false, codigo: "", toast: null
+  };
+
+  flash(t) {
+    clearTimeout(this._t);
+    this.setState({ toast: t });
+    this._t = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+
+  entrar() {
+    const { email, senha } = this.state;
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(email)) {
+      this.setState({ erro: "Informe um e-mail profissional válido." });
+      return;
+    }
+    if (senha.length < 6) {
+      this.setState({ erro: "A senha deve ter ao menos 6 caracteres." });
+      return;
+    }
+    this.setState({ erro: null, carregando: true });
+    clearTimeout(this._auth);
+    this._auth = setTimeout(() => {
+      this.setState({ carregando: false, etapa: "mfa", codigo: "" });
+    }, 850);
+  }
+
+  digitar(n) {
+    if (this.state.codigo.length >= 6) return;
+    const codigo = this.state.codigo + n;
+    this.setState({ codigo, erro: null });
+    if (codigo.length === 6) {
+      clearTimeout(this._ver);
+      this._ver = setTimeout(() => {
+        if (codigo === "204815") {
+          this.setState({ etapa: "ok" });
+        } else {
+          this.setState({ erro: "Código inválido. Tentativa registrada na auditoria.", codigo: "" });
+        }
+      }, 320);
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._t);
+    clearTimeout(this._auth);
+    clearTimeout(this._ver);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const titulos = {
+      credenciais: ["Entrar no CRM", "Use suas credenciais do escritório para acessar o pipeline comercial."],
+      mfa: ["Verificação em duas etapas", "Digite o código de 6 dígitos do seu aplicativo autenticador."],
+      ok: ["Bem-vinda, Camila", "Sessão aberta com perfil Gestor."]
+    };
+    const digitos = [];
+    for (let i = 0; i < 6; i++) {
+      digitos.push({
+        valor: s.codigo[i] || "",
+        borda: i === s.codigo.length ? "#C79A4E" : s.codigo[i] ? "#C6BFB0" : "#E7E3DA"
+      });
+    }
+    const teclas = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "limpar", "0", "←"].map(t => ({
+      label: t,
+      cor: t === "limpar" || t === "←" ? "#77808E" : "#171B21",
+      press: () => {
+        if (t === "limpar") { this.setState({ codigo: "", erro: null }); return; }
+        if (t === "←") { this.setState({ codigo: s.codigo.slice(0, -1), erro: null }); return; }
+        this.digitar(t);
+      }
+    }));
+
+    return {
+      tituloEtapa: titulos[s.etapa][0], subEtapa: titulos[s.etapa][1],
+      etapaCredenciais: s.etapa === "credenciais", etapaMfa: s.etapa === "mfa", etapaOk: s.etapa === "ok",
+      email: s.email, senha: s.senha, erro: s.erro, carregando: s.carregando, toast: s.toast,
+      setEmail: e => this.setState({ email: e.target.value, erro: null }),
+      setSenha: e => this.setState({ senha: e.target.value, erro: null }),
+      tipoSenha: s.verSenha ? "text" : "password",
+      rotuloSenha: s.verSenha ? "Ocultar" : "Mostrar",
+      toggleSenha: () => this.setState({ verSenha: !s.verSenha }),
+      bordaEmail: s.erro && s.erro.indexOf("e-mail") > -1 ? "#E6C9C2" : "#E3DFD6",
+      bordaSenha: s.erro && s.erro.indexOf("senha") > -1 ? "#E6C9C2" : "#E3DFD6",
+      lembrarBg: s.lembrar ? "#171B21" : "#FFFFFF",
+      lembrarBorda: s.lembrar ? "#171B21" : "#D6D1C6",
+      lembrarMarca: s.lembrar ? "✓" : "",
+      toggleLembrar: () => this.setState({ lembrar: !s.lembrar }),
+      rotuloEntrar: s.carregando ? "Verificando…" : "Entrar",
+      entrar: () => this.entrar(),
+      digitos, teclas,
+      voltar: () => this.setState({ etapa: "credenciais", codigo: "", erro: null }),
+      sair: () => this.setState({ etapa: "credenciais", senha: "", codigo: "", erro: null }),
+      recuperar: () => this.flash("Enviamos um link de redefinição para o e-mail informado."),
+      suporte: () => this.flash("Chamado aberto para o administrador do sistema.")
+    };
+  }
+}
+
+</script>
+</body>
+</html>

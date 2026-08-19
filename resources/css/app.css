@@ -1,0 +1,272 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans:
+        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+@layer utilities {
+    body,
+    html {
+        --font-sans:
+            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+    }
+}
+
+:root {
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(0 0% 3.9%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(0 0% 3.9%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(0 0% 3.9%);
+    --primary: hsl(0 0% 9%);
+    --primary-foreground: hsl(0 0% 98%);
+    --secondary: hsl(0 0% 92.1%);
+    --secondary-foreground: hsl(0 0% 9%);
+    --muted: hsl(0 0% 96.1%);
+    --muted-foreground: hsl(0 0% 45.1%);
+    --accent: hsl(0 0% 96.1%);
+    --accent-foreground: hsl(0 0% 9%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(0 0% 98%);
+    --border: hsl(0 0% 92.8%);
+    --input: hsl(0 0% 89.8%);
+    --ring: hsl(0 0% 3.9%);
+    --chart-1: hsl(12 76% 61%);
+    --chart-2: hsl(173 58% 39%);
+    --chart-3: hsl(197 37% 24%);
+    --chart-4: hsl(43 74% 66%);
+    --chart-5: hsl(27 87% 67%);
+    --radius: 0.5rem;
+    --sidebar-background: hsl(0 0% 98%);
+    --sidebar-foreground: hsl(240 5.3% 26.1%);
+    --sidebar-primary: hsl(0 0% 10%);
+    --sidebar-primary-foreground: hsl(0 0% 98%);
+    --sidebar-accent: hsl(0 0% 94%);
+    --sidebar-accent-foreground: hsl(0 0% 30%);
+    --sidebar-border: hsl(0 0% 91%);
+    --sidebar-ring: hsl(217.2 91.2% 59.8%);
+    --sidebar: hsl(0 0% 98%);
+}
+
+.dark {
+    --background: hsl(0 0% 3.9%);
+    --foreground: hsl(0 0% 98%);
+    --card: hsl(0 0% 3.9%);
+    --card-foreground: hsl(0 0% 98%);
+    --popover: hsl(0 0% 3.9%);
+    --popover-foreground: hsl(0 0% 98%);
+    --primary: hsl(0 0% 98%);
+    --primary-foreground: hsl(0 0% 9%);
+    --secondary: hsl(0 0% 14.9%);
+    --secondary-foreground: hsl(0 0% 98%);
+    --muted: hsl(0 0% 16.08%);
+    --muted-foreground: hsl(0 0% 63.9%);
+    --accent: hsl(0 0% 14.9%);
+    --accent-foreground: hsl(0 0% 98%);
+    --destructive: hsl(0 84% 60%);
+    --destructive-foreground: hsl(0 0% 98%);
+    --border: hsl(0 0% 14.9%);
+    --input: hsl(0 0% 14.9%);
+    --ring: hsl(0 0% 83.1%);
+    --chart-1: hsl(220 70% 50%);
+    --chart-2: hsl(160 60% 45%);
+    --chart-3: hsl(30 80% 55%);
+    --chart-4: hsl(280 65% 60%);
+    --chart-5: hsl(340 75% 55%);
+    --sidebar-background: hsl(0 0% 7%);
+    --sidebar-foreground: hsl(0 0% 95.9%);
+    --sidebar-primary: hsl(360, 100%, 100%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(0 0% 15.9%);
+    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+    --sidebar-border: hsl(0 0% 15.9%);
+    --sidebar-ring: hsl(217.2 91.2% 59.8%);
+    --sidebar: hsl(240 5.9% 10%);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@layer components {
+    .auth-label {
+        @apply mb-0 font-[family-name:var(--font-auth-mono)] text-[9.5px] font-medium tracking-[0.11em] text-[#77808E] uppercase;
+    }
+
+    .auth-input {
+        @apply w-full rounded-[9px] border border-[#E3DFD6] bg-white px-[13px] py-3 font-[family-name:var(--font-auth-body)] text-[14px] text-[#171B21] outline-none transition-[border-color];
+    }
+
+    .auth-input::placeholder {
+        color: #a9a296;
+    }
+
+    .auth-input:focus {
+        border-color: #c79a4e;
+    }
+
+    .auth-input:read-only {
+        @apply bg-[#FBFAF7] text-[#5B6478];
+    }
+
+    .auth-input-wrap {
+        @apply flex items-center gap-2 rounded-[9px] border border-[#E3DFD6] bg-white pr-2.5 transition-[border-color];
+    }
+
+    .auth-input-wrap:focus-within {
+        border-color: #c79a4e;
+    }
+
+    .auth-input-wrap .auth-input {
+        @apply flex-1 rounded-[9px] border-0 bg-transparent px-[13px] py-3 shadow-none;
+    }
+
+    .auth-input-wrap .auth-input:focus {
+        border-color: transparent;
+    }
+
+    .auth-reveal {
+        @apply shrink-0 cursor-pointer rounded-md border border-[#E7E3DA] bg-[#FBFAF7] px-[9px] py-[5px] font-[family-name:var(--font-auth-body)] text-[11.5px] text-[#3C4450];
+    }
+
+    .auth-btn-primary {
+        @apply flex w-full cursor-pointer items-center justify-center gap-[9px] rounded-[9px] border border-[#171B21] bg-[#171B21] px-4 py-[13px] font-[family-name:var(--font-auth-body)] text-[14px] font-medium text-[#FBF9F4] transition-colors hover:bg-[#23282F] disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .auth-btn-ghost {
+        @apply flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[9px] border border-[#E7E3DA] bg-white px-4 py-3 font-[family-name:var(--font-auth-body)] text-[14px] font-medium text-[#3C4450] transition-colors hover:border-[#C79A4E] hover:bg-[#FBFAF7] disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .auth-link {
+        @apply text-[#8C6F3F] transition-colors hover:text-[#6F5730] hover:underline;
+    }
+
+    .auth-footer-text {
+        @apply text-center text-[13.5px] text-[#77808E];
+    }
+
+    .auth-divider {
+        @apply my-5 flex items-center gap-3 font-[family-name:var(--font-auth-mono)] text-[11px] tracking-[0.08em] text-[#9AA2AE] uppercase;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+        content: '';
+        @apply h-px flex-1 bg-[#E7E3DA];
+    }
+
+    .auth-status {
+        @apply rounded-[10px] border border-[#CCE0DA] bg-[#F1F6F4] px-4 py-3.5 text-[13px] leading-normal text-[#171B21];
+    }
+
+    .auth-spinner {
+        @apply block size-[13px] rounded-full border-2 border-[#FBF9F4]/30 border-t-[#FBF9F4];
+        animation: auth-spin 700ms linear infinite;
+    }
+
+    .auth-check {
+        @apply grid size-[17px] place-items-center rounded-[5px] border-[1.5px] border-[#D6D1C6] bg-white text-[10px] text-[#FBF9F4];
+    }
+
+    .peer:checked + .auth-check {
+        @apply border-[#171B21] bg-[#171B21];
+    }
+
+    .auth-otp-slot {
+        @apply relative flex h-[52px] w-full items-center justify-center !rounded-[9px] !border !border-[#E7E3DA] bg-white text-[20px] text-[#171B21] !shadow-none;
+        font-family: var(--font-auth-mono), ui-monospace, monospace;
+    }
+
+    .auth-otp-slot[data-active='true'] {
+        @apply z-10 !border-[#C79A4E] !ring-0;
+    }
+}
+
+@keyframes auth-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

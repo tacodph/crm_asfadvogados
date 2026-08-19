@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=IBM+Plex+Sans:wght@400;450;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #F7F5F0; scroll-behavior: smooth; }
+  body { font-family: "IBM Plex Sans", system-ui, sans-serif; color: #171B21; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #8C6F3F; text-decoration: none; }
+  a:hover { color: #6F5730; }
+  input::placeholder { color: #A9A296; }
+</style>
+</helmet>
+
+<div style="width: 100%; overflow-x: hidden">
+
+  <header style="position: sticky; top: 0; z-index: 40; background: rgba(247,245,240,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #E7E3DA">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px">
+      <div style="display: flex; align-items: center; gap: 11px">
+        <span style="width: 30px; height: 30px; border-radius: 8px; background: #171B21; color: #FBF9F4; display: grid; place-items: center; font-family: Newsreader, serif; font-size: 15px">A</span>
+        <span style="font-family: Newsreader, serif; font-size: 18px; letter-spacing: -0.01em">Antessala</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #8C6F3F; border: 1px solid #E2D3B6; background: #F6EFE2; border-radius: 999px; padding: 3px 8px">CRM jurídico</span>
+      </div>
+      <nav style="display: flex; align-items: center; gap: 26px">
+        <a href="#produto" style="font-size: 13.5px; color: #3C4450">Produto</a>
+        <a href="#compliance" style="font-size: 13.5px; color: #3C4450">Compliance</a>
+        <a href="#planos" style="font-size: 13.5px; color: #3C4450">Planos</a>
+        <a href="#perguntas" style="font-size: 13.5px; color: #3C4450">Perguntas</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <a href="Login ASF.dc.html" style="font-size: 13.5px; padding: 8px 13px; border-radius: 8px; border: 1px solid #E3DFD6; background: #FFFFFF; color: #3C4450">Entrar</a>
+        <a href="#demonstracao" style="font-size: 13.5px; font-weight: 500; padding: 9px 15px; border-radius: 8px; background: #171B21; color: #FBF9F4">Agendar demonstração</a>
+      </div>
+    </div>
+  </header>
+
+  <section style="max-width: 1180px; margin: 0 auto; padding: 76px 28px 22px; display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 52px; align-items: center">
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <span style="display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; font-size: 12px; color: #6F5730; background: #F6EFE2; border: 1px solid #E2D3B6; border-radius: 999px; padding: 5px 12px">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #14574F"></span>
+        Desenhado sobre o Provimento 205/2021 e a LGPD
+      </span>
+      <h1 style="margin: 0; font-family: Newsreader, serif; font-size: 58px; font-weight: 400; line-height: 1.06; letter-spacing: -0.028em; text-wrap: pretty">O CRM para o que acontece <em style="font-style: italic">antes</em> do processo.</h1>
+      <p style="margin: 0; font-size: 16.5px; line-height: 1.68; color: #3C4450; max-width: 496px; text-wrap: pretty">Seu software jurídico cuida de prazos e tribunais. O Antessala cuida do momento comercial: da primeira mensagem no WhatsApp ao contrato assinado — com funis próprios da advocacia e trilha de auditoria em cada movimento.</p>
+      <div style="display: flex; align-items: center; gap: 11px; flex-wrap: wrap">
+        <a href="#demonstracao" style="font-size: 14.5px; font-weight: 500; padding: 13px 22px; border-radius: 9px; background: #171B21; color: #FBF9F4">Agendar demonstração</a>
+        <a href="Prototipo CRM Juridico.dc.html" style="font-size: 14.5px; padding: 13px 20px; border-radius: 9px; border: 1px solid #D8D2C5; background: #FFFFFF; color: #171B21">Ver o produto por dentro →</a>
+      </div>
+      <div style="display: flex; gap: 26px; padding-top: 4px; flex-wrap: wrap">
+        <span style="font-size: 12.5px; color: #77808E">Implantação em 2 semanas</span>
+        <span style="font-size: 12.5px; color: #77808E">Dados hospedados no Brasil</span>
+        <span style="font-size: 12.5px; color: #77808E">Sem importação de listas frias</span>
+      </div>
+    </div>
+
+    <div style="border: 1px solid #E3DFD6; border-radius: 14px; background: #FFFFFF; box-shadow: 0 26px 60px -32px rgba(23,27,33,0.32); overflow: hidden">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: #FBFAF7; border-bottom: 1px solid #EEEBE4">
+        <span style="display: flex; gap: 6px">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #DCD7CC"></span>
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #DCD7CC"></span>
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #DCD7CC"></span>
+        </span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA2AE">Funil B2B consultivo</span>
+      </div>
+      <div style="padding: 16px 14px 18px; display: flex; gap: 10px; background: #F7F5F0">
+        <sc-for list="{{ heroColunas }}" as="c" hint-placeholder-count="3">
+          <div style="flex: 1; min-width: 0; background: #F1EEE7; border: 1px solid #E7E3DA; border-radius: 9px; overflow: hidden; display: flex; flex-direction: column">
+            <div style="background: {{ c.cor }}; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 6px">
+              <span style="font-size: 10.5px; font-weight: 600; color: #FBF9F4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ c.nome }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #FBF9F4; background: rgba(255,255,255,0.18); border-radius: 999px; padding: 1px 6px">{{ c.qtd }}</span>
+            </div>
+            <div style="padding: 8px; display: flex; flex-direction: column; gap: 7px">
+              <sc-for list="{{ c.cards }}" as="k" hint-placeholder-count="2">
+                <div style="background: #FFFFFF; border: 1px solid #E3DFD6; border-radius: 7px; padding: 8px 9px; display: flex; flex-direction: column; gap: 5px">
+                  <span style="font-size: 10.5px; font-weight: 500; color: #171B21; line-height: 1.3">{{ k.nome }}</span>
+                  <span style="display: flex; align-items: center; justify-content: space-between; gap: 6px">
+                    <span style="font-size: 9px; color: #3C4450; background: #F4F2EC; border-radius: 999px; padding: 2px 6px">{{ k.canal }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #171B21">{{ k.valor }}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width: 1180px; margin: 0 auto; padding: 30px 28px 10px">
+    <div style="border-top: 1px solid #E7E3DA; border-bottom: 1px solid #E7E3DA; padding: 20px 0; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.13em; text-transform: uppercase; color: #A9A296">Em operação em escritórios de</span>
+      <div style="display: flex; gap: 34px; flex-wrap: wrap">
+        <sc-for list="{{ segmentos }}" as="s" hint-placeholder-count="5">
+          <span style="font-family: Newsreader, serif; font-size: 15px; color: #77808E">{{ s.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="produto" style="max-width: 1180px; margin: 0 auto; padding: 68px 28px 12px; display: flex; flex-direction: column; gap: 34px">
+    <div style="display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 44px; align-items: end">
+      <h2 style="margin: 0; font-family: Newsreader, serif; font-size: 40px; font-weight: 400; line-height: 1.12; letter-spacing: -0.02em">Um funil que fala a língua do escritório.</h2>
+      <p style="margin: 0; font-size: 15.5px; line-height: 1.7; color: #3C4450">Consultivo empresarial e volume de pessoa física não cabem no mesmo processo comercial. No Antessala, cada funil tem suas etapas, campos obrigatórios, SLA e motivos de perda — configurados pelo próprio escritório, sem desenvolvedor.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px">
+      <sc-for list="{{ recursos }}" as="r" hint-placeholder-count="6">
+        <div style="background: #FFFFFF; border: 1px solid #E3DFD6; border-radius: 12px; padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 11px">
+          <span style="width: 34px; height: 34px; border-radius: 9px; background: {{ r.iconeBg }}; color: {{ r.iconeCor }}; display: grid; place-items: center; font-family: Newsreader, serif; font-size: 16px">{{ r.marca }}</span>
+          <h3 style="margin: 0; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: -0.005em">{{ r.titulo }}</h3>
+          <p style="margin: 0; font-size: 13.5px; line-height: 1.62; color: #5F6875">{{ r.texto }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="max-width: 1180px; margin: 0 auto; padding: 60px 28px">
+    <div style="background: #14181E; border-radius: 16px; padding: 46px 46px 0; overflow: hidden; display: grid; grid-template-columns: 0.86fr 1.14fr; gap: 44px; align-items: start">
+      <div style="display: flex; flex-direction: column; gap: 22px; padding-bottom: 46px">
+        <h2 style="margin: 0; font-family: Newsreader, serif; font-size: 34px; font-weight: 400; line-height: 1.16; letter-spacing: -0.02em; color: #FBF9F4">Três telas que resolvem o dia do time comercial.</h2>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{ abas }}" as="a" hint-placeholder-count="3">
+            <button onClick="{{ a.go }}" style="text-align: left; font-family: 'IBM Plex Sans', sans-serif; border: 1px solid {{ a.borda }}; background: {{ a.bg }}; border-radius: 10px; padding: 14px 16px; cursor: pointer; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-size: 14px; font-weight: 500; color: {{ a.fg }}">{{ a.titulo }}</span>
+              <span style="font-size: 12.5px; line-height: 1.5; color: {{ a.sub }}">{{ a.texto }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="align-self: end; background: #FFFFFF; border: 1px solid #2B313A; border-radius: 12px 12px 0 0; overflow: hidden; box-shadow: 0 -20px 50px -30px rgba(0,0,0,0.6)">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: #FBFAF7; border-bottom: 1px solid #EEEBE4">
+          <span style="font-family: Newsreader, serif; font-size: 14px">{{ telaAtual.titulo }}</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA2AE">{{ telaAtual.etiqueta }}</span>
+        </div>
+        <div style="padding: 16px 16px 26px; display: flex; flex-direction: column; gap: 10px; min-height: 268px; background: #F7F5F0">
+          <sc-for list="{{ telaAtual.linhas }}" as="l" hint-placeholder-count="5">
+            <div style="background: #FFFFFF; border: 1px solid #E3DFD6; border-left: 3px solid {{ l.cor }}; border-radius: 8px; padding: 11px 13px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+              <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0">
+                <span style="font-size: 12.5px; color: #171B21">{{ l.titulo }}</span>
+                <span style="font-size: 11px; color: #77808E">{{ l.sub }}</span>
+              </span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: {{ l.cor }}; white-space: nowrap">{{ l.valor }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="compliance" style="max-width: 1180px; margin: 0 auto; padding: 26px 28px 68px; display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start">
+    <div style="display: flex; flex-direction: column; gap: 20px">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #8C6F3F">O diferencial que a OAB cobra</span>
+      <h2 style="margin: 0; font-family: Newsreader, serif; font-size: 40px; font-weight: 400; line-height: 1.12; letter-spacing: -0.02em">Um CRM comum coloca o escritório em risco.</h2>
+      <p style="margin: 0; font-size: 15.5px; line-height: 1.7; color: #3C4450">Ferramentas de vendas nasceram para disparo em massa, gatilho de urgência e comparação de preço — tudo o que a advocacia não pode fazer. O Antessala inverte a lógica: o que é vedado simplesmente não existe no produto.</p>
+      <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 4px">
+        <sc-for list="{{ travas }}" as="t" hint-placeholder-count="4">
+          <div style="display: grid; grid-template-columns: 20px 1fr; gap: 12px; align-items: start; padding-bottom: 11px; border-bottom: 1px solid #E7E3DA">
+            <span style="width: 20px; height: 20px; border-radius: 50%; background: #E7F0EE; color: #14574F; display: grid; place-items: center; font-size: 11px">✓</span>
+            <span style="display: flex; flex-direction: column; gap: 3px">
+              <span style="font-size: 13.5px; font-weight: 500; color: #171B21">{{ t.titulo }}</span>
+              <span style="font-size: 12.5px; line-height: 1.55; color: #5F6875">{{ t.texto }}</span>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E3DFD6; border-radius: 12px; padding: 24px 24px 26px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <h3 style="margin: 0; font-family: Newsreader, serif; font-size: 20px; font-weight: 500">Revisor ético de mensagens</h3>
+        <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5F6875">Todo texto automatizado passa por análise antes de ir ao ar. Experimente: escreva algo que um vendedor escreveria.</p>
+      </div>
+      <textarea value="{{ msg }}" onChange="{{ setMsg }}" rows="4" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13.5px; line-height: 1.6; color: #171B21; padding: 12px 13px; border: 1px solid #E3DFD6; border-radius: 9px; resize: vertical; outline: none; background: #FBFAF7"></textarea>
+      <div style="display: flex; flex-direction: column; gap: 9px">
+        <sc-for list="{{ flags }}" as="f" hint-placeholder-count="1">
+          <div style="display: flex; gap: 11px; align-items: flex-start; padding: 12px 13px; border-radius: 9px; background: {{ f.bg }}; border: 1px solid {{ f.borda }}">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: {{ f.cor }}; padding-top: 2px; flex: 0 0 auto">{{ f.nivel }}</span>
+            <span style="display: flex; flex-direction: column; gap: 3px">
+              <span style="font-size: 13px; color: #171B21">{{ f.titulo }}</span>
+              <span style="font-size: 12px; line-height: 1.5; color: #5F6875">{{ f.norma }}</span>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+      <span style="font-size: 11.5px; line-height: 1.55; color: #9AA2AE">O parecer fica anexado ao modelo e versionado — serve como trava preventiva e como prova de diligência.</span>
+    </div>
+  </section>
+
+  <section id="planos" style="background: #FBFAF7; border-top: 1px solid #E7E3DA; border-bottom: 1px solid #E7E3DA">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 68px 28px; display: flex; flex-direction: column; gap: 32px">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; flex-wrap: wrap">
+        <div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px">
+          <h2 style="margin: 0; font-family: Newsreader, serif; font-size: 40px; font-weight: 400; line-height: 1.12; letter-spacing: -0.02em">Preço por usuário, sem surpresa.</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.68; color: #3C4450">Implantação, migração de planilhas e treinamento inclusos em todos os planos. Cancelamento a qualquer momento, com exportação completa dos seus dados.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <div style="display: flex; gap: 2px; border: 1px solid #E3DFD6; background: #FFFFFF; padding: 3px; border-radius: 9px">
+            <sc-for list="{{ ciclos }}" as="c" hint-placeholder-count="2">
+              <button onClick="{{ c.go }}" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; padding: 7px 14px; border: 0; border-radius: 7px; cursor: pointer; background: {{ c.bg }}; color: {{ c.fg }}">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <span style="font-size: 12px; color: #14574F">{{ notaCiclo }}</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start">
+        <sc-for list="{{ planos }}" as="p" hint-placeholder-count="3">
+          <div style="background: {{ p.fundo }}; border: 1px solid {{ p.borda }}; border-radius: 13px; padding: 26px 24px 28px; display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+              <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 600; color: {{ p.tituloCor }}">{{ p.nome }}</span>
+              <span style="display: {{ p.selo }}; font-size: 10.5px; color: #6F5730; background: #F6EFE2; border: 1px solid #E2D3B6; border-radius: 999px; padding: 3px 9px">mais escolhido</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <span style="display: flex; align-items: baseline; gap: 6px">
+                <span style="font-family: Newsreader, serif; font-size: 38px; font-weight: 500; line-height: 1; color: {{ p.precoCor }}">{{ p.preco }}</span>
+                <span style="font-size: 12.5px; color: {{ p.subCor }}">{{ p.unidade }}</span>
+              </span>
+              <span style="font-size: 12px; color: {{ p.subCor }}">{{ p.minimo }}</span>
+            </div>
+            <p style="margin: 0; font-size: 13px; line-height: 1.6; color: {{ p.textoCor }}">{{ p.resumo }}</p>
+            <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid {{ p.divisor }}; padding-top: 14px">
+              <sc-for list="{{ p.itens }}" as="i" hint-placeholder-count="4">
+                <span style="display: grid; grid-template-columns: 14px 1fr; gap: 9px; align-items: start; font-size: 12.5px; line-height: 1.5; color: {{ p.textoCor }}">
+                  <span style="color: {{ p.checkCor }}; font-size: 11px">✓</span>
+                  <span>{{ i.label }}</span>
+                </span>
+              </sc-for>
+            </div>
+            <a href="#demonstracao" style="margin-top: auto; text-align: center; font-size: 13.5px; font-weight: 500; padding: 12px; border-radius: 9px; border: 1px solid {{ p.botaoBorda }}; background: {{ p.botaoBg }}; color: {{ p.botaoCor }}">{{ p.acao }}</a>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="perguntas" style="max-width: 880px; margin: 0 auto; padding: 68px 28px 20px; display: flex; flex-direction: column; gap: 26px">
+    <h2 style="margin: 0; font-family: Newsreader, serif; font-size: 36px; font-weight: 400; line-height: 1.14; letter-spacing: -0.02em">Perguntas que todo sócio faz.</h2>
+    <div style="display: flex; flex-direction: column">
+      <sc-for list="{{ faq }}" as="q" hint-placeholder-count="5">
+        <div style="border-top: 1px solid #E7E3DA; display: flex; flex-direction: column">
+          <button onClick="{{ q.toggle }}" style="text-align: left; font-family: 'IBM Plex Sans', sans-serif; background: transparent; border: 0; padding: 18px 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+            <span style="font-size: 15px; font-weight: 500; color: #171B21">{{ q.pergunta }}</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: #8C6F3F; flex: 0 0 auto">{{ q.sinal }}</span>
+          </button>
+          <p style="display: {{ q.display }}; margin: 0; padding: 0 60px 20px 0; font-size: 14px; line-height: 1.7; color: #3C4450">{{ q.resposta }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="demonstracao" style="max-width: 1180px; margin: 0 auto; padding: 56px 28px 76px">
+    <div style="background: #14181E; border-radius: 16px; padding: 48px 46px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 44px; align-items: center">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <h2 style="margin: 0; font-family: Newsreader, serif; font-size: 36px; font-weight: 400; line-height: 1.14; letter-spacing: -0.02em; color: #FBF9F4">Veja o Antessala com os seus funis.</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #A8AFB9">Demonstração de 30 minutos, conduzida por quem entende de escritório — não por vendedor de software. Levamos seus dois funis já montados.</p>
+        <div style="display: flex; gap: 22px; padding-top: 6px; flex-wrap: wrap">
+          <span style="font-size: 12.5px; color: #7C8593">Sem cartão de crédito</span>
+          <span style="font-size: 12.5px; color: #7C8593">Piloto de 30 dias</span>
+        </div>
+      </div>
+
+      <sc-if value="{{ enviado }}" hint-placeholder-val="{{ false }}">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid #2B313A; border-radius: 12px; padding: 26px; display: flex; flex-direction: column; gap: 8px">
+          <span style="width: 32px; height: 32px; border-radius: 50%; background: #14574F; color: #FBF9F4; display: grid; place-items: center; font-size: 15px">✓</span>
+          <span style="font-family: Newsreader, serif; font-size: 20px; color: #FBF9F4">Pedido recebido</span>
+          <span style="font-size: 13.5px; line-height: 1.6; color: #A8AFB9">Entramos em contato em até um dia útil no e-mail informado. Nenhum dado foi usado para outra finalidade.</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ formulario }}" hint-placeholder-val="{{ true }}">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid #2B313A; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+          <label style="display: flex; flex-direction: column; gap: 5px">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.11em; text-transform: uppercase; color: #7C8593">Escritório</span>
+            <input value="{{ form.escritorio }}" onChange="{{ setForm.escritorio }}" placeholder="ASF Advogados Associados" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13.5px; padding: 11px 12px; border: 1px solid #2B313A; border-radius: 8px; outline: none; background: #191E25; color: #FBF9F4" />
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 5px">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.11em; text-transform: uppercase; color: #7C8593">E-mail profissional</span>
+            <input value="{{ form.email }}" onChange="{{ setForm.email }}" placeholder="socio@escritorio.adv.br" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 13.5px; padding: 11px 12px; border: 1px solid #2B313A; border-radius: 8px; outline: none; background: #191E25; color: #FBF9F4" />
+          </label>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.11em; text-transform: uppercase; color: #7C8593">Tamanho do time comercial</span>
+          <div style="display: flex; gap: 7px; flex-wrap: wrap">
+            <sc-for list="{{ tamanhos }}" as="t" hint-placeholder-count="3">
+              <button onClick="{{ t.pick }}" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; padding: 8px 13px; border-radius: 999px; cursor: pointer; border: 1px solid {{ t.borda }}; background: {{ t.bg }}; color: {{ t.fg }}">{{ t.label }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ erroForm }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 12px; color: #E3A79C">{{ erroForm }}</span>
+          </sc-if>
+          <button onClick="{{ enviar }}" style="font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 12px; border-radius: 9px; border: 1px solid #C79A4E; background: #C79A4E; color: #14181E; cursor: pointer; margin-top: 4px">Quero a demonstração</button>
+          <span style="font-size: 11px; line-height: 1.5; color: #7C8593">Usamos seus dados apenas para agendar a conversa, na base legal de procedimentos preliminares ao contrato. Você pode pedir a exclusão quando quiser.</span>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <footer style="border-top: 1px solid #E7E3DA; background: #FBFAF7">
+    <div style="max-width: 1180px; margin: 0 auto; padding: 34px 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap">
+      <div style="display: flex; align-items: baseline; gap: 10px">
+        <span style="font-family: Newsreader, serif; font-size: 16px">Antessala</span>
+        <span style="font-size: 12.5px; color: #9AA2AE">CRM jurídico pré-processual</span>
+      </div>
+      <div style="display: flex; gap: 22px; flex-wrap: wrap">
+        <a href="#produto" style="font-size: 12.5px; color: #77808E">Produto</a>
+        <a href="#compliance" style="font-size: 12.5px; color: #77808E">Compliance</a>
+        <a href="#planos" style="font-size: 12.5px; color: #77808E">Planos</a>
+        <a href="Login ASF.dc.html" style="font-size: 12.5px; color: #77808E">Entrar</a>
+      </div>
+      <span style="font-size: 11.5px; color: #A9A296">© 2026 Antessala Tecnologia · dados hospedados no Brasil</span>
+    </div>
+  </footer>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #171B21; color: #FBF9F4; font-size: 12.5px; padding: 11px 18px; border-radius: 999px; box-shadow: 0 8px 24px rgba(23,27,33,0.22); z-index: 50">{{ toast }}</div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+const TERMOS = [
+  { re: /garant|assegur[ao]|com certeza|100%|êxito certo|ganho de causa|revers(ão|ao) certa/i, nivel: "bloqueio", titulo: "Promessa de resultado", norma: "Vedado prometer ou insinuar êxito — Provimento 205/2021 (CFOAB) e EAOAB art. 34, IV." },
+  { re: /promo(ção|cional)|desconto|imperd|oferta relâmpago|barato|menor preço|condição especial/i, nivel: "bloqueio", titulo: "Linguagem mercantilista", norma: "Vedada a mercantilização da advocacia e a captação por preço." },
+  { re: /melhor escritório|nº ?1|n1|líder de mercado|mais premiado|referência absoluta/i, nivel: "bloqueio", titulo: "Autopromoção comparativa", norma: "Vedada publicidade imoderada, comparativa ou de autoexaltação." },
+  { re: /urgente|últim[ao]s? (vaga|dia)|corre|agora ou nunca|só hoje/i, nivel: "atenção", titulo: "Gatilho de urgência artificial", norma: "Risco de captação desleal — revise o tom antes de publicar." }
+];
+
+const TELAS = {
+  funil: {
+    titulo: "Negociações", etiqueta: "Funil configurável",
+    linhas: [
+      { titulo: "Metalúrgica Verano S/A", sub: "Diagnóstico · Camila Moraes", valor: "R$ 48.000", cor: "#31496E" },
+      { titulo: "Construtora Piedade", sub: "Apresentação da solução · 4d na etapa", valor: "R$ 210.000", cor: "#41503A" },
+      { titulo: "Grupo Aldeia Alimentos", sub: "Negociação · proposta v1", valor: "R$ 120.000", cor: "#6B5330" },
+      { titulo: "Têxtil Guaporé Ltda", sub: "Fechamento · assinatura pendente", valor: "R$ 96.000", cor: "#0F4A43" },
+      { titulo: "Cooperativa Vale Verde", sub: "Diagnóstico · consentimento pendente", valor: "R$ 64.000", cor: "#8C6F3F" }
+    ]
+  },
+  agenda: {
+    titulo: "Calendário e atividades", etiqueta: "Prazos das negociações",
+    linhas: [
+      { titulo: "Reunião de diagnóstico presencial", sub: "Metalúrgica Verano · hoje", valor: "15:00", cor: "#8C4A6B" },
+      { titulo: "Apresentar proposta v3", sub: "Construtora Piedade · amanhã", valor: "10:00", cor: "#31496E" },
+      { titulo: "Retomar contato", sub: "Cooperativa Vale Verde · 6d em atraso", valor: "atrasada", cor: "#9B3B2F" },
+      { titulo: "PR-2026-124 vence", sub: "Validade da proposta", valor: "17/08", cor: "#8C6F3F" },
+      { titulo: "Coletar assinatura eletrônica", sub: "Têxtil Guaporé · hoje", valor: "17:00", cor: "#14574F" }
+    ]
+  },
+  auditoria: {
+    titulo: "Compliance e auditoria", etiqueta: "Trilha imutável",
+    linhas: [
+      { titulo: "Avanço de etapa registrado", sub: "Camila Moraes · Diagnóstico → Apresentação", valor: "14:02", cor: "#31496E" },
+      { titulo: "Acesso ao caso negado por perfil", sub: "Diego Alencar · consultor comercial", valor: "10:19", cor: "#9B3B2F" },
+      { titulo: "Revogação de consentimento", sub: "Aline Cordeiro · contato suspenso", valor: "09:40", cor: "#8C6F3F" },
+      { titulo: "Proposta v2 gerada", sub: "Letícia Bonfim · diff registrado", valor: "17:33", cor: "#41503A" },
+      { titulo: "Exportação de dados do titular", sub: "Encarregado (DPO) · pedido de acesso", valor: "09:05", cor: "#0F4A43" }
+    ]
+  }
+};
+
+const FAQ = [
+  {
+    pergunta: "Isso substitui o meu software de gestão processual?",
+    resposta: "Não, e nem tenta. O Antessala cuida do que vem antes: lead, qualificação, proposta e contrato. Quando o contrato é assinado, ele dispara a abertura do caso no seu sistema processual e guarda apenas o identificador — o conteúdo do caso nunca é copiado para o CRM."
+  },
+  {
+    pergunta: "Como o produto me protege de uma representação por captação irregular?",
+    resposta: "Por ausência de função, não por aviso. Não existe disparo em massa, importação de lista fria ou enriquecimento de contatos de terceiros. Todo lead exige origem rastreável de contato iniciado pelo interessado, e todo texto automatizado passa pelo revisor ético com parecer versionado — que serve como prova de diligência."
+  },
+  {
+    pergunta: "Quem consegue ver o conteúdo dos casos?",
+    resposta: "O advogado responsável e o sócio da área. O consultor comercial vê o pipeline e nada do caso; o encarregado de dados vê metadados e a trilha de auditoria. Acesso excepcional exige justificativa, notifica o responsável e fica registrado."
+  },
+  {
+    pergunta: "Dá para atender concursos e consultivo empresarial no mesmo sistema?",
+    resposta: "É exatamente para isso que os funis são independentes. Volume de pessoa física roda com SLA de 15 minutos e triagem enxuta; consultivo empresarial roda com diagnóstico, conflito de interesses e proposta versionada. Cada funil tem etapas, campos e motivos de perda próprios."
+  },
+  {
+    pergunta: "Meus dados ficam onde? E se eu quiser sair?",
+    resposta: "Hospedagem em região brasileira, criptografia em trânsito e em repouso, backup diário com teste trimestral de restauração. Ao cancelar, você exporta tudo em formato aberto e a base é eliminada conforme a política de retenção acordada."
+  }
+];
+
+class Component extends DCLogic {
+  state = {
+    aba: "funil", ciclo: "anual", faqAberta: 0, toast: null, enviado: false, erroForm: null,
+    msg: "Olá! Podemos garantir a reversão da sua eliminação e ainda estamos com uma condição promocional imperdível neste mês.",
+    form: { escritorio: "", email: "", tamanho: "3 a 8 pessoas" }
+  };
+
+  flash(t) {
+    clearTimeout(this._t);
+    this.setState({ toast: t });
+    this._t = setTimeout(() => this.setState({ toast: null }), 2800);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._t);
+  }
+
+  setCampo(campo, valor) {
+    const form = Object.assign({}, this.state.form);
+    form[campo] = valor;
+    this.setState({ form, erroForm: null });
+  }
+
+  enviar() {
+    const f = this.state.form;
+    if (!f.escritorio.trim()) { this.setState({ erroForm: "Informe o nome do escritório." }); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(f.email)) { this.setState({ erroForm: "Informe um e-mail profissional válido." }); return; }
+    this.setState({ enviado: true, erroForm: null });
+    this.flash("Pedido de demonstração registrado.");
+  }
+
+  planosVals() {
+    const anual = this.state.ciclo === "anual";
+    const defs = [
+      {
+        nome: "Essencial", preco: anual ? "R$ 89" : "R$ 109", destaque: false,
+        minimo: "mínimo de 3 usuários",
+        resumo: "Para bancas pequenas que precisam parar de perder lead no WhatsApp.",
+        itens: ["Um funil configurável", "Entrada por WhatsApp e site", "Histórico unificado e tarefas", "Trilha de auditoria completa"],
+        acao: "Falar com o time"
+      },
+      {
+        nome: "Escritório", preco: anual ? "R$ 149" : "R$ 179", destaque: true,
+        minimo: "mínimo de 5 usuários",
+        resumo: "O plano do escritório de médio porte, com dois ou mais funis em operação.",
+        itens: ["Funis ilimitados e campos por etapa", "Propostas versionadas e minutas", "Revisor ético e automações", "API de tráfego (Meta, Google, site)", "Painel de métricas e motivos de perda"],
+        acao: "Agendar demonstração"
+      },
+      {
+        nome: "Banca", preco: "sob consulta", destaque: false,
+        minimo: "a partir de 25 usuários",
+        resumo: "Para escritórios com várias unidades, DPO dedicado e exigências próprias.",
+        itens: ["Instância dedicada", "SSO e política de senha própria", "Integração com gestão processual", "Encarregado e relatórios de LGPD", "Gerente de conta nomeado"],
+        acao: "Falar com o time"
+      }
+    ];
+    return defs.map(p => ({
+      nome: p.nome, preco: p.preco, minimo: p.minimo, resumo: p.resumo, acao: p.acao,
+      unidade: p.preco === "sob consulta" ? "" : "por usuário / mês",
+      selo: p.destaque ? "inline-flex" : "none",
+      fundo: p.destaque ? "#14181E" : "#FFFFFF",
+      borda: p.destaque ? "#14181E" : "#E3DFD6",
+      tituloCor: p.destaque ? "#FBF9F4" : "#171B21",
+      precoCor: p.destaque ? "#FBF9F4" : "#171B21",
+      textoCor: p.destaque ? "#A8AFB9" : "#5F6875",
+      subCor: p.destaque ? "#7C8593" : "#77808E",
+      divisor: p.destaque ? "#2B313A" : "#EEEBE4",
+      checkCor: p.destaque ? "#C79A4E" : "#14574F",
+      botaoBg: p.destaque ? "#C79A4E" : "#FFFFFF",
+      botaoCor: p.destaque ? "#14181E" : "#171B21",
+      botaoBorda: p.destaque ? "#C79A4E" : "#D8D2C5",
+      itens: p.itens.map(i => ({ label: i }))
+    }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const flags = TERMOS.filter(t => t.re.test(s.msg)).map(t => ({
+      nivel: t.nivel, titulo: t.titulo, norma: t.norma,
+      bg: t.nivel === "bloqueio" ? "#FCF5F3" : "#FBF7EF",
+      borda: t.nivel === "bloqueio" ? "#E6C9C2" : "#E2D3B6",
+      cor: t.nivel === "bloqueio" ? "#9B3B2F" : "#8C6F3F"
+    }));
+    if (!flags.length) flags.push({
+      nivel: "aprovado", titulo: "Texto liberado para uso automatizado",
+      norma: "Sem promessa de resultado, comparação ou apelo mercantilista. Parecer anexado ao modelo.",
+      bg: "#F1F6F4", borda: "#CCE0DA", cor: "#14574F"
+    });
+
+    return {
+      heroColunas: [
+        {
+          nome: "Diagnóstico", qtd: 2, cor: "#333A45",
+          cards: [
+            { nome: "Metalúrgica Verano S/A", canal: "Indicação", valor: "48k" },
+            { nome: "Cooperativa Vale Verde", canal: "Maps", valor: "64k" }
+          ]
+        },
+        {
+          nome: "Negociação", qtd: 2, cor: "#6B5330",
+          cards: [
+            { nome: "Construtora Piedade", canal: "Indicação", valor: "210k" },
+            { nome: "Instituto Farrapo", canal: "Site", valor: "25k" }
+          ]
+        },
+        {
+          nome: "Fechamento", qtd: 1, cor: "#0F4A43",
+          cards: [
+            { nome: "Têxtil Guaporé Ltda", canal: "Indicação", valor: "96k" }
+          ]
+        }
+      ],
+      segmentos: ["Consultivo empresarial", "Concursos públicos", "Trabalhista", "Empresarial bancário", "Previdenciário"].map(l => ({ label: l })),
+
+      recursos: [
+        { marca: "F", titulo: "Funis por área de atuação", texto: "Etapas, campos obrigatórios, SLA e motivos de perda definidos pelo escritório. Um lead só avança quando a etapa está completa.", iconeBg: "#EEF1F6", iconeCor: "#31496E" },
+        { marca: "W", titulo: "WhatsApp, site e indicação num só lugar", texto: "Toda mensagem vira interação no histórico do contato, com deduplicação por telefone, e-mail e CPF/CNPJ.", iconeBg: "#E7F0EE", iconeCor: "#14574F" },
+        { marca: "A", titulo: "Follow-up que gera tarefa, não spam", texto: "Sem resposta há três dias abre tarefa para o advogado responsável — o sistema não dispara mensagem em massa por decisão de projeto.", iconeBg: "#F6EFE2", iconeCor: "#8C6F3F" },
+        { marca: "P", titulo: "Propostas versionadas", texto: "Minutas a partir de modelo aprovado, honorários dentro da tabela da seccional e versões imutáveis com autor, data e diff.", iconeBg: "#F4EFF2", iconeCor: "#8C4A6B" },
+        { marca: "D", titulo: "Distribuição automática", texto: "Round robin, por especialidade ou por carga de trabalho — com verificação de conflito de interesses antes da atribuição.", iconeBg: "#F0F2EC", iconeCor: "#41503A" },
+        { marca: "M", titulo: "Métricas que o sócio usa", texto: "Conversão por etapa, ciclo médio, SLA de primeiro contato por colaborador e ranking de motivos de perda.", iconeBg: "#F2EFE8", iconeCor: "#3C4450" }
+      ],
+
+      abas: [
+        { k: "funil", titulo: "Negociações", texto: "Quadro por etapa, com valor, SLA e campos obrigatórios visíveis." },
+        { k: "agenda", titulo: "Calendário e atividades", texto: "Tarefas, previsões de fechamento e validade de propostas no mesmo mês." },
+        { k: "auditoria", titulo: "Compliance e auditoria", texto: "Quem viu o quê, quando — e o que o sistema recusou." }
+      ].map(a => ({
+        titulo: a.titulo, texto: a.texto,
+        bg: s.aba === a.k ? "rgba(255,255,255,0.07)" : "transparent",
+        borda: s.aba === a.k ? "#3A424D" : "#23282F",
+        fg: s.aba === a.k ? "#FBF9F4" : "#C4CAD3",
+        sub: s.aba === a.k ? "#A8AFB9" : "#7C8593",
+        go: () => this.setState({ aba: a.k })
+      })),
+      telaAtual: TELAS[s.aba],
+
+      travas: [
+        { titulo: "Nenhum disparo em massa", texto: "Envios são 1:1, a partir da ficha do lead, com cadência máxima configurável." },
+        { titulo: "Sem importação de lista fria", texto: "Todo lead exige origem rastreável: contato iniciado pelo interessado ou indicação nominal registrada." },
+        { titulo: "Léxico bloqueado", texto: "Promessa de êxito, superlativo e apelo promocional impedem a publicação do modelo — inclusive para o gestor." },
+        { titulo: "Sigilo por arquitetura", texto: "O CRM guarda dado comercial; conteúdo do caso vive no sistema processual e é referenciado por identificador." }
+      ],
+
+      msg: s.msg,
+      setMsg: e => this.setState({ msg: e.target.value }),
+      flags,
+
+      ciclos: [{ k: "anual", label: "Anual" }, { k: "mensal", label: "Mensal" }].map(c => ({
+        label: c.label,
+        bg: s.ciclo === c.k ? "#171B21" : "transparent",
+        fg: s.ciclo === c.k ? "#FBF9F4" : "#77808E",
+        go: () => this.setState({ ciclo: c.k })
+      })),
+      notaCiclo: s.ciclo === "anual" ? "economia de 2 meses" : "sem compromisso de prazo",
+      planos: this.planosVals(),
+
+      faq: FAQ.map((q, i) => ({
+        pergunta: q.pergunta, resposta: q.resposta,
+        sinal: s.faqAberta === i ? "−" : "+",
+        display: s.faqAberta === i ? "block" : "none",
+        toggle: () => this.setState({ faqAberta: s.faqAberta === i ? -1 : i })
+      })),
+
+      form: s.form,
+      setForm: {
+        escritorio: e => this.setCampo("escritorio", e.target.value),
+        email: e => this.setCampo("email", e.target.value)
+      },
+      tamanhos: ["Até 2 pessoas", "3 a 8 pessoas", "9 ou mais"].map(t => {
+        const on = s.form.tamanho === t;
+        return {
+          label: t,
+          bg: on ? "#C79A4E" : "transparent",
+          fg: on ? "#14181E" : "#A8AFB9",
+          borda: on ? "#C79A4E" : "#2B313A",
+          pick: () => this.setCampo("tamanho", t)
+        };
+      }),
+      erroForm: s.erroForm,
+      enviado: s.enviado, formulario: !s.enviado,
+      enviar: () => this.enviar(),
+      toast: s.toast
+    };
+  }
+}
+
+</script>
+</body>
+</html>

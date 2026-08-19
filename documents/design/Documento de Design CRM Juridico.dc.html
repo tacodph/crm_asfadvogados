@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;450;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  doc-page:not(:defined) { visibility: hidden; }
+  body { font-family: "IBM Plex Sans", system-ui, sans-serif; color: #171B21; }
+  a { color: #8C6F3F; }
+  a:hover { color: #6F5730; }
+</style>
+<script src="./doc-page.js"></script>
+</helmet>
+
+<doc-page margin="0.8in">
+
+  <div slot="header" style="display: flex; justify-content: space-between; align-items: baseline; font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; letter-spacing: 0.08em; text-transform: uppercase; color: #8B8578; padding-bottom: 6px; border-bottom: 1px solid #E3DFD6">
+    <span>CRM Jurídico · Documento de design técnico-jurídico</span>
+    <span>Vieira &amp; Sant'Ana · confidencial</span>
+  </div>
+
+  <div slot="footer" style="display: flex; justify-content: space-between; align-items: baseline; font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; color: #8B8578; padding-top: 6px; border-top: 1px solid #E3DFD6">
+    <span>v1.0 · agosto de 2026</span>
+    <span>Sujeito a validação do comitê de ética do escritório</span>
+  </div>
+
+  <h1 style="font-family: Newsreader, serif; font-size: 30pt; font-weight: 500; line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 14px">CRM Jurídico: desenho de um sistema para o ciclo pré-processual</h1>
+
+  <p style="font-family: Newsreader, serif; font-size: 14pt; line-height: 1.5; color: #3C4450; margin: 0 0 22px">Documento de design técnico-jurídico para um escritório de médio porte (10 a 50 usuários), com atuação em <strong style="font-weight: 500">consultivo empresarial</strong> e <strong style="font-weight: 500">causas de concursos públicos</strong>, cobrindo do primeiro contato ao contrato assinado — dentro dos limites do Código de Ética e Disciplina da OAB, do Provimento nº 205/2021 do CFOAB e da LGPD.</p>
+
+  <div style="break-inside: avoid; background: #FBFAF7; border: 1px solid #E3DFD6; border-radius: 8px; padding: 16px 18px; margin: 0 0 26px">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5pt; letter-spacing: 0.11em; text-transform: uppercase; color: #8C6F3F; margin-bottom: 9px">Premissas assumidas</div>
+    <ul style="margin: 0; padding-left: 18px; font-size: 10.5pt; line-height: 1.65; color: #3C4450">
+      <li>Porte médio: 10–50 usuários, sendo ~8 em papel comercial ativo.</li>
+      <li>Instância única do escritório no lançamento, com arquitetura preparada para virar SaaS multi-tenant sem reescrita.</li>
+      <li>Dois funis distintos e configuráveis: B2B consultivo (ticket alto, ciclo longo) e Pessoa Física em volume (concursos).</li>
+      <li>O CRM cobre o momento <em>comercial e pré-contratual</em>. Prazos, peças e processos permanecem no sistema de gestão processual, integrado por referência.</li>
+      <li>Referências normativas devem ser conferidas em sua redação vigente pelo comitê de ética antes da implementação; este documento aponta a exigência, não substitui o parecer.</li>
+    </ul>
+  </div>
+
+  <h2 style="font-family: Newsreader, serif; font-size: 19pt; font-weight: 500; margin: 30px 0 10px; letter-spacing: -0.01em">1. Modelagem de negócio e funcionalidades</h2>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">1.1 Funis configuráveis</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Funil, etapa, campo obrigatório, SLA e motivo de perda são <strong style="font-weight: 500">dados, não código</strong>: o escritório cria e reordena etapas sem deploy. Cada etapa declara (a) campos obrigatórios para saída, (b) SLA em horas úteis, (c) automações vinculadas e (d) se exige registro de motivo em caso de perda. A regra de ouro é que um lead só avança quando os campos obrigatórios da etapa estão preenchidos — é isso que torna o funil auditável e o dashboard confiável.</p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 0 0 18px">
+    <thead>
+      <tr>
+        <th style="text-align: left; padding: 7px 9px 7px 0; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Etapa — funil B2B consultivo</th>
+        <th style="text-align: left; padding: 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Campos obrigatórios para sair da etapa</th>
+        <th style="text-align: left; padding: 7px 0 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">SLA</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Prospecção / Inbound</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Canal de origem, contato válido, registro de consentimento, responsável atribuído</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">4h</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Diagnóstico / Qualificação</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Porte, área jurídica, dor mapeada, decisor identificado, conflito de interesses verificado</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">5d</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Apresentação da solução</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Escopo, honorários dentro da tabela da seccional, modelo de minuta selecionado</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">7d</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Negociação</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Versão vigente da proposta, objeção classificada, data de decisão acordada</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">10d</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Fechamento</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Contrato assinado, procuração, abertura do caso no sistema processual</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">O funil de concursos herda a mesma máquina, com cadência muito mais curta (Novo lead → Triagem → Envio da oferta → Objeções → Fechamento, SLA de primeiro contato em 15 minutos) e campos próprios: banca, concurso, fase da eliminação, prazo administrativo remanescente. Motivos de perda são uma lista fechada e configurável — o campo livre é opcional e complementar, nunca substituto, porque o relatório de perdas só serve se for categórico.</p>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">1.2 Captação multicanal e deduplicação</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Todos os canais (formulário do site, WhatsApp Business, Instagram/Meta, Google Business Profile, indicação, telefone) escrevem em um único <em>inbox</em> de leads. Cada mensagem de entrada gera um evento imutável com canal, identificador externo, carimbo de tempo e o texto do consentimento exibido ao titular naquele momento.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">A deduplicação roda em duas camadas: <strong style="font-weight: 500">determinística</strong> (telefone E.164, e-mail normalizado, CPF/CNPJ) resolve automaticamente; <strong style="font-weight: 500">probabilística</strong> (similaridade de nome + mesma empresa + janela de 90 dias) apenas <em>sugere</em> a fusão a um humano. Fusão nunca destrói dado: os registros originais permanecem como fontes vinculadas ao contato canônico, o que preserva a rastreabilidade de qual consentimento veio de qual canal — exigência prática da LGPD que a fusão silenciosa quebraria.</p>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">1.3 Histórico unificado e automação de follow-up</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Cada interação (mensagem, ligação, e-mail, reunião, nota) é um registro append-only na linha do tempo do contato. Notas são editáveis apenas por quem as criou e por tempo limitado, com versão anterior preservada.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">A automação segue o padrão <strong style="font-weight: 500">gatilho → condição → ação</strong>, com um limite deliberado: as ações que enviam mensagem para o titular exigem template pré-aprovado e passam pelo revisor ético (§2.4). As ações padrão do MVP:</p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 0 0 18px">
+    <thead>
+      <tr>
+        <th style="text-align: left; padding: 7px 9px 7px 0; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Gatilho</th>
+        <th style="text-align: left; padding: 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Condição</th>
+        <th style="text-align: left; padding: 7px 0 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Novo lead recebido</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Canal = WhatsApp, horário comercial</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Atribuir por round robin + notificar plantonista (SLA 15 min)</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Sem resposta há 3 dias</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Etapa ≠ Fechamento e consentimento vigente</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Criar <em>tarefa humana</em> de retomada — não dispara mensagem sozinha</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">48h antes do vencimento da proposta</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Proposta enviada e não respondida</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Alertar responsável e sócio da área</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Lead parado além do SLA da etapa</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Qualquer funil</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Escalar para o gestor e sinalizar o card</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Titular revoga consentimento</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Qualquer canal</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Suspender toda comunicação automática e abrir tarefa para o encarregado</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="break-inside: avoid; border-left: 3px solid #8C6F3F; background: #FBF7EF; padding: 13px 16px; margin: 0 0 18px">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.11em; text-transform: uppercase; color: #8C6F3F; margin-bottom: 6px">Decisão de design ⇢ exigência ética</div>
+    <p style="margin: 0; font-size: 10.5pt; line-height: 1.6; color: #3C4450">O follow-up automático cria <strong style="font-weight: 500">tarefa para o advogado</strong>, não mensagem ao lead. Cadência automatizada de disparos em massa aproxima-se de captação ativa e de mala direta ostensiva, vedadas pelo Provimento 205/2021. Mensagens automáticas ficam restritas a respostas a contato iniciado pelo próprio interessado e a comunicações de serviço (confirmação de reunião, envio de proposta solicitada).</p>
+  </div>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">1.4 Propostas, minutas e contratos</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Propostas nascem de <strong style="font-weight: 500">modelos aprovados</strong> pelo comitê, com cláusulas obrigatórias travadas e campos variáveis (escopo, honorários, parcelamento, índice de reajuste, vigência). Versões são imutáveis: qualquer alteração gera v+1 com autor, carimbo de tempo e diff. Validade, reajuste anual e renovação são datas de primeira classe, com alertas automáticos. Assinatura eletrônica é integração, não funcionalidade própria.</p>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">1.5 Distribuição, agenda, métricas e indicações</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">A distribuição combina três estratégias configuráveis por funil: <em>round robin</em> simples (volume/PF), roteamento por especialidade (B2B) e balanceamento por carga de trabalho aberta. Sobre elas incidem duas travas obrigatórias: verificação de conflito de interesses antes da atribuição e exclusão de responsáveis em férias/licença.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">O dashboard entrega conversão por etapa, tempo médio de fechamento por funil, produtividade e SLA de primeiro contato por colaborador, receita contratada, origem dos leads e ranking de motivos de perda. O módulo de indicações registra quem indicou, o vínculo com o contato indicado e o desfecho — <strong style="font-weight: 500">sem qualquer forma de remuneração, comissão ou bonificação por indicação</strong>, que configuraria captação de clientela; o módulo mede a origem e organiza o agradecimento institucional, nada além disso.</p>
+
+  <h2 style="font-family: Newsreader, serif; font-size: 19pt; font-weight: 500; margin: 30px 0 10px; letter-spacing: -0.01em">2. Compliance jurídico e ética profissional</h2>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">2.1 Provimento nº 205/2021 traduzido em regras de produto</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">O provimento admite marketing jurídico informativo e veda a captação de clientela, a mercantilização e a publicidade imoderada. Um CRM comercial vive exatamente na fronteira, então o desenho adota o princípio de que <strong style="font-weight: 500">o sistema só amplifica o contato que o interessado iniciou</strong>.</p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 0 0 18px">
+    <thead>
+      <tr>
+        <th style="text-align: left; padding: 7px 9px 7px 0; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Risco ético</th>
+        <th style="text-align: left; padding: 7px 0 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Como o sistema impede</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; width: 38%">Captação ativa de clientela</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Não há importação de listas nem enriquecimento de contatos de terceiros. Todo lead exige origem rastreável de contato iniciado pelo interessado ou indicação nominal registrada.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Mala direta ostensiva</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Não existe função de disparo em massa. Envios são 1:1, a partir da ficha do lead, e limitados por cadência máxima configurável (padrão: 3 tentativas, depois encerramento por “sem resposta”).</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Promessa de resultado</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Revisor ético bloqueia publicação de templates com termos de garantia de êxito; propostas usam cláusula padrão de ausência de garantia de resultado.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Linguagem mercantilista</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Bloqueio de vocabulário promocional (desconto, promoção, imperdível) e de honorários abaixo da tabela da seccional no gerador de propostas.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Publicidade comparativa / autoexaltação</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Mesma trava aplicada a superlativos e comparações (“melhor escritório”, “nº 1”), com registro do parecer anexado ao template.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">2.2 Sigilo profissional: a separação comercial / caso</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Esta é a decisão estrutural mais importante do documento. O CRM guarda <strong style="font-weight: 500">dado comercial</strong> — identificação, canal, objeto genérico da consulta, histórico de contato, valores e etapa. Ele <strong style="font-weight: 500">não</strong> guarda conteúdo jurídico: fatos do caso, documentos, estratégia, teses, pareceres. Esse conteúdo vive no sistema de gestão processual/GED e é referenciado por identificador.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Consequência prática: o consultor comercial vê o pipeline inteiro e nada do caso; o advogado responsável vê os dois; o sócio vê tudo; o encarregado de dados vê metadados e a trilha de auditoria, não o conteúdo. Acesso excepcional existe, mas é <em>break-glass</em>: exige justificativa, notifica o responsável e fica registrado. Campos de nota livre exibem aviso permanente de que não devem receber conteúdo sigiloso — e o revisor sinaliza indícios (números de processo, nomes de partes contrárias) para revisão.</p>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">2.3 LGPD: bases legais, retenção e direitos do titular</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Base legal por finalidade, não por sistema. Contato comercial em resposta a solicitação do próprio titular: <strong style="font-weight: 500">procedimentos preliminares ao contrato</strong> (art. 7º, V). Comunicações de marketing e reengajamento: <strong style="font-weight: 500">consentimento</strong> (art. 7º, I), coletado com finalidade específica e revogável em um clique. Registros de auditoria e defesa em processo disciplinar: <strong style="font-weight: 500">cumprimento de obrigação legal e exercício regular de direitos</strong>. Dados sensíveis (saúde em causas previdenciárias, dado biométrico em concursos) não entram no CRM comercial.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">O consentimento é capturado no canal de origem e armazenado com texto exibido, versão, canal, IP/identificador e carimbo de tempo. Em WhatsApp e Instagram, o opt-in é registrado a partir da mensagem iniciada pelo titular somada ao aviso de privacidade enviado na primeira resposta. Retenção padrão: lead perdido é anonimizado em 24 meses (contadores agregados permanecem para o dashboard); cliente contratado segue a retenção contratual e prescricional. Direitos do titular (acesso, correção, portabilidade, eliminação, revogação) têm fila própria com prazo, responsável e resposta registrada — visível no módulo de compliance do protótipo.</p>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">2.4 Revisor ético de textos automatizados</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Todo template de mensagem, proposta ou follow-up passa por análise antes de entrar em produção: léxico proibido (garantia de êxito, superlativos, apelo promocional, urgência artificial), verificação de identificação profissional do remetente e exigência de finalidade informativa. O resultado é um parecer versionado, anexado ao template — que serve tanto de trava preventiva quanto de prova de diligência. Textos aprovados carregam selo com data e revisor; templates reprovados não podem ser publicados por nenhum perfil, inclusive gestor.</p>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">2.5 Trilha de auditoria</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Log append-only, com retenção mínima de cinco anos e hash encadeado por registro, cobrindo: acesso a ficha de lead, mudança de etapa, alteração de proposta, exportação de dados, tentativa de acesso negada, alteração de automação e de permissão. A trilha é consultável pelo encarregado e pelo comitê, mas não é editável por ninguém — inclusive administradores. Além de salvaguarda ética, é o material probatório do escritório caso a conduta comercial seja questionada.</p>
+
+  <h2 style="font-family: Newsreader, serif; font-size: 19pt; font-weight: 500; margin: 30px 0 10px; letter-spacing: -0.01em">3. Arquitetura técnica</h2>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">3.1 Estilo arquitetural: monolito modular</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Recomendação: <strong style="font-weight: 500">monolito modular</strong> com fronteiras internas explícitas (Leads, Funil, Interações, Propostas, Automação, Compliance, Identidade) e um único banco relacional, mais um <em>worker</em> assíncrono separado para automações e webhooks. Para 10–50 usuários, microsserviços custariam observabilidade, transações distribuídas e time de plataforma que o escritório não tem — sem entregar escala de que ele precisa. As fronteiras de módulo dão a opção de extrair depois (a integração de WhatsApp é a candidata natural), sem pagar o preço agora.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px"><em>Trade-off aceito:</em> deploy acoplado — uma alteração no módulo de propostas reimplanta tudo. Mitigação: feature flags e testes de contrato entre módulos.</p>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">3.2 Modelo de dados</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Descrição textual do diagrama ER. Todas as entidades carregam <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; background: #F2EFE8; padding: 1px 4px; border-radius: 3px">tenant_id</code>, <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; background: #F2EFE8; padding: 1px 4px; border-radius: 3px">created_at</code>, <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; background: #F2EFE8; padding: 1px 4px; border-radius: 3px">updated_at</code> e <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; background: #F2EFE8; padding: 1px 4px; border-radius: 3px">deleted_at</code> (exclusão lógica, exceto quando o titular pede eliminação — aí a remoção é física com registro do evento).</p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 0 0 14px">
+    <thead>
+      <tr>
+        <th style="text-align: left; padding: 7px 9px 7px 0; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Entidade</th>
+        <th style="text-align: left; padding: 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Atributos centrais</th>
+        <th style="text-align: left; padding: 7px 0 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Relações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Contato</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">nome, tipo (PF/PJ), documento, telefones, e-mails, empresa</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">1:N Lead · 1:N Consentimento · N:1 Contato canônico (dedupe)</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Lead</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">objeto genérico, valor estimado, canal de origem, etapa, motivo de perda, entrada na etapa</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">N:1 Contato · N:1 Funil · N:1 Etapa · N:1 Usuário (responsável) · 1:N Interação, Proposta, Tarefa</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Funil / Etapa</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">nome, ordem, SLA, campos obrigatórios (JSON), exige motivo de perda</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Funil 1:N Etapa · Etapa 1:N Lead · Etapa 1:N Automação</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Interação</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">tipo, direção, canal, conteúdo, id externo, ocorrida_em (append-only)</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">N:1 Lead · N:1 Usuário ou Automação (autor)</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Proposta</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">código, versão, escopo, honorários, validade, status, modelo de origem</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">N:1 Lead · 1:N Versão (imutável) · 1:1 Contrato</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Contrato</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">assinado_em, vigência, reajuste, renovação, ref. do caso no sistema processual</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">1:1 Proposta · N:1 Contato</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Tarefa</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">título, prazo, status, origem (humana/automação)</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">N:1 Lead · N:1 Usuário</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Automação</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">gatilho, condições (JSON), ações (JSON), ativa, parecer ético</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">N:1 Funil/Etapa · 1:N Execução · N:1 Template</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Usuário</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">nome, OAB, especialidades, capacidade, perfil (RBAC), status</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">1:N Lead · 1:N Tarefa · 1:N Evento de auditoria</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">Consentimento</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">finalidade, base legal, texto exibido, canal, coletado_em, revogado_em</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">N:1 Contato</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">EventoAuditoria</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">ator, ação, entidade, diff, hash anterior, ocorrido_em</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">N:1 Usuário · polimórfico com todas as entidades</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">3.3 Stack e trade-offs</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px"><strong style="font-weight: 500">Backend:</strong> TypeScript (NestJS) ou Python (Django/FastAPI). Recomendação por TypeScript, com linguagem única entre front e back — para uma equipe pequena, isso reduz custo de contexto mais do que qualquer ganho isolado de ecossistema. <em>Trade-off:</em> Django entregaria admin e ORM maduros mais rápido no MVP.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px"><strong style="font-weight: 500">Banco:</strong> PostgreSQL, com <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; background: #F2EFE8; padding: 1px 4px; border-radius: 3px">pgcrypto</code> para campos sensíveis, <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; background: #F2EFE8; padding: 1px 4px; border-radius: 3px">pg_trgm</code> para dedupe por similaridade e Row-Level Security para isolamento por tenant. <strong style="font-weight: 500">Fila:</strong> Redis + BullMQ no MVP (SQS/RabbitMQ quando o volume justificar). <strong style="font-weight: 500">Frontend:</strong> React com Next.js, tabelas virtualizadas e board otimista. <strong style="font-weight: 500">Hospedagem:</strong> nuvem com região no Brasil (São Paulo) — reduz latência de WhatsApp e simplifica o discurso de soberania de dados perante clientes corporativos.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px"><strong style="font-weight: 500">Integrações:</strong> WhatsApp Business Cloud API via BSP homologado (templates aprovados, janela de 24h respeitada); e-mail por IMAP/Gmail e Microsoft Graph; calendário Google/Outlook bidirecional; formulários do site por webhook assinado; Instagram/Meta por Messenger API; assinatura eletrônica; e integração futura, por referência, com o sistema de gestão processual — o CRM envia o gatilho de abertura do caso e recebe apenas o identificador de volta, jamais o conteúdo.</p>
+
+  <h3 style="font-family: 'IBM Plex Sans', sans-serif; font-size: 12pt; font-weight: 600; margin: 20px 0 8px">3.4 Segurança e multi-tenant</h3>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">RBAC com quatro perfis base (gestor, advogado responsável, consultor comercial, encarregado/DPO) e escopo por funil e por carteira, avaliado no servidor a cada requisição. TLS 1.3 em trânsito; criptografia em repouso no volume e criptografia de coluna para documento, telefone e conteúdo de mensagem, com chaves em KMS e rotação anual. MFA obrigatório para gestor e DPO. Backup diário com retenção de 35 dias, teste de restauração trimestral, RPO de 24h e RTO de 4h.</p>
+
+  <p style="font-size: 11pt; line-height: 1.62; margin: 0 0 12px">Multi-tenant desde o primeiro dia no modelo lógico: banco compartilhado, <code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; background: #F2EFE8; padding: 1px 4px; border-radius: 3px">tenant_id</code> em todas as tabelas e RLS no Postgres. Custa pouco agora e evita a migração dolorosa quando o produto virar SaaS; escritórios grandes que exijam isolamento físico ganham instância dedicada como plano superior. <em>Trade-off:</em> RLS adiciona complexidade de teste e um pequeno custo de consulta — aceitável frente ao risco de vazamento cruzado entre escritórios, que seria fatal para o produto.</p>
+
+  <h2 style="font-family: Newsreader, serif; font-size: 19pt; font-weight: 500; margin: 30px 0 10px; letter-spacing: -0.01em">4. Roadmap e riscos</h2>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 0 0 18px">
+    <thead>
+      <tr>
+        <th style="text-align: left; padding: 7px 9px 7px 0; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Fase</th>
+        <th style="text-align: left; padding: 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Escopo</th>
+        <th style="text-align: left; padding: 7px 0 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Prazo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-weight: 500">MVP</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Dois funis configuráveis com campos obrigatórios; entrada por WhatsApp, site e indicação; dedupe determinística; histórico unificado; distribuição round robin + especialidade; tarefas e follow-up por tarefa; RBAC e trilha de auditoria; registro de consentimento; dashboard de conversão, ciclo e motivos de perda</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">3–4 meses</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-weight: 500">Fase 2</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Propostas versionadas e minutas a partir de modelo; assinatura eletrônica; revisor ético de templates; portal de direitos do titular; Instagram e Google Business; calendário bidirecional</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">+3 meses</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-weight: 500">Fase 3</td>
+        <td style="padding: 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Módulo de indicações completo; dedupe probabilística assistida; integração com gestão processual; previsão de receita; multi-tenant comercial e onboarding self-service</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; font-family: 'IBM Plex Mono', monospace">+4 meses</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 0 0 18px">
+    <thead>
+      <tr>
+        <th style="text-align: left; padding: 7px 9px 7px 0; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Risco</th>
+        <th style="text-align: left; padding: 7px 0 7px 9px; border-bottom: 1.5px solid #171B21; font-family: 'IBM Plex Mono', monospace; font-size: 8pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 400; color: #3C4450">Mitigação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top; width: 38%">Representação disciplinar por captação irregular</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Ausência de disparo em massa, revisor ético obrigatório, parecer versionado e trilha de auditoria como prova de diligência; validação prévia do desenho pelo comitê e, se possível, consulta à seccional</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Vazamento de dado sigiloso pelo CRM</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Separação comercial/caso, criptografia de coluna, break-glass auditado e detecção de conteúdo sigiloso em campos livres</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Bloqueio ou mudança de política do WhatsApp</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">BSP homologado, camada de canal abstrata e fallback por e-mail/telefone; nunca depender de número pessoal</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Baixa adoção pelos advogados</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450">Captura automática de interações (nada de digitação manual), campos obrigatórios mínimos por etapa e piloto com uma área antes do rollout</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 9px 8px 0; border-bottom: 1px solid #EEEBE4; vertical-align: top">Multi-tenant tardio</td>
+        <td style="padding: 8px 0 8px 9px; border-bottom: 1px solid #EEEBE4; vertical-align: top; color: #3C4450"><code style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5pt; background: #F2EFE8; padding: 1px 4px; border-radius: 3px">tenant_id</code> e RLS desde a primeira migração, mesmo com um único escritório em produção</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 style="font-family: Newsreader, serif; font-size: 19pt; font-weight: 500; margin: 30px 0 10px; letter-spacing: -0.01em">5. Perguntas em aberto</h2>
+
+  <ol style="margin: 0 0 8px; padding-left: 20px; font-size: 11pt; line-height: 1.65">
+    <li style="margin-bottom: 6px">Volume mensal atual de leads por canal e taxa de conversão de referência — dimensiona fila, SLA e o desenho do funil PF.</li>
+    <li style="margin-bottom: 6px">Quantos usuários efetivamente comerciais entre os 10–50, e quem responde pelo pipeline no dia a dia?</li>
+    <li style="margin-bottom: 6px">Já existe sistema de gestão processual em uso (Astrea, Projuris, ADVBOX, próprio)? Qual API disponível?</li>
+    <li style="margin-bottom: 6px">Há encarregado (DPO) designado e política de privacidade publicada? Existe registro de operações de tratamento?</li>
+    <li style="margin-bottom: 6px">O número de WhatsApp é único do escritório ou há números pessoais em uso? Migração é aceitável?</li>
+    <li style="margin-bottom: 6px">Orçamento e janela de lançamento: construir sob medida ou avaliar CRM de mercado com camada de compliance?</li>
+    <li style="margin-bottom: 6px">O comitê de ética valida o léxico bloqueado proposto, ou prefere lista própria aprovada em ata?</li>
+    <li style="margin-bottom: 6px">A ambição de SaaS tem horizonte definido? Isso muda a prioridade de onboarding, billing e suporte.</li>
+  </ol>
+
+</doc-page>
+
+</x-dc>
+</body>
+</html>
