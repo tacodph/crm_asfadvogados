@@ -3,9 +3,6 @@ import { Form, Head, Link } from '@inertiajs/vue3';
 import AuthError from '@/components/auth/AuthError.vue';
 import AuthPasswordInput from '@/components/auth/AuthPasswordInput.vue';
 import PasskeyVerify from '@/components/PasskeyVerify.vue';
-/* @chisel-registration */
-import { register } from '@/routes';
-/* @end-chisel-registration */
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 /* @chisel-passkeys */
@@ -86,7 +83,7 @@ defineProps<{
                 class="peer sr-only"
             />
             <span class="auth-check">✓</span>
-            <span class="text-[12.5px] text-[#3C4450]">
+            <span class="text-[12.5px] text-muted-foreground">
                 Manter sessão neste dispositivo
             </span>
         </label>
@@ -113,12 +110,4 @@ defineProps<{
     />
     <!-- @end-chisel-passkeys -->
 
-    <!-- @chisel-registration -->
-    <p class="auth-footer-text">
-        Sem credenciais?
-        <Link :href="register()" class="auth-link" :tabindex="6">
-            Solicitar acesso
-        </Link>
-    </p>
-    <!-- @end-chisel-registration -->
 </template>

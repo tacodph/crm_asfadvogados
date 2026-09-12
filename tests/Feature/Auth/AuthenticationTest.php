@@ -14,7 +14,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered()
     {
-        $response = $this->get(route('login'));
+        $response = $this->get($this->tenantUrl('login'));
 
         $response->assertOk();
     }
@@ -23,13 +23,13 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post(route('login.store'), [
+        $response = $this->post($this->tenantUrl('login.store'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect($this->tenantUrl('dashboard'));
     }
 
     public function test_users_with_two_factor_enabled_are_redirected_to_two_factor_challenge()
@@ -43,12 +43,12 @@ class AuthenticationTest extends TestCase
 
         $user = User::factory()->withTwoFactor()->create();
 
-        $response = $this->post(route('login'), [
+        $response = $this->post($this->tenantUrl('login'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $response->assertRedirect(route('two-factor.login'));
+        $response->assertRedirect($this->tenantUrl('two-factor.login'));
         $response->assertSessionHas('login.id', $user->id);
         $this->assertGuest();
     }
@@ -57,7 +57,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->post(route('login.store'), [
+        $this->post($this->tenantUrl('login.store'), [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -69,9 +69,9 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post(route('logout'));
+        $response = $this->actingAs($user)->post($this->tenantUrl('logout'));
 
-        $response->assertRedirect(route('home'));
+        $response->assertRedirect($this->centralUrl('home'));
 
         $this->assertGuest();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\HistoricoNegociacaoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -12,6 +13,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int $tenant_id
  * @property int $negociacao_id
  * @property string $tipo
  * @property string $titulo
@@ -33,7 +35,7 @@ use Illuminate\Support\Carbon;
 class HistoricoNegociacao extends Model
 {
     /** @use HasFactory<HistoricoNegociacaoFactory> */
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     /**
      * @return array<string, string>

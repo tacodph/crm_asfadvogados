@@ -8,6 +8,7 @@ use App\Models\Empresa;
 use App\Models\Setor;
 use App\Models\StatusConflito;
 use App\Models\StatusConsentimento;
+use App\Models\Tenant;
 use App\Models\TipoPessoa;
 use App\Models\Uf;
 use Database\Seeders\EmpresaContatoSeeder;
@@ -80,24 +81,32 @@ class EmpresaContatoTest extends TestCase
     {
         $this->seed(EmpresaContatoSeeder::class);
 
+        // The seeder provisions its own dev tenant (slug "asfadvogados"),
+        // independent of the random tenant TestCase::setUp() created. Uf and
+        // TipoPessoa are global, so they're unaffected either way.
         $this->assertSame(27, Uf::query()->count());
-        $this->assertSame(7, Setor::query()->count());
-        $this->assertSame(6, CanalContato::query()->count());
         $this->assertSame(2, TipoPessoa::query()->count());
-        $this->assertSame(2, StatusConflito::query()->count());
-        $this->assertSame(6, StatusConsentimento::query()->count());
-        $this->assertSame(7, Empresa::query()->count());
-        $this->assertSame(16, Contato::query()->count());
-        $this->assertSame(8, Contato::query()->whereNotNull('empresa_id')->count());
-        $this->assertSame(8, Contato::query()->whereNull('empresa_id')->count());
 
-        $renata = Contato::query()
-            ->where('email', 'renata.bonfanti@verano.ind.br')
-            ->first();
+        $tenant = Tenant::query()->where('slug', 'asfadvogados')->firstOrFail();
 
-        $this->assertNotNull($renata);
-        $this->assertTrue($renata->registro_mesclado);
-        $this->assertSame(3, $renata->consentimentos()->count());
-        $this->assertSame('Metalúrgica Verano S/A', $renata->empresa?->nome);
+        $this->asTenant($tenant, function () {
+            $this->assertSame(7, Setor::query()->count());
+            $this->assertSame(6, CanalContato::query()->count());
+            $this->assertSame(2, StatusConflito::query()->count());
+            $this->assertSame(6, StatusConsentimento::query()->count());
+            $this->assertSame(7, Empresa::query()->count());
+            $this->assertSame(16, Contato::query()->count());
+            $this->assertSame(8, Contato::query()->whereNotNull('empresa_id')->count());
+            $this->assertSame(8, Contato::query()->whereNull('empresa_id')->count());
+
+            $renata = Contato::query()
+                ->where('email', 'renata.bonfanti@verano.ind.br')
+                ->first();
+
+            $this->assertNotNull($renata);
+            $this->assertTrue($renata->registro_mesclado);
+            $this->assertSame(3, $renata->consentimentos()->count());
+            $this->assertSame('Metalúrgica Verano S/A', $renata->empresa?->nome);
+        });
     }
 }

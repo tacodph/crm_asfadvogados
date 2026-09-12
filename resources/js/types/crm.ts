@@ -33,9 +33,15 @@ export type ContatoLinha = {
     telefone: string;
     cpf: string | null;
     cnpj: string | null;
+    uf: string;
+    municipio: string;
     dedupe: string;
+    dedupeMesclado: boolean;
     contexto: string;
     canal: string;
+    statusComercial: string;
+    statusComercialBg: string;
+    statusComercialCor: string;
     consent: string;
     consentBg: string;
     consentCor: string;
@@ -61,7 +67,12 @@ export type EmpresaLinha = {
     nome: string;
     cnpj: string;
     setor: string;
+    uf: string;
+    municipio: string;
     contatosResumo: string;
+    statusComercial: string;
+    statusComercialBg: string;
+    statusComercialCor: string;
     conflito: string;
     conflitoBg: string;
     conflitoCor: string;
@@ -74,14 +85,24 @@ export type CrmCounts = {
     contatos?: string;
     empresas?: string;
     negociacoes?: string;
+    propostas?: string;
+    trafego?: string;
 };
 
 export type TimelineNegociacao = {
+    id?: number;
     titulo: string;
     descricao: string;
     quando: string;
     autor: string;
     cor: string;
+};
+
+export type CapiElegibilidade = {
+    estado: 'enviavel' | 'sem_consentimento' | 'campanha_indefinida' | 'desligado';
+    label: string;
+    cor: string;
+    bg: string;
 };
 
 export type NegociacaoDrawer = {
@@ -93,6 +114,7 @@ export type NegociacaoDrawer = {
     consent: string;
     consentBg: string;
     consentCor: string;
+    capi: CapiElegibilidade;
     campos: DrawerField[];
     historicos: TimelineNegociacao[];
     avancandoLabel: string;
@@ -107,6 +129,12 @@ export type NegociacaoLinha = {
     conta: string;
     canal: string;
     canalCor: string;
+    statusAtendimento: string | null;
+    statusAtendimentoCor: string;
+    statusAtendimentoBg: string;
+    statusQualificacao: string | null;
+    statusQualificacaoCor: string;
+    statusQualificacaoBg: string;
     etapa: string;
     funilNome: string;
     responsavel: string;
@@ -114,11 +142,18 @@ export type NegociacaoLinha = {
     valor: number;
     valorFmt: string;
     previsao: string;
+    cardFundo: string | null;
+    contratoAssinado: boolean;
+    atendimentoEncerrado: boolean;
+    dataLimiteLabel: string;
+    dataLimite: string;
+    dataLimiteCor: string;
     tarefa: string;
     tarefaCor: string;
     slaLabel: string;
     slaCor: string;
     slaBg: string;
+    capi: CapiElegibilidade;
     drawer: NegociacaoDrawer;
 };
 

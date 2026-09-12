@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\EmpresaFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -13,14 +14,17 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int $tenant_id
  * @property string $nome
  * @property string $cnpj
  * @property int $setor_id
  * @property string $porte
  * @property string $cidade
  * @property int $uf_id
+ * @property int|null $municipio_id
  * @property int|null $responsavel_user_id
  * @property int $status_conflito_id
+ * @property int $status_comercial_id
  * @property string|null $conflito_texto
  * @property Carbon|null $conflito_verificado_em
  * @property Carbon|null $created_at
@@ -34,15 +38,17 @@ use Illuminate\Support\Carbon;
     'porte',
     'cidade',
     'uf_id',
+    'municipio_id',
     'responsavel_user_id',
     'status_conflito_id',
+    'status_comercial_id',
     'conflito_texto',
     'conflito_verificado_em',
 ])]
 class Empresa extends Model
 {
     /** @use HasFactory<EmpresaFactory> */
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     /**
      * @return array<string, string>
@@ -71,6 +77,14 @@ class Empresa extends Model
     }
 
     /**
+     * @return BelongsTo<IbgeMunicipio, $this>
+     */
+    public function municipio(): BelongsTo
+    {
+        return $this->belongsTo(IbgeMunicipio::class, 'municipio_id');
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function responsavel(): BelongsTo
@@ -87,6 +101,14 @@ class Empresa extends Model
     }
 
     /**
+     * @return BelongsTo<StatusComercial, $this>
+     */
+    public function statusComercial(): BelongsTo
+    {
+        return $this->belongsTo(StatusComercial::class);
+    }
+
+    /**
      * @return HasMany<Contato, $this>
      */
     public function contatos(): HasMany
@@ -100,5 +122,13 @@ class Empresa extends Model
     public function negociacoes(): HasMany
     {
         return $this->hasMany(Negociacao::class);
+    }
+
+    /**
+     * @return HasMany<Proposta, $this>
+     */
+    public function propostas(): HasMany
+    {
+        return $this->hasMany(Proposta::class);
     }
 }

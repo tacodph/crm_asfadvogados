@@ -1,194 +1,174 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { CheckCheck, Crown, Goal, Luggage, X } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { planosDefs } from '@/data/landing';
+import { create } from '@/routes/tenants';
 
-const ciclo = ref<'anual' | 'mensal'>('anual');
+const ciclo = ref<'anual' | 'mensual'>('anual');
 
-const notaCiclo = computed(() =>
-    ciclo.value === 'anual'
-        ? 'economia de 2 meses'
-        : 'sem compromisso de prazo',
-);
+const planoSlugs: Record<string, string> = {
+    Essencial: 'essencial',
+    Escritório: 'escritorio',
+    Banca: 'banca',
+};
+
+const planIcons: Record<string, typeof Goal> = {
+    Essencial: Goal,
+    Escritório: Crown,
+    Banca: Luggage,
+};
+
+const planIconColors: Record<string, string> = {
+    Essencial: 'text-green-500',
+    Escritório: 'text-sky-500',
+    Banca: 'text-orange-500',
+};
 
 const planos = computed(() =>
-    planosDefs.map((plano) => {
-        const preco =
-            ciclo.value === 'anual' ? plano.precoAnual : plano.precoMensal;
-
-        return {
-            ...plano,
-            preco,
-            unidade: plano.sobConsulta ? '' : 'por usuário / mês',
-        };
-    }),
+    planosDefs.map((plano) => ({
+        ...plano,
+        preco: ciclo.value === 'anual' ? plano.precoAnual : plano.precoMensal,
+        slug: planoSlugs[plano.nome] ?? 'escritorio',
+    })),
 );
+
+const extrasNegativos = [
+    'Disparo em massa',
+    'Importação de lista fria',
+    'Integração processual',
+    'Instância dedicada',
+];
 </script>
 
 <template>
-    <section id="planos" class="border-y border-[#E7E3DA] bg-[#FBFAF7]">
-        <div class="mx-auto flex max-w-[1180px] flex-col gap-8 px-7 py-[68px]">
-            <div class="flex flex-wrap items-end justify-between gap-[30px]">
-                <div class="flex max-w-[520px] flex-col gap-3">
-                    <h2
-                        class="m-0 font-[family-name:var(--font-landing-display)] text-[32px] leading-[1.12] font-normal tracking-[-0.02em] sm:text-[40px]"
+    <section id="pricing" class="relative pb-32">
+        <div class="landing-container">
+            <div class="mx-auto text-center xl:max-w-3xl">
+                <h2 class="mb-4 capitalize leading-normal">
+                    Preço por usuário, sem surpresa
+                </h2>
+                <p class="text-lg text-slate-500">
+                    Implantação, migração de planilhas e treinamento inclusos.
+                    Cancelamento a qualquer momento, com exportação completa dos
+                    seus dados.
+                </p>
+                <div
+                    class="mt-6 inline-flex gap-0.5 rounded-md border border-slate-200 bg-white p-1"
+                >
+                    <button
+                        type="button"
+                        class="rounded px-4 py-1.5 text-sm"
+                        :class="
+                            ciclo === 'anual'
+                                ? 'bg-custom-500 text-white'
+                                : 'text-slate-500'
+                        "
+                        @click="ciclo = 'anual'"
                     >
-                        Preço por usuário, sem surpresa.
-                    </h2>
-                    <p class="m-0 text-[15px] leading-[1.68] text-[#3C4450]">
-                        Implantação, migração de planilhas e treinamento
-                        inclusos em todos os planos. Cancelamento a qualquer
-                        momento, com exportação completa dos seus dados.
-                    </p>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="flex gap-0.5 rounded-[9px] border border-[#E3DFD6] bg-white p-[3px]"
+                        Anual
+                    </button>
+                    <button
+                        type="button"
+                        class="rounded px-4 py-1.5 text-sm"
+                        :class="
+                            ciclo === 'mensual'
+                                ? 'bg-custom-500 text-white'
+                                : 'text-slate-500'
+                        "
+                        @click="ciclo = 'mensual'"
                     >
-                        <button
-                            type="button"
-                            class="cursor-pointer rounded-[7px] border-0 px-[14px] py-[7px] text-[12.5px]"
-                            :class="
-                                ciclo === 'anual'
-                                    ? 'bg-[#171B21] text-white'
-                                    : 'bg-transparent text-[#77808E]'
-                            "
-                            @click="ciclo = 'anual'"
-                        >
-                            Anual
-                        </button>
-                        <button
-                            type="button"
-                            class="cursor-pointer rounded-[7px] border-0 px-[14px] py-[7px] text-[12.5px]"
-                            :class="
-                                ciclo === 'mensal'
-                                    ? 'bg-[#171B21] text-white'
-                                    : 'bg-transparent text-[#77808E]'
-                            "
-                            @click="ciclo = 'mensal'"
-                        >
-                            Mensal
-                        </button>
-                    </div>
-                    <span class="text-xs text-[#14574F]">
-                        {{ notaCiclo }}
-                    </span>
+                        Mensal
+                    </button>
                 </div>
             </div>
 
-            <div class="grid items-start gap-4 lg:grid-cols-3">
+            <div
+                class="mt-16 grid grid-cols-1 gap-x-5 md:grid-cols-2 xl:grid-cols-3"
+            >
                 <div
                     v-for="plano in planos"
                     :key="plano.nome"
-                    class="flex flex-col gap-4 rounded-[13px] border px-6 pt-[26px] pb-7"
-                    :class="
-                        plano.destaque
-                            ? 'border-[#14181E] bg-[#14181E]'
-                            : 'border-[#E3DFD6] bg-white'
-                    "
+                    class="landing-card relative !shadow-lg text-15"
                 >
-                    <div class="flex items-center justify-between gap-2.5">
-                        <span
-                            class="text-sm font-semibold"
-                            :class="
-                                plano.destaque
-                                    ? 'text-[#FBF9F4]'
-                                    : 'text-[#171B21]'
-                            "
-                        >
-                            {{ plano.nome }}
-                        </span>
-                        <span
-                            v-if="plano.destaque"
-                            class="inline-flex rounded-full border border-[#E2D3B6] bg-[#F6EFE2] px-[9px] py-[3px] text-[10.5px] text-[#6F5730]"
-                        >
-                            mais escolhido
-                        </span>
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <span class="flex items-baseline gap-1.5">
-                            <span
-                                class="font-[family-name:var(--font-landing-display)] text-[38px] leading-none font-medium"
-                                :class="
-                                    plano.destaque
-                                        ? 'text-[#FBF9F4]'
-                                        : 'text-[#171B21]'
-                                "
-                            >
-                                {{ plano.preco }}
-                            </span>
-                            <span
-                                v-if="plano.unidade"
-                                class="text-[12.5px]"
-                                :class="
-                                    plano.destaque
-                                        ? 'text-[#7C8593]'
-                                        : 'text-[#77808E]'
-                                "
-                            >
-                                {{ plano.unidade }}
-                            </span>
-                        </span>
-                        <span
-                            class="text-xs"
-                            :class="
-                                plano.destaque
-                                    ? 'text-[#7C8593]'
-                                    : 'text-[#77808E]'
-                            "
-                        >
-                            {{ plano.minimo }}
-                        </span>
-                    </div>
-                    <p
-                        class="m-0 text-[13px] leading-[1.6]"
-                        :class="
-                            plano.destaque ? 'text-[#A8AFB9]' : 'text-[#5F6875]'
-                        "
-                    >
-                        {{ plano.resumo }}
-                    </p>
                     <div
-                        class="flex flex-col gap-2 border-t pt-[14px]"
-                        :class="
-                            plano.destaque
-                                ? 'border-[#2B313A]'
-                                : 'border-[#EEEBE4]'
-                        "
+                        v-if="plano.destaque"
+                        class="absolute top-0 size-16 ltr:right-0 rtl:left-0"
                     >
-                        <span
-                            v-for="item in plano.itens"
-                            :key="item"
-                            class="grid grid-cols-[14px_1fr] items-start gap-[9px] text-[12.5px] leading-normal"
-                            :class="
-                                plano.destaque
-                                    ? 'text-[#A8AFB9]'
-                                    : 'text-[#5F6875]'
-                            "
+                        <div
+                            class="absolute top-6 w-[170px] bg-sky-500 py-1 text-center text-sm font-medium text-white ltr:-right-12 ltr:rotate-45 rtl:-left-12 rtl:-rotate-45"
                         >
-                            <span
-                                class="text-[11px]"
-                                :class="
-                                    plano.destaque
-                                        ? 'text-[#C79A4E]'
-                                        : 'text-[#14574F]'
-                                "
-                            >
-                                ✓
-                            </span>
-                            <span>{{ item }}</span>
-                        </span>
+                            Mais escolhido
+                        </div>
                     </div>
-                    <a
-                        href="#demonstracao"
-                        class="mt-auto rounded-[9px] border py-3 text-center text-[13.5px] font-medium"
-                        :class="
-                            plano.destaque
-                                ? 'border-[#C79A4E] bg-[#C79A4E] text-[#14181E] hover:bg-[#d4a85c]'
-                                : 'border-[#D8D2C5] bg-white text-[#171B21] hover:bg-[#FBFAF7]'
-                        "
-                    >
-                        {{ plano.acao }}
-                    </a>
+                    <div class="landing-card-body">
+                        <h5 class="mb-2 flex items-center">
+                            <component
+                                :is="planIcons[plano.nome] ?? Goal"
+                                class="mr-1 inline-block size-5"
+                                :class="planIconColors[plano.nome]"
+                            />
+                            {{ plano.nome }}
+                        </h5>
+                        <p class="mb-4 text-slate-500">
+                            {{ plano.resumo }}
+                        </p>
+                        <h3 class="mb-4 font-normal">
+                            <span
+                                v-if="!plano.sobConsulta"
+                                class="text-slate-400"
+                            >
+                                R$
+                            </span>
+                            {{ plano.preco.replace('R$ ', '') }}
+                            <small
+                                v-if="!plano.sobConsulta"
+                                class="text-15 text-slate-500"
+                            >
+                                /usuário · mês
+                            </small>
+                        </h3>
+                        <p class="mb-4 text-sm text-slate-400">
+                            {{ plano.minimo }}
+                        </p>
+                        <Link
+                            v-if="plano.ctaType === 'self-service'"
+                            :href="create({ query: { plan: plano.slug } })"
+                            class="landing-btn landing-btn-dashed"
+                        >
+                            {{ plano.acao }}
+                        </Link>
+                        <a
+                            v-else
+                            href="#contact"
+                            class="landing-btn landing-btn-dashed"
+                        >
+                            {{ plano.acao }}
+                        </a>
+                        <ul class="mt-5 flex flex-col gap-3">
+                            <li
+                                v-for="item in plano.itens"
+                                :key="item"
+                                class="flex items-center gap-2"
+                            >
+                                <CheckCheck
+                                    class="size-4 fill-green-100 text-green-500"
+                                />
+                                <span>{{ item }}</span>
+                            </li>
+                            <li
+                                v-for="extra in extrasNegativos.slice(
+                                    0,
+                                    plano.nome === 'Essencial' ? 3 : plano.nome === 'Escritório' ? 1 : 0,
+                                )"
+                                :key="extra"
+                                class="flex items-center gap-2 text-slate-500 line-through"
+                            >
+                                <X class="size-4 text-red-500" />
+                                <span>{{ extra }}</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

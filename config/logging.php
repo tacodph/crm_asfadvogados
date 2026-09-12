@@ -73,6 +73,26 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // Pipeline da API de Conversões da Meta (Job + client + sincronização).
+        // Nunca recebe token, IP ou user agent — só ids e status.
+        'meta-capi' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/meta-capi.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
+        // Leitura do Meta Ads (Marketing API — client + sincronização de estrutura/insights).
+        // Nunca recebe token.
+        'meta-ads' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/meta-ads.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

@@ -3,7 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && npm run build:landing",
+        "build:landing": "vite build --config vite.config.landing.ts && node -e \"require('fs').cpSync('public/images/logos','public/landing/images/logos',{recursive:true})\"",
         "build:ssr": "vite build && vite build --ssr",
         "dev": "vite",
         "format": "prettier --write resources/",

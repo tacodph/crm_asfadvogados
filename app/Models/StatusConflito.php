@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\StatusConflitoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -12,6 +13,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int $tenant_id
  * @property string $slug
  * @property string $nome
  * @property string $cor_fundo
@@ -27,7 +29,7 @@ use Illuminate\Support\Carbon;
 class StatusConflito extends Model
 {
     /** @use HasFactory<StatusConflitoFactory> */
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     /**
      * @return array<string, string>

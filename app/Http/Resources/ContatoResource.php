@@ -19,6 +19,7 @@ class ContatoResource extends JsonResource
     public function toArray(Request $request): array
     {
         $status = $this->statusConsentimento;
+        $statusComercial = $this->statusComercial;
         $canal = $this->canalContato;
         $empresa = $this->empresa;
         $cargo = $this->cargo ?: '—';
@@ -34,9 +35,17 @@ class ContatoResource extends JsonResource
             'telefone' => $this->telefone ?: '—',
             'cpf' => $this->cpf,
             'cnpj' => $this->empresa?->cnpj,
-            'dedupe' => $this->observacao_deduplicacao ?: 'registro único',
+            'uf' => $this->uf?->sigla ?: '—',
+            'municipio' => $this->cidade ?: '—',
+            'dedupeMesclado' => (bool) $this->registro_mesclado,
+            'dedupe' => $this->registro_mesclado
+                ? ($this->observacao_deduplicacao ?: 'registro mesclado')
+                : ($this->observacao_deduplicacao ?: 'registro único'),
             'contexto' => $contexto,
             'canal' => $canal->nome,
+            'statusComercial' => $statusComercial->nome,
+            'statusComercialBg' => $statusComercial->cor_fundo,
+            'statusComercialCor' => $statusComercial->cor_texto,
             'consent' => $status->nome,
             'consentBg' => $status->cor_fundo,
             'consentCor' => $status->cor_texto,
@@ -49,7 +58,14 @@ class ContatoResource extends JsonResource
                 'campos' => [
                     ['label' => 'Telefone', 'valor' => $this->telefone ?: '—'],
                     ['label' => 'E-mail', 'valor' => $this->email ?: '—'],
+                    [
+                        'label' => 'Cidade / UF',
+                        'valor' => $this->cidade && $this->uf
+                            ? "{$this->cidade} / {$this->uf->sigla}"
+                            : '—',
+                    ],
                     ['label' => 'Canal de origem', 'valor' => $canal->nome],
+                    ['label' => 'Status comercial', 'valor' => $statusComercial->nome],
                     [
                         'label' => 'Tipo',
                         'valor' => $this->tipoPessoa->slug === 'pj'

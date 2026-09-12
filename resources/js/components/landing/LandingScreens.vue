@@ -10,11 +10,11 @@ const telaAtual = computed(() => telas[aba.value]);
 <template>
     <section class="mx-auto max-w-[1180px] px-7 py-[60px]">
         <div
-            class="grid overflow-hidden rounded-2xl bg-[#14181E] px-[28px] pt-[46px] sm:px-[46px] lg:grid-cols-[0.86fr_1.14fr] lg:items-start lg:gap-[44px]"
+            class="grid overflow-hidden rounded-2xl bg-background px-[28px] pt-[46px] sm:px-[46px] lg:grid-cols-[0.86fr_1.14fr] lg:items-start lg:gap-[44px]"
         >
             <div class="flex flex-col gap-[22px] pb-[46px]">
                 <h2
-                    class="m-0 font-[family-name:var(--font-landing-display)] text-[28px] leading-[1.16] font-normal tracking-[-0.02em] text-[#FBF9F4] sm:text-[34px]"
+                    class="m-0 font-[family-name:var(--font-landing-display)] text-[28px] leading-[1.16] font-normal tracking-[-0.02em] text-primary-foreground sm:text-[34px]"
                 >
                     Três telas que resolvem o dia do time comercial.
                 </h2>
@@ -26,7 +26,7 @@ const telaAtual = computed(() => telas[aba.value]);
                         class="flex cursor-pointer flex-col gap-1 rounded-[10px] border px-4 py-[14px] text-left"
                         :class="
                             aba === item.k
-                                ? 'border-[#3A424D] bg-white/7'
+                                ? 'border-[#3A424D] bg-card/7'
                                 : 'border-[#23282F] bg-transparent'
                         "
                         @click="aba = item.k"
@@ -35,7 +35,7 @@ const telaAtual = computed(() => telas[aba.value]);
                             class="text-sm font-medium"
                             :class="
                                 aba === item.k
-                                    ? 'text-[#FBF9F4]'
+                                    ? 'text-primary-foreground'
                                     : 'text-[#C4CAD3]'
                             "
                         >
@@ -45,8 +45,8 @@ const telaAtual = computed(() => telas[aba.value]);
                             class="text-[12.5px] leading-normal"
                             :class="
                                 aba === item.k
-                                    ? 'text-[#A8AFB9]'
-                                    : 'text-[#7C8593]'
+                                    ? 'text-muted-foreground'
+                                    : 'text-muted-foreground'
                             "
                         >
                             {{ item.texto }}
@@ -56,10 +56,10 @@ const telaAtual = computed(() => telas[aba.value]);
             </div>
 
             <div
-                class="self-end overflow-hidden rounded-t-xl border border-b-0 border-[#2B313A] bg-white shadow-[0_-20px_50px_-30px_rgba(0,0,0,0.6)]"
+                class="self-end overflow-hidden rounded-t-xl border border-b-0 border-border bg-card shadow-[0_-20px_50px_-30px_rgba(0,0,0,0.6)]"
             >
                 <div
-                    class="flex items-center justify-between border-b border-[#EEEBE4] bg-[#FBFAF7] px-[14px] py-[11px]"
+                    class="flex items-center justify-between border-b border-border bg-card px-[14px] py-[11px]"
                 >
                     <span
                         class="font-[family-name:var(--font-landing-display)] text-sm"
@@ -67,25 +67,30 @@ const telaAtual = computed(() => telas[aba.value]);
                         {{ telaAtual.titulo }}
                     </span>
                     <span
-                        class="font-[family-name:var(--font-landing-mono)] text-[9.5px] tracking-[0.1em] text-[#9AA2AE] uppercase"
+                        class="font-[family-name:var(--font-landing-mono)] text-[9.5px] tracking-[0.1em] text-muted-foreground uppercase"
                     >
                         {{ telaAtual.etiqueta }}
                     </span>
                 </div>
-                <div
-                    class="flex min-h-[268px] flex-col gap-2.5 bg-[#F7F5F0] px-4 pt-4 pb-[26px]"
+                <TransitionGroup
+                    tag="div"
+                    name="tela-linha"
+                    class="relative flex min-h-[268px] flex-col gap-2.5 bg-background px-4 pt-4 pb-[26px]"
                 >
                     <div
-                        v-for="linha in telaAtual.linhas"
-                        :key="linha.titulo"
-                        class="flex items-center justify-between gap-3 rounded-lg border border-[#E3DFD6] bg-white py-[11px] pr-[13px] pl-[13px]"
-                        :style="{ borderLeft: `3px solid ${linha.cor}` }"
+                        v-for="(linha, indiceLinha) in telaAtual.linhas"
+                        :key="telaAtual.titulo + linha.titulo"
+                        class="flex items-center justify-between gap-3 rounded-lg border border-border bg-card py-[11px] pr-[13px] pl-[13px]"
+                        :style="{
+                            borderLeft: `3px solid ${linha.cor}`,
+                            transitionDelay: `${indiceLinha * 50}ms`,
+                        }"
                     >
                         <span class="flex min-w-0 flex-col gap-[3px]">
-                            <span class="text-[12.5px] text-[#171B21]">
+                            <span class="text-[12.5px] text-foreground">
                                 {{ linha.titulo }}
                             </span>
-                            <span class="text-[11px] text-[#77808E]">
+                            <span class="text-[11px] text-muted-foreground">
                                 {{ linha.sub }}
                             </span>
                         </span>
@@ -96,8 +101,40 @@ const telaAtual = computed(() => telas[aba.value]);
                             {{ linha.valor }}
                         </span>
                     </div>
-                </div>
+                </TransitionGroup>
             </div>
         </div>
     </section>
 </template>
+
+<style scoped>
+.tela-linha-enter-active,
+.tela-linha-leave-active {
+    transition:
+        opacity 0.32s ease,
+        transform 0.32s ease;
+}
+
+.tela-linha-enter-from {
+    opacity: 0;
+    transform: translateY(8px);
+}
+
+.tela-linha-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+}
+
+.tela-linha-leave-active {
+    position: absolute;
+    right: 16px;
+    left: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tela-linha-enter-active,
+    .tela-linha-leave-active {
+        transition: none;
+    }
+}
+</style>

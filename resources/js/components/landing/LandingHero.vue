@@ -1,134 +1,146 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { heroColunas } from '@/data/landing';
-import { login } from '@/routes';
+import { Rocket } from '@lucide/vue';
+import LandingFunnelMock from '@/components/landing/LandingFunnelMock.vue';
+import { BRAND } from '@/lib/brand';
+import { create } from '@/routes/tenants';
 </script>
 
 <template>
-    <section
-        class="mx-auto grid max-w-[1180px] items-center gap-10 px-7 pt-[76px] pb-[22px] lg:grid-cols-[1.02fr_0.98fr] lg:gap-[52px]"
-    >
-        <div class="flex flex-col gap-6">
-            <span
-                class="inline-flex items-center gap-2 self-start rounded-full border border-[#E2D3B6] bg-[#F6EFE2] px-3 py-[5px] text-xs text-[#6F5730]"
-            >
-                <span class="h-1.5 w-1.5 rounded-full bg-[#14574F]" />
-                Desenhado sobre o Provimento 205/2021 e a LGPD
-            </span>
-
-            <h1
-                class="m-0 font-[family-name:var(--font-landing-display)] text-[40px] leading-[1.06] font-normal tracking-[-0.028em] text-pretty sm:text-[58px]"
-            >
-                O CRM para o que acontece
-                <em class="italic">antes</em>
-                do processo.
-            </h1>
-
-            <p
-                class="m-0 max-w-[496px] text-[16.5px] leading-[1.68] text-pretty text-[#3C4450]"
-            >
-                Seu software jurídico cuida de prazos e tribunais. O Antessala
-                cuida do momento comercial: da primeira mensagem no WhatsApp ao
-                contrato assinado — com funis próprios da advocacia e trilha de
-                auditoria em cada movimento.
-            </p>
-
-            <div class="flex flex-wrap items-center gap-[11px]">
-                <a
-                    href="#demonstracao"
-                    class="rounded-[9px] bg-[#171B21] px-[22px] py-[13px] text-[14.5px] font-medium text-white transition-colors hover:bg-[#2B313A] hover:text-white"
-                >
-                    Agendar demonstração
-                </a>
-                <Link
-                    :href="login()"
-                    class="rounded-[9px] border border-[#D8D2C5] bg-white px-5 py-[13px] text-[14.5px] text-[#171B21] transition-colors hover:bg-[#FBFAF7]"
-                >
-                    Ver o produto por dentro →
-                </Link>
-            </div>
-
-            <div class="flex flex-wrap gap-[26px] pt-1">
-                <span class="text-[12.5px] text-[#77808E]">
-                    Implantação em 2 semanas
-                </span>
-                <span class="text-[12.5px] text-[#77808E]">
-                    Dados hospedados no Brasil
-                </span>
-                <span class="text-[12.5px] text-[#77808E]">
-                    Sem importação de listas frias
-                </span>
-            </div>
-        </div>
-
+    <section id="home" class="relative overflow-hidden pb-24 pt-36 md:pb-32 md:pt-40">
         <div
-            class="overflow-hidden rounded-[14px] border border-[#E3DFD6] bg-white shadow-[0_26px_60px_-32px_rgba(23,27,33,0.32)]"
-        >
-            <div
-                class="flex items-center justify-between border-b border-[#EEEBE4] bg-[#FBFAF7] px-[14px] py-[11px]"
-            >
-                <span class="flex gap-1.5">
-                    <span class="h-2 w-2 rounded-full bg-[#DCD7CC]" />
-                    <span class="h-2 w-2 rounded-full bg-[#DCD7CC]" />
-                    <span class="h-2 w-2 rounded-full bg-[#DCD7CC]" />
-                </span>
-                <span
-                    class="font-[family-name:var(--font-landing-mono)] text-[9.5px] tracking-[0.1em] text-[#9AA2AE] uppercase"
-                >
-                    Funil B2B consultivo
-                </span>
-            </div>
+            class="pointer-events-none absolute -bottom-[250px] hidden size-[500px] rotate-45 rounded-full border border-b-slate-700 border-l-slate-300 border-r-slate-700 border-t-slate-300 border-dashed ltr:right-40 lg:block"
+        />
+        <div
+            class="pointer-events-none absolute -bottom-[350px] hidden size-[700px] rotate-45 rounded-full border border-b-slate-700 border-l-slate-300 border-r-slate-700 border-t-slate-300 border-dashed ltr:right-16 2xl:block"
+        />
 
-            <div class="flex gap-2.5 bg-[#F7F5F0] px-[14px] py-4 pb-[18px]">
-                <div
-                    v-for="coluna in heroColunas"
-                    :key="coluna.nome"
-                    class="flex min-w-0 flex-1 flex-col overflow-hidden rounded-[9px] border border-[#E7E3DA] bg-[#F1EEE7]"
-                >
-                    <div
-                        class="flex items-center justify-between gap-1.5 px-2.5 py-2"
-                        :style="{ background: coluna.cor }"
+        <div class="landing-container relative z-10">
+            <div
+                class="grid items-center gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-12"
+            >
+                <div class="max-w-xl">
+                    <p
+                        class="mb-4 font-[family-name:var(--font-landing-mono)] text-[11px] tracking-[0.14em] text-slate-500 uppercase"
                     >
-                        <span
-                            class="truncate text-[10.5px] font-semibold text-[#FBF9F4]"
-                        >
-                            {{ coluna.nome }}
+                        {{ BRAND.name }} · CRM jurídico
+                    </p>
+                    <h1 class="mb-6 text-4xl !leading-relaxed md:text-5xl">
+                        CRM jurídico para o que acontece
+                        <span class="landing-highlight">
+                            <span class="landing-highlight-text">antes</span>
                         </span>
-                        <span
-                            class="rounded-full bg-white/18 px-1.5 py-px font-[family-name:var(--font-landing-mono)] text-[9.5px] text-[#FBF9F4]"
+                        do processo
+                    </h1>
+                    <p class="mb-8 text-lg text-slate-500">
+                        {{ BRAND.name }} centraliza lead, qualificação, proposta e
+                        contrato — com funis por área de atuação, trilha de
+                        auditoria e regras de compliance da OAB desde a
+                        arquitetura.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <Link
+                            :href="create()"
+                            class="landing-btn landing-btn-primary"
                         >
-                            {{ coluna.qtd }}
-                        </span>
+                            <Rocket class="mr-1 inline-block size-4" />
+                            Criar conta grátis
+                        </Link>
+                        <a
+                            href="#contact"
+                            class="landing-btn border border-dashed border-red-500 bg-white text-red-500 hover:bg-red-50"
+                        >
+                            Agendar demonstração
+                        </a>
                     </div>
-                    <div class="flex flex-col gap-[7px] p-2">
-                        <div
-                            v-for="card in coluna.cards"
-                            :key="card.nome"
-                            class="flex flex-col gap-[5px] rounded-[7px] border border-[#E3DFD6] bg-white px-[9px] py-2"
-                        >
-                            <span
-                                class="text-[10.5px] leading-[1.3] font-medium text-[#171B21]"
-                            >
-                                {{ card.nome }}
-                            </span>
-                            <span
-                                class="flex items-center justify-between gap-1.5"
-                            >
-                                <span
-                                    class="rounded-full bg-[#F4F2EC] px-1.5 py-0.5 text-[9px] text-[#3C4450]"
-                                >
-                                    {{ card.canal }}
-                                </span>
-                                <span
-                                    class="font-[family-name:var(--font-landing-mono)] text-[9.5px] text-[#171B21]"
-                                >
-                                    {{ card.valor }}
-                                </span>
-                            </span>
-                        </div>
+                </div>
+
+                <div class="relative min-h-[320px] lg:min-h-[420px]">
+                    <div
+                        class="landing-hero-shot absolute top-0 right-0 z-0 hidden w-[78%] overflow-hidden rounded-xl border border-slate-200 shadow-xl md:block"
+                    >
+                        <img
+                            src="/images/landing/funil-real.png"
+                            alt="Funil LexStart com negociações por etapa"
+                            class="block h-auto w-full object-cover object-left-top"
+                            width="1280"
+                            height="720"
+                            loading="eager"
+                        />
+                    </div>
+
+                    <div
+                        class="landing-hero-float relative z-10 mx-auto w-full max-w-[560px] md:absolute md:top-16 md:-left-2 md:mx-0 md:w-[86%] lg:top-20"
+                    >
+                        <LandingFunnelMock />
+                    </div>
+
+                    <div
+                        class="landing-hero-chip absolute -bottom-3 right-4 z-20 hidden rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-lg sm:block md:right-8"
+                    >
+                        <p class="text-[10px] tracking-wide text-slate-400 uppercase">
+                            Urgência no card
+                        </p>
+                        <p class="text-[12.5px] font-medium text-slate-800">
+                            Previsão hoje · fundo vermelho claro
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </template>
+
+<style scoped>
+.landing-hero-shot {
+    animation: landing-hero-drift 9s ease-in-out infinite;
+}
+
+.landing-hero-float {
+    animation: landing-hero-rise 0.7s ease-out both;
+}
+
+.landing-hero-chip {
+    animation: landing-hero-chip 0.6s ease-out 0.45s both;
+}
+
+@keyframes landing-hero-drift {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-1.2deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(-0.4deg);
+    }
+}
+
+@keyframes landing-hero-rise {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes landing-hero-chip {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-hero-shot,
+    .landing-hero-float,
+    .landing-hero-chip {
+        animation: none;
+    }
+}
+</style>

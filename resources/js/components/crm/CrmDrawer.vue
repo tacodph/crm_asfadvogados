@@ -28,10 +28,10 @@ onUnmounted(() => {
 
 <template>
     <aside
-        class="crm-drawer flex h-full w-[560px] shrink-0 flex-col border-l border-[#E3DFD6] bg-white"
+        class="crm-drawer flex h-full w-[560px] shrink-0 flex-col border-l border-border bg-card"
     >
         <div
-            class="flex items-start justify-between gap-3.5 border-b border-[#EEEBE4] px-[22px] pt-5 pb-4"
+            class="flex items-start justify-between gap-3.5 border-b border-border px-[22px] pt-5 pb-4"
         >
             <div class="flex min-w-0 flex-col gap-1">
                 <span
@@ -42,8 +42,8 @@ onUnmounted(() => {
                 <span
                     :class="
                         subtitleMono
-                            ? 'font-[family-name:var(--font-crm-mono)] text-[11.5px] text-[#77808E]'
-                            : 'text-[12.5px] text-[#77808E]'
+                            ? 'font-[family-name:var(--font-crm-mono)] text-[11.5px] text-muted-foreground'
+                            : 'text-[12.5px] text-muted-foreground'
                     "
                 >
                     {{ subtitle }}
@@ -51,7 +51,7 @@ onUnmounted(() => {
             </div>
             <button
                 type="button"
-                class="grid size-[30px] shrink-0 cursor-pointer place-items-center rounded-[7px] border border-[#E3DFD6] bg-white text-[15px] leading-none text-[#77808E]"
+                class="grid size-[30px] shrink-0 cursor-pointer place-items-center rounded-[7px] border border-border bg-card text-[15px] leading-none text-muted-foreground"
                 aria-label="Fechar"
                 @click="emit('close')"
             >
@@ -67,7 +67,7 @@ onUnmounted(() => {
 
         <div
             v-if="$slots.footer"
-            class="flex gap-[9px] border-t border-[#EEEBE4] bg-[#FBFAF7] px-[22px] py-3.5"
+            class="flex gap-[9px] border-t border-border bg-card px-[22px] py-3.5"
         >
             <slot name="footer" />
         </div>

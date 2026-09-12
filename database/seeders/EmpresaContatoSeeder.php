@@ -7,26 +7,37 @@ use App\Models\ConsentimentoContato;
 use App\Models\Contato;
 use App\Models\Empresa;
 use App\Models\FinalidadeConsentimento;
+use App\Models\IbgeMunicipio;
+use App\Models\Role;
 use App\Models\Setor;
+use App\Models\StatusComercial;
 use App\Models\StatusConflito;
 use App\Models\StatusConsentimento;
 use App\Models\TipoPessoa;
 use App\Models\Uf;
 use App\Models\User;
+use App\Support\Tenancy\CurrentTenant;
+use Database\Seeders\Concerns\SeedsForDevTenant;
 use Illuminate\Database\Seeder;
 
 class EmpresaContatoSeeder extends Seeder
 {
+    use SeedsForDevTenant;
+
     /**
      * Seed companies and contacts from the CRM prototype screens.
      */
     public function run(): void
     {
+        Role::ensureDefaults();
+
         $this->call(DominioCrmSeeder::class);
 
-        $responsaveis = $this->responsaveis();
-        $empresas = $this->empresas($responsaveis);
-        $this->contatos($empresas);
+        app(CurrentTenant::class)->runAs($this->devTenant(), function (): void {
+            $responsaveis = $this->responsaveis();
+            $empresas = $this->empresas($responsaveis);
+            $this->contatos($empresas);
+        });
     }
 
     /**
@@ -37,9 +48,21 @@ class EmpresaContatoSeeder extends Seeder
         $senha = 'password';
 
         $dados = [
-            ['name' => 'Camila Moraes', 'email' => 'camila.moraes@asfadvogados.adv.br'],
-            ['name' => 'Rafael Prado', 'email' => 'rafael.prado@asfadvogados.adv.br'],
-            ['name' => 'Letícia Bonfim', 'email' => 'leticia.bonfim@asfadvogados.adv.br'],
+            [
+                'name' => 'Camila Moraes',
+                'email' => 'camila.moraes@asfadvogados.adv.br',
+                'especialidades' => ['industria-metalurgica', 'alimentos', 'agronegocio'],
+            ],
+            [
+                'name' => 'Rafael Prado',
+                'email' => 'rafael.prado@asfadvogados.adv.br',
+                'especialidades' => ['software-b2b', 'servicos-financeiros'],
+            ],
+            [
+                'name' => 'Letícia Bonfim',
+                'email' => 'leticia.bonfim@asfadvogados.adv.br',
+                'especialidades' => ['saude', 'alimentos'],
+            ],
         ];
 
         $usuarios = [];
@@ -47,7 +70,13 @@ class EmpresaContatoSeeder extends Seeder
         foreach ($dados as $dado) {
             $usuarios[$dado['name']] = User::query()->updateOrCreate(
                 ['email' => $dado['email']],
-                ['name' => $dado['name'], 'password' => $senha],
+                [
+                    'name' => $dado['name'],
+                    'password' => $senha,
+                    'role' => Role::VENDEDOR,
+                    'especialidades' => $dado['especialidades'],
+                    'ausente_ate' => null,
+                ],
             );
         }
 
@@ -63,6 +92,9 @@ class EmpresaContatoSeeder extends Seeder
         $rs = Uf::query()->where('sigla', 'RS')->firstOrFail();
         $verificado = StatusConflito::query()->where('slug', 'verificado')->firstOrFail();
         $pendente = StatusConflito::query()->where('slug', 'pendente')->firstOrFail();
+        $statusComercialPadrao = StatusComercial::query()->where('slug', 'qualificado')->firstOrFail();
+        $statusCliente = StatusComercial::query()->where('slug', 'cliente-efetivado')->firstOrFail();
+        $statusEmAnalise = StatusComercial::query()->where('slug', 'em-analise')->firstOrFail();
 
         $linhas = [
             [
@@ -74,6 +106,7 @@ class EmpresaContatoSeeder extends Seeder
                 'cidade' => 'Caxias do Sul',
                 'responsavel' => 'Camila Moraes',
                 'conflito' => $verificado,
+                'status_comercial' => $statusCliente,
             ],
             [
                 'chave' => 'e2',
@@ -104,6 +137,7 @@ class EmpresaContatoSeeder extends Seeder
                 'cidade' => 'Erechim',
                 'responsavel' => 'Rafael Prado',
                 'conflito' => $pendente,
+                'status_comercial' => $statusEmAnalise,
             ],
             [
                 'chave' => 'e5',
@@ -141,6 +175,10 @@ class EmpresaContatoSeeder extends Seeder
 
         foreach ($linhas as $linha) {
             $ok = $linha['conflito']->slug === 'verificado';
+            $municipioId = IbgeMunicipio::query()
+                ->whereHas('estado', fn ($query) => $query->whereRaw('UPPER(txt_sigla_uf) = ?', ['RS']))
+                ->whereRaw('LOWER(txt_nome_municipios) = ?', [mb_strtolower($linha['cidade'])])
+                ->value('id');
 
             $empresas[$linha['chave']] = Empresa::query()->updateOrCreate(
                 ['cnpj' => $linha['cnpj']],
@@ -150,8 +188,10 @@ class EmpresaContatoSeeder extends Seeder
                     'porte' => $linha['porte'],
                     'cidade' => $linha['cidade'],
                     'uf_id' => $rs->id,
+                    'municipio_id' => $municipioId,
                     'responsavel_user_id' => $responsaveis[$linha['responsavel']]->id,
                     'status_conflito_id' => $linha['conflito']->id,
+                    'status_comercial_id' => ($linha['status_comercial'] ?? $statusComercialPadrao)->id,
                     'conflito_texto' => $ok
                         ? 'Verificado em 04/08 contra a base de clientes e partes contrárias. Sem impedimento para atuação.'
                         : 'Verificação pendente: há parte relacionada em processo patrocinado pelo escritório. A negociação não avança de etapa até o parecer do sócio responsável.',
@@ -170,6 +210,9 @@ class EmpresaContatoSeeder extends Seeder
     {
         $pj = TipoPessoa::query()->where('slug', 'pj')->firstOrFail();
         $pf = TipoPessoa::query()->where('slug', 'pf')->firstOrFail();
+        $statusComercialPadrao = StatusComercial::query()->where('slug', 'qualificado')->firstOrFail();
+        $statusNovo = StatusComercial::query()->where('slug', 'novo')->firstOrFail();
+        $statusCliente = StatusComercial::query()->where('slug', 'cliente-efetivado')->firstOrFail();
 
         $linhas = [
             ['email' => 'renata.bonfanti@verano.ind.br', 'nome' => 'Renata Bonfanti', 'cargo' => 'Diretora de RH', 'empresa' => 'e1', 'telefone' => '(54) 99712-4408', 'canal' => 'whatsapp', 'consent' => 'opt-in-registrado', 'mesclado' => true],
@@ -191,16 +234,25 @@ class EmpresaContatoSeeder extends Seeder
         ];
 
         foreach ($linhas as $linha) {
+            $empresa = $linha['empresa'] ? $empresas[$linha['empresa']] : null;
+            $statusComercialId = $empresa?->status_comercial_id
+                ?? ($linha['consent'] === 'opt-in-registrado' ? $statusComercialPadrao->id : $statusNovo->id);
+
+            if ($linha['email'] === 'h.sales@email.com' || $linha['email'] === 'patricia.andrade@email.com') {
+                $statusComercialId = $statusCliente->id;
+            }
+
             $contato = Contato::query()->updateOrCreate(
                 ['email' => $linha['email']],
                 [
                     'nome' => $linha['nome'],
                     'cargo' => $linha['cargo'],
-                    'empresa_id' => $linha['empresa'] ? $empresas[$linha['empresa']]->id : null,
-                    'tipo_pessoa_id' => $linha['empresa'] ? $pj->id : $pf->id,
+                    'empresa_id' => $empresa?->id,
+                    'tipo_pessoa_id' => $empresa ? $pj->id : $pf->id,
                     'telefone' => $linha['telefone'],
                     'canal_contato_id' => CanalContato::query()->where('slug', $linha['canal'])->firstOrFail()->id,
                     'status_consentimento_id' => StatusConsentimento::query()->where('slug', $linha['consent'])->firstOrFail()->id,
+                    'status_comercial_id' => $statusComercialId,
                     'registro_mesclado' => $linha['mesclado'],
                     'observacao_deduplicacao' => $linha['mesclado']
                         ? '2 registros mesclados · WhatsApp + formulário'

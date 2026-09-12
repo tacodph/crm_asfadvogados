@@ -4,9 +4,14 @@ import AuthBrandPanel from '@/components/auth/AuthBrandPanel.vue';
 import AuthLogoMark from '@/components/auth/AuthLogoMark.vue';
 import { home } from '@/routes';
 
-defineProps<{
+const {
+    restrictionNotice = 'Acesso restrito a colaboradores do escritório. O uso é monitorado e registrado; o conteúdo dos casos é protegido por sigilo profissional e visível apenas ao advogado responsável.',
+    showAdminHelp = true,
+} = defineProps<{
     title?: string;
     description?: string;
+    restrictionNotice?: string;
+    showAdminHelp?: boolean;
 }>();
 </script>
 
@@ -23,13 +28,13 @@ defineProps<{
                 <div v-if="title || description" class="flex flex-col gap-1.5">
                     <h2
                         v-if="title"
-                        class="m-0 font-[family-name:var(--font-auth-display)] text-[28px] font-medium tracking-[-0.015em] text-[#171B21]"
+                        class="m-0 font-[family-name:var(--font-auth-display)] text-[28px] font-medium tracking-[-0.015em] text-foreground"
                     >
                         {{ title }}
                     </h2>
                     <p
                         v-if="description"
-                        class="m-0 text-[13.5px] leading-[1.55] text-[#77808E]"
+                        class="m-0 text-[13.5px] leading-[1.55] text-muted-foreground"
                     >
                         {{ description }}
                     </p>
@@ -38,15 +43,12 @@ defineProps<{
                 <slot />
 
                 <div
-                    class="flex flex-col gap-3 border-t border-[#E7E3DA] pt-[18px]"
+                    class="flex flex-col gap-3 border-t border-border pt-[18px]"
                 >
-                    <p class="m-0 text-[11.5px] leading-[1.6] text-[#9AA2AE]">
-                        Acesso restrito a colaboradores do escritório. O uso é
-                        monitorado e registrado; o conteúdo dos casos é
-                        protegido por sigilo profissional e visível apenas ao
-                        advogado responsável.
+                    <p class="m-0 text-[11.5px] leading-[1.6] text-muted-foreground">
+                        {{ restrictionNotice }}
                     </p>
-                    <p class="m-0 text-[11.5px] text-[#9AA2AE]">
+                    <p v-if="showAdminHelp" class="m-0 text-[11.5px] text-muted-foreground">
                         Problemas de acesso?
                         <span class="auth-link">Fale com o administrador</span>
                     </p>
@@ -59,11 +61,11 @@ defineProps<{
 <style>
 .auth-page {
     --font-auth-body: 'IBM Plex Sans', system-ui, sans-serif;
-    --font-auth-display: 'Newsreader', Georgia, serif;
+    --font-auth-display: 'IBM Plex Sans', system-ui, sans-serif;
     --font-auth-mono: 'IBM Plex Mono', ui-monospace, monospace;
-    background: #f7f5f0;
+    background: var(--background);
     font-family: var(--font-auth-body);
-    color: #171b21;
+    color: var(--foreground);
     -webkit-font-smoothing: antialiased;
 }
 
@@ -83,12 +85,12 @@ defineProps<{
 }
 
 .auth-page a {
-    color: #8c6f3f;
+    color: var(--primary);
     text-decoration: none;
 }
 
 .auth-page a:hover {
-    color: #6f5730;
+    color: color-mix(in srgb, var(--primary) 80%, white);
     text-decoration: underline;
 }
 

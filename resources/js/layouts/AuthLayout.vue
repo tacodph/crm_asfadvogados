@@ -2,9 +2,16 @@
 import { Head } from '@inertiajs/vue3';
 import AuthSplitLayout from '@/layouts/auth/AuthSplitLayout.vue';
 
-const { title = '', description = '' } = defineProps<{
+const {
+    title = '',
+    description = '',
+    restrictionNotice,
+    showAdminHelp,
+} = defineProps<{
     title?: string;
     description?: string;
+    restrictionNotice?: string;
+    showAdminHelp?: boolean;
 }>();
 </script>
 
@@ -22,7 +29,12 @@ const { title = '', description = '' } = defineProps<{
         />
     </Head>
 
-    <AuthSplitLayout :title="title" :description="description">
+    <AuthSplitLayout
+        :title="title"
+        :description="description"
+        :restriction-notice="restrictionNotice"
+        :show-admin-help="showAdminHelp"
+    >
         <slot />
     </AuthSplitLayout>
 </template>

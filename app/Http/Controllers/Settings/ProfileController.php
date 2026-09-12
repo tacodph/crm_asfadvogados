@@ -57,6 +57,9 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Explicitly the central domain: `redirect('/')` would resolve
+        // relative to the current (tenant subdomain) request, and no route
+        // exists at "/" there — only `home`, on the central domain, does.
+        return redirect()->to(route('home'));
     }
 }

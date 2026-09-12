@@ -8,9 +8,11 @@ export type ScreenKey =
     | 'propostas'
     | 'automacoes'
     | 'trafego'
+    | 'investimento'
     | 'site'
     | 'compliance'
-    | 'admin';
+    | 'admin'
+    | 'configuracoes';
 
 export type FunilKey = string;
 
@@ -119,8 +121,8 @@ export type Termo = {
 };
 
 export const CANAIS: Record<string, string> = {
-    WhatsApp: '#14574F',
-    Site: '#8C6F3F',
+    WhatsApp: 'var(--accent)',
+    Site: 'var(--primary)',
     Indicação: '#3F5E8C',
     Instagram: '#8C4A6B',
     'Google Maps': '#7A6E3F',
@@ -941,10 +943,10 @@ export const TL_DEFAULT: TimelineItem[] = [
 ];
 
 export const TL_COR: Record<string, string> = {
-    wa: '#14574F',
+    wa: 'var(--accent)',
     call: '#3F5E8C',
-    mail: '#8C6F3F',
-    sys: '#77808E',
+    mail: 'var(--primary)',
+    sys: 'var(--muted-foreground)',
     task: '#8C4A6B',
 };
 
@@ -996,11 +998,11 @@ export const NAV_GROUPS: {
         title: 'Comercial',
         items: [
             { key: 'painel', label: 'Painel' },
-            { key: 'negociacoes', label: 'Negociações' },
-            { key: 'atividades', label: 'Atividades' },
-            { key: 'calendario', label: 'Calendário' },
+            { key: 'negociacoes', label: 'Funil' },
             { key: 'contatos', label: 'Contatos' },
             { key: 'empresas', label: 'Empresas' },
+            { key: 'atividades', label: 'Atividades' },
+            { key: 'calendario', label: 'Calendário' },
             { key: 'propostas', label: 'Propostas' },
         ],
     },
@@ -1009,6 +1011,7 @@ export const NAV_GROUPS: {
         items: [
             { key: 'automacoes', label: 'Automações' },
             { key: 'trafego', label: 'API de tráfego' },
+            { key: 'investimento', label: 'Investimento em anúncios' },
             { key: 'site', label: 'Site' },
         ],
     },
@@ -1024,8 +1027,8 @@ export const NAV_GROUPS: {
 export const SCREEN_TITLES: Record<ScreenKey, [string, string]> = {
     painel: ['Painel comercial', 'últimos {periodo} · 2 funis ativos'],
     negociacoes: [
-        'Negociações',
-        'funil e lista — abra um card para avançar etapa',
+        'Funil',
+        'visão em quadro ou lista — abra um card para avançar etapa',
     ],
     atividades: ['Minhas atividades', 'tarefas atribuídas a Camila Moraes'],
     calendario: [
@@ -1046,6 +1049,10 @@ export const SCREEN_TITLES: Record<ScreenKey, [string, string]> = {
         'API de tráfego',
         'entrada de leads pagos e orgânicos, com consentimento na origem',
     ],
+    investimento: [
+        'Investimento em anúncios',
+        'Meta Ads × resultados do CRM — CPL real, custo por contrato e ROAS',
+    ],
     site: [
         'Módulos do site',
         'seção “Quem somos” — edite à esquerda, confira à direita',
@@ -1056,6 +1063,10 @@ export const SCREEN_TITLES: Record<ScreenKey, [string, string]> = {
     ],
     admin: [
         'Administração',
-        'funis personalizados, etapas, campos obrigatórios e motivos de perda',
+        'tabelas de domínio: finalidades e status de consentimento',
+    ],
+    configuracoes: [
+        'Configurações',
+        'perfil, segurança e preferências da conta',
     ],
 };

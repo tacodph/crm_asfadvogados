@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import LandingCompliance from '@/components/landing/LandingCompliance.vue';
+import { ChevronUp } from '@lucide/vue';
+import LandingAbout from '@/components/landing/LandingAbout.vue';
 import LandingCta from '@/components/landing/LandingCta.vue';
 import LandingFaq from '@/components/landing/LandingFaq.vue';
 import LandingFeatures from '@/components/landing/LandingFeatures.vue';
@@ -8,49 +9,46 @@ import LandingFooter from '@/components/landing/LandingFooter.vue';
 import LandingHeader from '@/components/landing/LandingHeader.vue';
 import LandingHero from '@/components/landing/LandingHero.vue';
 import LandingPlans from '@/components/landing/LandingPlans.vue';
-import LandingScreens from '@/components/landing/LandingScreens.vue';
-import LandingSegments from '@/components/landing/LandingSegments.vue';
+import { useLandingOnePage } from '@/composables/useLandingOnePage';
+
+const {
+    isSticky,
+    mobileMenuOpen,
+    activeSection,
+    showBackToTop,
+    toggleMobileMenu,
+    closeMobileMenu,
+    scrollToTop,
+} = useLandingOnePage();
 </script>
 
 <template>
-    <Head title="Antessala — CRM jurídico pré-processual">
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossorigin=""
-        />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
-            rel="stylesheet"
-        />
-    </Head>
+    <Head title="LexStart — CRM jurídico pré-processual" />
 
-    <div
-        class="landing-page w-full overflow-x-hidden bg-[#F7F5F0] font-[family-name:var(--font-landing-body)] text-[#171B21] antialiased"
-    >
-        <LandingHeader />
+    <div class="landing-page w-full overflow-x-hidden">
+        <LandingHeader
+            :is-sticky="isSticky"
+            :mobile-menu-open="mobileMenuOpen"
+            :active-section="activeSection"
+            @toggle-mobile-menu="toggleMobileMenu"
+            @close-mobile-menu="closeMobileMenu"
+        />
         <LandingHero />
-        <LandingSegments />
         <LandingFeatures />
-        <LandingScreens />
-        <LandingCompliance />
+        <LandingAbout />
         <LandingPlans />
         <LandingFaq />
         <LandingCta />
         <LandingFooter />
+
+        <button
+            id="back-to-top"
+            type="button"
+            class="fixed bottom-10 right-10 flex size-10 items-center justify-center rounded-md bg-purple-500 text-white transition-opacity"
+            :style="{ opacity: showBackToTop ? 1 : 0 }"
+            @click="scrollToTop"
+        >
+            <ChevronUp class="size-5" />
+        </button>
     </div>
 </template>
-
-<style>
-.landing-page {
-    --font-landing-body: 'IBM Plex Sans', system-ui, sans-serif;
-    --font-landing-display: 'Newsreader', Georgia, serif;
-    --font-landing-mono: 'IBM Plex Mono', ui-monospace, monospace;
-    scroll-behavior: smooth;
-}
-
-.landing-page a {
-    text-decoration: none;
-}
-</style>

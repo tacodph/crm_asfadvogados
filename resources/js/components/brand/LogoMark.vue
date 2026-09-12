@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { BRAND } from '@/lib/brand';
+
 withDefaults(
     defineProps<{
         sizeClass?: string;
@@ -13,8 +15,8 @@ withDefaults(
 
 <template>
     <img
-        src="/images/logo-sm.png"
-        alt="SM"
+        :src="BRAND.mark"
+        :alt="BRAND.name"
         :class="[
             sizeClass,
             withPanel

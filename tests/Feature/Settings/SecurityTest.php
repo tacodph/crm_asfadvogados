@@ -33,7 +33,7 @@ class SecurityTest extends TestCase
             /* @chisel-password-confirmation */
             ->withSession(['auth.password_confirmed_at' => time()])
             /* @end-chisel-password-confirmation */
-            ->get(route('security.edit'))
+            ->get($this->tenantUrl('security.edit'))
             ->assertInertia(fn (Assert $page) => $page
                 ->component('settings/Security')
                 /* @chisel-passkeys */
@@ -58,9 +58,9 @@ class SecurityTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->get(route('security.edit'));
+            ->get($this->tenantUrl('security.edit'));
 
-        $response->assertRedirect(route('password.confirm'));
+        $response->assertRedirect($this->tenantUrl('password.confirm'));
     }
     /* @end-chisel-password-confirmation */
 
@@ -76,7 +76,7 @@ class SecurityTest extends TestCase
             /* @chisel-password-confirmation */
             ->withSession(['auth.password_confirmed_at' => time()])
             /* @end-chisel-password-confirmation */
-            ->get(route('security.edit'))
+            ->get($this->tenantUrl('security.edit'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('settings/Security')
@@ -96,8 +96,8 @@ class SecurityTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->from(route('security.edit'))
-            ->put(route('user-password.update'), [
+            ->from($this->tenantUrl('security.edit'))
+            ->put($this->tenantUrl('user-password.update'), [
                 'current_password' => 'password',
                 'password' => 'new-password',
                 'password_confirmation' => 'new-password',
@@ -105,7 +105,7 @@ class SecurityTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('security.edit'));
+            ->assertRedirect($this->tenantUrl('security.edit'));
 
         $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
     }
@@ -116,8 +116,8 @@ class SecurityTest extends TestCase
 
         $response = $this
             ->actingAs($user)
-            ->from(route('security.edit'))
-            ->put(route('user-password.update'), [
+            ->from($this->tenantUrl('security.edit'))
+            ->put($this->tenantUrl('user-password.update'), [
                 'current_password' => 'wrong-password',
                 'password' => 'new-password',
                 'password_confirmation' => 'new-password',
@@ -125,6 +125,6 @@ class SecurityTest extends TestCase
 
         $response
             ->assertSessionHasErrors('current_password')
-            ->assertRedirect(route('security.edit'));
+            ->assertRedirect($this->tenantUrl('security.edit'));
     }
 }

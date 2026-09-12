@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { edit } from '@/actions/App/Http/Controllers/NegociacaoController';
 import CrmDrawer from '@/components/crm/CrmDrawer.vue';
 import CrmFieldCards from '@/components/crm/CrmFieldCards.vue';
 import type { NegociacaoDrawer } from '@/types/crm';
 
 defineProps<{
     modelo: NegociacaoDrawer;
+    negociacaoId: number;
 }>();
 
 const emit = defineEmits<{
@@ -20,7 +23,7 @@ const emit = defineEmits<{
     >
         <div class="flex flex-wrap gap-[7px]">
             <span
-                class="inline-flex items-center gap-[5px] rounded-full bg-[#F4F2EC] px-[9px] py-1 text-[11px] text-[#3C4450]"
+                class="inline-flex items-center gap-[5px] rounded-full bg-muted px-[9px] py-1 text-[11px] text-muted-foreground"
             >
                 <span
                     class="h-[5px] w-[5px] rounded-full"
@@ -29,32 +32,31 @@ const emit = defineEmits<{
                 {{ modelo.canal }}
             </span>
             <span
-                class="rounded-full bg-[#F4F2EC] px-[9px] py-1 text-[11px] text-[#3C4450]"
+                class="rounded-full bg-muted px-[9px] py-1 text-[11px] text-muted-foreground"
             >
                 Resp. {{ modelo.responsavel }}
             </span>
             <span
+                v-if="modelo.capi.estado === 'enviavel'"
                 class="rounded-full px-[9px] py-1 text-[11px]"
-                :style="{
-                    background: modelo.consentBg,
-                    color: modelo.consentCor,
-                }"
+                :style="{ background: modelo.capi.bg, color: modelo.capi.cor }"
+                title="A API de Conversões da Meta recebe os eventos desta negociação"
             >
-                {{ modelo.consent }}
+                {{ modelo.capi.label }}
             </span>
         </div>
 
         <CrmFieldCards :campos="modelo.campos" />
 
         <div
-            class="flex flex-col gap-[7px] rounded-[9px] border border-[#E2D3B6] bg-[#FBF7EF] px-[15px] py-[13px]"
+            class="flex flex-col gap-[7px] rounded-[9px] border border-primary/30 bg-[#FBF7EF] px-[15px] py-[13px]"
         >
             <span
-                class="font-[family-name:var(--font-crm-mono)] text-[9.5px] tracking-[0.11em] text-[#8C6F3F] uppercase"
+                class="font-[family-name:var(--font-crm-mono)] text-[9.5px] tracking-[0.11em] text-primary uppercase"
             >
                 Sigilo profissional
             </span>
-            <p class="m-0 text-[12.5px] leading-[1.55] text-[#3C4450]">
+            <p class="m-0 text-[12.5px] leading-[1.55] text-muted-foreground">
                 Conteúdo do caso restrito a
                 <strong class="font-medium">{{ modelo.responsavel }}</strong>
                 e à sócia responsável. Este registro comercial guarda apenas
@@ -63,7 +65,7 @@ const emit = defineEmits<{
             </p>
             <button
                 type="button"
-                class="mt-0.5 w-fit cursor-pointer rounded-md border border-[#E2D3B6] bg-white px-[11px] py-1.5 text-[12px] text-[#6F5730]"
+                class="mt-0.5 w-fit cursor-pointer rounded-md border border-primary/30 bg-card px-[11px] py-1.5 text-[12px] text-primary"
             >
                 Solicitar acesso registrado
             </button>
@@ -76,7 +78,7 @@ const emit = defineEmits<{
                 >
                     Histórico unificado
                 </h3>
-                <span class="text-[11.5px] text-[#77808E]">
+                <span class="text-[11.5px] text-muted-foreground">
                     {{ modelo.historicos.length }} interações
                 </span>
             </div>
@@ -91,29 +93,29 @@ const emit = defineEmits<{
                             class="mt-1 h-[9px] w-[9px] rounded-full"
                             :style="{ background: item.cor }"
                         />
-                        <span class="w-px flex-1 bg-[#EEEBE4]" />
+                        <span class="w-px flex-1 bg-border" />
                     </div>
                     <div class="flex flex-col gap-[3px]">
                         <div
                             class="flex items-baseline justify-between gap-2.5"
                         >
                             <span
-                                class="text-[12.5px] font-medium text-[#171B21]"
+                                class="text-[12.5px] font-medium text-foreground"
                             >
                                 {{ item.titulo }}
                             </span>
                             <span
-                                class="font-[family-name:var(--font-crm-mono)] text-[11px] text-[#77808E]"
+                                class="font-[family-name:var(--font-crm-mono)] text-[11px] text-muted-foreground"
                             >
                                 {{ item.quando }}
                             </span>
                         </div>
                         <span
-                            class="text-[12.5px] leading-normal text-[#3C4450]"
+                            class="text-[12.5px] leading-normal text-muted-foreground"
                         >
                             {{ item.descricao }}
                         </span>
-                        <span class="text-[11px] text-[#77808E]">
+                        <span class="text-[11px] text-muted-foreground">
                             {{ item.autor }}
                         </span>
                     </div>
@@ -122,21 +124,21 @@ const emit = defineEmits<{
         </div>
 
         <template #footer>
+            <Link
+                :href="edit.url({ negociacao: negociacaoId })"
+                class="flex-1 cursor-pointer rounded-lg border border-primary bg-primary py-2.5 text-center text-[13px] font-medium text-primary-foreground"
+            >
+                Editar negociação
+            </Link>
             <button
                 type="button"
-                class="flex-1 cursor-pointer rounded-lg border border-[#171B21] bg-[#171B21] py-2.5 text-[13px] font-medium text-[#FBF9F4]"
+                class="cursor-pointer rounded-lg border border-border bg-card px-3.5 py-2.5 text-[13px] text-muted-foreground"
             >
                 {{ modelo.avancandoLabel }}
             </button>
             <button
                 type="button"
-                class="cursor-pointer rounded-lg border border-[#E3DFD6] bg-white px-3.5 py-2.5 text-[13px] text-[#3C4450]"
-            >
-                Gerar proposta
-            </button>
-            <button
-                type="button"
-                class="cursor-pointer rounded-lg border border-[#E6C9C2] bg-white px-3.5 py-2.5 text-[13px] text-[#9B3B2F]"
+                class="cursor-pointer rounded-lg border border-[#E6C9C2] bg-card px-3.5 py-2.5 text-[13px] text-[#9B3B2F]"
             >
                 Perdido
             </button>

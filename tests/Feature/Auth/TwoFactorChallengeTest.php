@@ -21,9 +21,9 @@ class TwoFactorChallengeTest extends TestCase
 
     public function test_two_factor_challenge_redirects_to_login_when_not_authenticated(): void
     {
-        $response = $this->get(route('two-factor.login'));
+        $response = $this->get($this->tenantUrl('two-factor.login'));
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect($this->tenantUrl('login'));
     }
 
     public function test_two_factor_challenge_can_be_rendered(): void
@@ -35,12 +35,12 @@ class TwoFactorChallengeTest extends TestCase
 
         $user = User::factory()->withTwoFactor()->create();
 
-        $this->post(route('login'), [
+        $this->post($this->tenantUrl('login'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $this->get(route('two-factor.login'))
+        $this->get($this->tenantUrl('two-factor.login'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('auth/TwoFactorChallenge'),

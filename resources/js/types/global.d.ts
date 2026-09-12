@@ -21,6 +21,7 @@ declare module '@inertiajs/core' {
             auth: Auth;
             sidebarOpen: boolean;
             crmCounts: CrmCounts | null;
+            tenant: { name: string; slug: string } | null;
             [key: string]: unknown;
         };
     }

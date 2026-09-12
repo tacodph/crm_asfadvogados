@@ -1,68 +1,90 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import Heading from '@/components/Heading.vue';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
+import { index as usersIndex } from '@/routes/settings/users';
 import type { NavItem } from '@/types';
 
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: editProfile(),
-    },
-    {
-        title: 'Security',
-        href: editSecurity(),
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
-    },
-];
+const page = usePage();
+
+const canManageUsers = computed(() => {
+    const role = page.props.auth.user?.role;
+
+    return role === 'owner' || role === 'admin';
+});
+
+const sidebarNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Perfil',
+            href: editProfile(),
+        },
+        {
+            title: 'Segurança',
+            href: editSecurity(),
+        },
+        {
+            title: 'Aparência',
+            href: editAppearance(),
+        },
+    ];
+
+    if (canManageUsers.value) {
+        items.splice(1, 0, {
+            title: 'Usuários',
+            href: usersIndex(),
+        });
+    }
+
+    return items;
+});
 
 const { isCurrentOrParentUrl } = useCurrentUrl();
 </script>
 
 <template>
-    <div class="px-4 py-6">
-        <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
-        />
+    <div class="flex max-w-[960px] flex-col gap-5">
+        <div class="flex flex-col gap-1">
+            <h2
+                class="m-0 font-[family-name:var(--font-crm-display)] text-[18px] font-medium tracking-[-0.01em] text-foreground"
+            >
+                Conta
+            </h2>
+            <p class="m-0 text-[13px] text-muted-foreground">
+                Gerencie perfil, segurança e preferências do escritório.
+            </p>
+        </div>
 
-        <div class="flex flex-col lg:flex-row lg:space-x-12">
-            <aside class="w-full max-w-xl lg:w-48">
+        <div class="flex flex-col gap-5 lg:flex-row lg:gap-8">
+            <aside class="w-full shrink-0 lg:w-44">
                 <nav
-                    class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
+                    class="flex flex-row gap-1 overflow-x-auto lg:flex-col"
+                    aria-label="Configurações"
                 >
-                    <Button
+                    <Link
                         v-for="item in sidebarNavItems"
                         :key="toUrl(item.href)"
-                        variant="ghost"
-                        :class="[
-                            'w-full justify-start',
-                            { 'bg-muted': isCurrentOrParentUrl(item.href) },
-                        ]"
-                        as-child
+                        :href="item.href"
+                        class="rounded-lg px-3 py-2 text-[13px] whitespace-nowrap"
+                        :class="
+                            isCurrentOrParentUrl(item.href)
+                                ? 'bg-primary/15 font-medium text-foreground'
+                                : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                        "
                     >
-                        <Link :href="item.href">
-                            <component :is="item.icon" class="h-4 w-4" />
-                            {{ item.title }}
-                        </Link>
-                    </Button>
+                        {{ item.title }}
+                    </Link>
                 </nav>
             </aside>
 
-            <Separator class="my-6 lg:hidden" />
-
-            <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
+            <div
+                class="min-w-0 flex-1 rounded-[10px] border border-border bg-card px-5 py-5"
+            >
+                <section class="w-full space-y-10">
                     <slot />
                 </section>
             </div>

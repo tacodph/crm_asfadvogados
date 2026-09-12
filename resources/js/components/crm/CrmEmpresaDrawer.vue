@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { edit as editEmpresa } from '@/actions/App/Http/Controllers/EmpresaController';
+import { create as createNegociacao } from '@/actions/App/Http/Controllers/NegociacaoController';
 import CrmDrawer from '@/components/crm/CrmDrawer.vue';
 import CrmFieldCards from '@/components/crm/CrmFieldCards.vue';
+import { index as negociacoesIndex } from '@/routes/negociacoes';
 import type { EmpresaDrawer } from '@/types/crm';
 
 defineProps<{
     modelo: EmpresaDrawer;
+    empresaId: number;
 }>();
 
 const emit = defineEmits<{
@@ -35,7 +40,7 @@ const emit = defineEmits<{
             >
                 Conflito de interesses
             </span>
-            <p class="m-0 text-[12.5px] leading-[1.55] text-[#3C4450]">
+            <p class="m-0 text-[12.5px] leading-[1.55] text-muted-foreground">
                 {{ modelo.conflitoTexto }}
             </p>
         </div>
@@ -46,23 +51,27 @@ const emit = defineEmits<{
             >
                 Contatos vinculados
             </h3>
-            <button
+            <p
+                v-if="modelo.contatos.length === 0"
+                class="m-0 text-[12.5px] text-muted-foreground"
+            >
+                Nenhum contato vinculado.
+            </p>
+            <div
                 v-for="contato in modelo.contatos"
                 :key="contato.id"
-                type="button"
-                class="flex cursor-pointer items-center justify-between gap-3 rounded-[9px] border border-[#E3DFD6] bg-white px-[13px] py-[11px] text-left hover:border-[#C79A4E]"
-                @click="emit('openContato', contato.id)"
+                class="flex items-center justify-between gap-3 rounded-[9px] border border-border bg-card px-[13px] py-[11px]"
             >
-                <span class="flex flex-col gap-0.5">
-                    <span class="text-[13px] text-[#171B21]">
+                <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span class="truncate text-[13px] text-foreground">
                         {{ contato.nome }}
                     </span>
-                    <span class="text-[11.5px] text-[#77808E]">
+                    <span class="truncate text-[11.5px] text-muted-foreground">
                         {{ contato.cargo }} · {{ contato.email }}
                     </span>
                 </span>
                 <span
-                    class="rounded-full px-[9px] py-[3px] text-[11px]"
+                    class="shrink-0 rounded-full px-[9px] py-[3px] text-[11px]"
                     :style="{
                         background: contato.consentBg,
                         color: contato.consentCor,
@@ -70,49 +79,81 @@ const emit = defineEmits<{
                 >
                     {{ contato.consent }}
                 </span>
-            </button>
+                <button
+                    type="button"
+                    class="shrink-0 cursor-pointer rounded-[7px] border border-border bg-card px-[11px] py-1.5 text-[12px] text-primary hover:border-primary"
+                    @click="emit('openContato', contato.id)"
+                >
+                    Visualizar
+                </button>
+            </div>
         </div>
 
         <div class="flex flex-col gap-2.5">
-            <h3
-                class="m-0 font-[family-name:var(--font-crm-display)] text-base font-medium"
-            >
-                Negociações
-            </h3>
+            <div class="flex items-center justify-between gap-2">
+                <h3
+                    class="m-0 font-[family-name:var(--font-crm-display)] text-base font-medium"
+                >
+                    Negociações
+                </h3>
+                <Link
+                    v-if="modelo.negociacoes.length === 0"
+                    :href="
+                        createNegociacao.url(
+                            {},
+                            { query: { empresa_id: empresaId } },
+                        )
+                    "
+                    class="shrink-0 cursor-pointer rounded-[7px] border border-primary bg-primary px-[11px] py-1.5 text-[12px] text-primary-foreground"
+                >
+                    Nova negociação
+                </Link>
+            </div>
             <p
                 v-if="modelo.negociacoes.length === 0"
-                class="m-0 text-[12.5px] text-[#77808E]"
+                class="m-0 text-[12.5px] text-muted-foreground"
             >
                 Nenhuma negociação vinculada.
             </p>
             <div
                 v-for="negociacao in modelo.negociacoes"
                 :key="negociacao.id"
-                class="flex items-center justify-between gap-3 rounded-[9px] border border-[#E3DFD6] bg-white px-[13px] py-[11px]"
+                class="flex items-center justify-between gap-3 rounded-[9px] border border-border bg-card px-[13px] py-[11px]"
             >
-                <span class="flex flex-col gap-0.5">
-                    <span class="text-[13px] text-[#171B21]">
+                <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span class="truncate text-[13px] text-foreground">
                         {{ negociacao.titulo }}
                     </span>
-                    <span class="text-[11.5px] text-[#77808E]">
+                    <span class="truncate text-[11.5px] text-muted-foreground">
                         {{ negociacao.etapa }} · {{ negociacao.responsavel }}
                     </span>
                 </span>
                 <span
-                    class="font-[family-name:var(--font-crm-mono)] text-[12.5px]"
+                    class="shrink-0 font-[family-name:var(--font-crm-mono)] text-[12.5px]"
                 >
                     {{ negociacao.valorFmt }}
                 </span>
+                <Link
+                    :href="
+                        negociacoesIndex.url(
+                            {},
+                            { query: { negociacao: negociacao.id } },
+                        )
+                    "
+                    class="shrink-0 cursor-pointer rounded-[7px] border border-border bg-card px-[11px] py-1.5 text-[12px] text-primary hover:border-primary"
+                >
+                    Abrir
+                </Link>
             </div>
         </div>
 
         <template #footer>
-            <button
-                type="button"
-                class="flex-1 cursor-pointer rounded-lg border border-[#171B21] bg-[#171B21] py-2.5 text-[13px] font-medium text-[#FBF9F4]"
+            <Link
+                :href="editEmpresa.url({ empresa: empresaId })"
+                class="flex-1 cursor-pointer rounded-lg border border-primary bg-primary py-2.5 text-center text-[13px] font-medium text-primary-foreground"
             >
-                Nova negociação para esta empresa
-            </button>
+                Editar empresa
+            </Link>
         </template>
     </CrmDrawer>
 </template>

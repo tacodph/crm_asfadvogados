@@ -2,18 +2,25 @@
 
 namespace Database\Seeders;
 
+use App\Enums\StatusTarefaNegociacao;
 use App\Models\CanalContato;
 use App\Models\Contato;
 use App\Models\EtapaFunil;
 use App\Models\Funil;
 use App\Models\HistoricoNegociacao;
 use App\Models\Negociacao;
+use App\Models\Role;
+use App\Models\TarefaNegociacao;
 use App\Models\User;
+use App\Support\Tenancy\CurrentTenant;
+use Database\Seeders\Concerns\SeedsForDevTenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
 class FunilNegociacaoSeeder extends Seeder
 {
+    use SeedsForDevTenant;
+
     /**
      * Seed funnels and prototype negotiations.
      */
@@ -21,13 +28,21 @@ class FunilNegociacaoSeeder extends Seeder
     {
         $this->call(EmpresaContatoSeeder::class);
 
-        User::query()->updateOrCreate(
-            ['email' => 'diego.alencar@asfadvogados.adv.br'],
-            ['name' => 'Diego Alencar', 'password' => 'password'],
-        );
+        app(CurrentTenant::class)->runAs($this->devTenant(), function (): void {
+            User::query()->updateOrCreate(
+                ['email' => 'diego.alencar@asfadvogados.adv.br'],
+                [
+                    'name' => 'Diego Alencar',
+                    'password' => 'password',
+                    'role' => Role::GERENTE,
+                    'especialidades' => [],
+                    'ausente_ate' => null,
+                ],
+            );
 
-        $funis = $this->funis();
-        $this->negociacoes($funis);
+            $funis = $this->funis();
+            $this->negociacoes($funis);
+        });
     }
 
     /**
@@ -43,11 +58,12 @@ class FunilNegociacaoSeeder extends Seeder
                 'nome' => 'B2B consultivo',
                 'distribuicao' => 'round robin por especialidade',
                 'etapas' => [
-                    ['nome' => 'Prospecção / Inbound', 'sla' => '4h', 'campos' => ['origem', 'consentimento'], 'exige' => false],
-                    ['nome' => 'Diagnóstico', 'sla' => '5d', 'campos' => ['porte', 'dor mapeada', 'conflito verificado'], 'exige' => true],
-                    ['nome' => 'Apresentação da solução', 'sla' => '7d', 'campos' => ['escopo', 'honorários'], 'exige' => true],
-                    ['nome' => 'Negociação', 'sla' => '10d', 'campos' => ['minuta enviada', 'objeção'], 'exige' => true],
-                    ['nome' => 'Fechamento', 'sla' => '—', 'campos' => ['contrato assinado', 'procuração'], 'exige' => false],
+                    ['nome' => 'Prospecção / Inbound', 'sla' => '4h', 'campos' => ['origem', 'consentimento'], 'exige' => false, 'resultado' => 'aberta'],
+                    ['nome' => 'Diagnóstico', 'sla' => '5d', 'campos' => ['porte', 'dor mapeada', 'conflito verificado'], 'exige' => true, 'resultado' => 'aberta'],
+                    ['nome' => 'Apresentação da solução', 'sla' => '7d', 'campos' => ['escopo', 'honorários'], 'exige' => true, 'resultado' => 'aberta'],
+                    ['nome' => 'Negociação', 'sla' => '10d', 'campos' => ['minuta enviada', 'objeção'], 'exige' => true, 'resultado' => 'aberta'],
+                    ['nome' => 'Fechamento', 'sla' => '—', 'campos' => ['contrato assinado', 'procuração'], 'exige' => false, 'resultado' => 'ganho'],
+                    ['nome' => 'Atendimentos encerrados', 'sla' => '—', 'campos' => ['motivo do encerramento', 'desqualificação'], 'exige' => true, 'resultado' => 'perdido'],
                 ],
             ],
             [
@@ -55,11 +71,12 @@ class FunilNegociacaoSeeder extends Seeder
                 'nome' => 'Concursos (PF, volume)',
                 'distribuicao' => 'round robin simples',
                 'etapas' => [
-                    ['nome' => 'Novo lead', 'sla' => '15min', 'campos' => ['telefone válido', 'consentimento'], 'exige' => false],
-                    ['nome' => 'Triagem', 'sla' => '1d', 'campos' => ['concurso/banca', 'fase'], 'exige' => true],
-                    ['nome' => 'Envio da oferta', 'sla' => '2d', 'campos' => ['oferta registrada'], 'exige' => true],
-                    ['nome' => 'Objeções', 'sla' => '3d', 'campos' => ['objeção classificada'], 'exige' => true],
-                    ['nome' => 'Fechamento', 'sla' => '—', 'campos' => ['contrato assinado'], 'exige' => false],
+                    ['nome' => 'Novo lead', 'sla' => '15min', 'campos' => ['telefone válido', 'consentimento'], 'exige' => false, 'resultado' => 'aberta'],
+                    ['nome' => 'Triagem', 'sla' => '1d', 'campos' => ['concurso/banca', 'fase'], 'exige' => true, 'resultado' => 'aberta'],
+                    ['nome' => 'Envio da oferta', 'sla' => '2d', 'campos' => ['oferta registrada'], 'exige' => true, 'resultado' => 'aberta'],
+                    ['nome' => 'Objeções', 'sla' => '3d', 'campos' => ['objeção classificada'], 'exige' => true, 'resultado' => 'aberta'],
+                    ['nome' => 'Fechamento', 'sla' => '—', 'campos' => ['contrato assinado'], 'exige' => false, 'resultado' => 'ganho'],
+                    ['nome' => 'Atendimentos encerrados', 'sla' => '—', 'campos' => ['motivo do encerramento', 'desqualificação'], 'exige' => true, 'resultado' => 'perdido'],
                 ],
             ],
         ];
@@ -77,7 +94,9 @@ class FunilNegociacaoSeeder extends Seeder
             );
 
             foreach ($definicao['etapas'] as $i => $etapa) {
-                $ultima = $i === count($definicao['etapas']) - 1;
+                $resultado = $etapa['resultado'];
+                $ganho = $resultado === 'ganho';
+                $perdido = $resultado === 'perdido';
 
                 EtapaFunil::query()->updateOrCreate(
                     [
@@ -89,9 +108,14 @@ class FunilNegociacaoSeeder extends Seeder
                         'sla' => $etapa['sla'],
                         'campos' => $etapa['campos'],
                         'exige_motivo' => $etapa['exige'],
-                        'cor_fundo' => $ultima ? '#0F4A43' : $paleta[$i % count($paleta)],
+                        'resultado' => $resultado,
+                        'cor_fundo' => $perdido
+                            ? '#9B3B2F'
+                            : ($ganho ? '#0F4A43' : $paleta[$i % count($paleta)]),
                         'cor_texto' => '#FBF9F4',
-                        'cor_suave' => 'rgba(251,249,244,0.9)',
+                        'cor_suave' => $perdido
+                            ? 'rgba(251,249,244,0.92)'
+                            : 'rgba(251,249,244,0.9)',
                     ],
                 );
             }
@@ -150,6 +174,19 @@ class FunilNegociacaoSeeder extends Seeder
                     'proxima_tarefa' => $linha['tarefa'],
                     'proxima_tarefa_em' => $hoje->copy()->addDays($linha['off'])->toDateString(),
                     'proxima_tarefa_hora' => $linha['hora'],
+                ],
+            );
+
+            TarefaNegociacao::query()->updateOrCreate(
+                [
+                    'negociacao_id' => $negociacao->id,
+                    'descricao' => $linha['tarefa'],
+                ],
+                [
+                    'data' => $hoje->copy()->addDays($linha['off'])->toDateString(),
+                    'hora' => $linha['hora'],
+                    'status' => StatusTarefaNegociacao::Pendente,
+                    'criado_por_user_id' => $responsavel->id,
                 ],
             );
 

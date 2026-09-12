@@ -1,0 +1,38 @@
+[
+  {
+    "data_entrada": "2026-08-05",
+    "nome": "Lead Fixture Um",
+    "ddd": "61",
+    "whatsapp": "999990001",
+    "campanha": "PMDF - QUESTÕES",
+    "responsavel": "Dr. Bruno Gabriel",
+    "respondeu": "Sim",
+    "proposta": "Sim",
+    "fu1": "2026-08-06",
+    "fu2": null,
+    "fu3": null,
+    "status_atendimento": "Contrato Fechado",
+    "status_qualificacao": "Qualificado",
+    "motivo_desqualificacao": null,
+    "continuidade": "Engajamento Contínuo",
+    "observacoes": "Fixture de teste"
+  },
+  {
+    "data_entrada": "2026-08-06",
+    "nome": "Lead Fixture Dois",
+    "ddd": "51",
+    "whatsapp": "999990002",
+    "campanha": "PCRS - TAF",
+    "responsavel": "Dr. Flávio Augusto",
+    "respondeu": "Não",
+    "proposta": "Não",
+    "fu1": "2026-08-07",
+    "fu2": "2026-08-08",
+    "fu3": null,
+    "status_atendimento": "Encerrado",
+    "status_qualificacao": "Desqualificado",
+    "motivo_desqualificacao": "Não respondeu mesmo após tentativa de follow-up",
+    "continuidade": "Interrupção no primeiro contato",
+    "observacoes": null
+  }
+]

@@ -18,6 +18,7 @@ class EmpresaResource extends JsonResource
     public function toArray(Request $request): array
     {
         $status = $this->statusConflito;
+        $statusComercial = $this->statusComercial;
         $contatos = $this->contatos;
         $quantidade = $contatos->count();
         $primeiro = $contatos->first();
@@ -29,9 +30,14 @@ class EmpresaResource extends JsonResource
             'nome' => $this->nome,
             'cnpj' => $this->cnpj,
             'setor' => "{$this->setor->nome} · {$this->porte}",
+            'uf' => $this->uf->sigla,
+            'municipio' => $this->cidade,
             'contatosResumo' => $quantidade === 1
                 ? ($primeiro?->nome ?? '1 contato')
                 : "{$quantidade} contatos",
+            'statusComercial' => $statusComercial->nome,
+            'statusComercialBg' => $statusComercial->cor_fundo,
+            'statusComercialCor' => $statusComercial->cor_texto,
             'conflito' => $status->nome,
             'conflitoBg' => $status->cor_fundo,
             'conflitoCor' => $status->cor_texto,
@@ -44,6 +50,9 @@ class EmpresaResource extends JsonResource
                 'campos' => [
                     ['label' => 'Setor', 'valor' => $this->setor->nome],
                     ['label' => 'Porte', 'valor' => $this->porte],
+                    ['label' => 'Município', 'valor' => $this->cidade],
+                    ['label' => 'UF', 'valor' => $this->uf->sigla],
+                    ['label' => 'Status comercial', 'valor' => $statusComercial->nome],
                     ['label' => 'Responsável', 'valor' => $this->responsavel?->name ?: '—'],
                     ['label' => 'Em negociação', 'valor' => NegociacaoResource::moeda($valorAberto)],
                 ],

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\FinalidadeConsentimentoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -12,6 +13,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int $tenant_id
  * @property string $slug
  * @property string $nome
  * @property int $ordem
@@ -23,7 +25,7 @@ use Illuminate\Support\Carbon;
 class FinalidadeConsentimento extends Model
 {
     /** @use HasFactory<FinalidadeConsentimentoFactory> */
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     /**
      * @return array<string, string>

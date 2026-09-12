@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
+use App\Http\Controllers\Settings\TenantUserController;
 /* @chisel-password-confirmation */
 use Illuminate\Auth\Middleware\RequirePassword;
 /* @end-chisel-password-confirmation */
@@ -12,6 +13,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('settings/users', [TenantUserController::class, 'index'])->name('settings.users.index');
+    Route::post('settings/users', [TenantUserController::class, 'store'])->name('settings.users.store');
+    Route::get('settings/users/{user}/edit', [TenantUserController::class, 'edit'])->name('settings.users.edit');
+    Route::patch('settings/users/{user}', [TenantUserController::class, 'update'])->name('settings.users.update');
+    Route::delete('settings/users/{user}', [TenantUserController::class, 'destroy'])->name('settings.users.destroy');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

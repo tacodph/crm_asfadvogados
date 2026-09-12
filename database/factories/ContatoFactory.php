@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\CanalContato;
 use App\Models\Contato;
 use App\Models\Empresa;
+use App\Models\StatusComercial;
 use App\Models\StatusConsentimento;
 use App\Models\TipoPessoa;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -32,6 +33,7 @@ class ContatoFactory extends Factory
             'cpf' => null,
             'canal_contato_id' => CanalContato::factory(),
             'status_consentimento_id' => StatusConsentimento::factory(),
+            'status_comercial_id' => StatusComercial::factory(),
             'registro_mesclado' => false,
             'observacao_deduplicacao' => null,
         ];

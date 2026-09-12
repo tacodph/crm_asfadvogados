@@ -139,7 +139,7 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     >
                         Voltar
                     </button>
-                    <span class="text-[12px] text-[#77808E]">
+                    <span class="text-[12px] text-muted-foreground">
                         ou
                         <button
                             type="button"

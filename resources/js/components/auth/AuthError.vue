@@ -14,7 +14,7 @@ defineProps<{
         >
             Erro
         </span>
-        <span class="text-[12.5px] leading-normal text-[#3C4450]">
+        <span class="text-[12.5px] leading-normal text-muted-foreground">
             {{ message }}
         </span>
     </div>

@@ -3,77 +3,60 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import CrmNavIcon from '@/components/crm/CrmNavIcon.vue';
 import { NAV_GROUPS } from '@/data/crm';
-import { getInitials } from '@/composables/useInitials';
 import {
     isNavEnabled,
     PAGE_SCREEN,
-    SCREEN_HREF,
     screenCount,
+    screenHref,
 } from '@/lib/crmNav';
-import { index as contatos } from '@/routes/contatos';
-import { edit } from '@/routes/profile';
-import type { User } from '@/types';
+import { BRAND } from '@/lib/brand';
+import { dashboard } from '@/routes';
 
 const colapsado = defineModel<boolean>('colapsado', { default: false });
 
 const page = usePage();
-const user = computed(() => page.props.auth.user as User);
-const iniciais = computed(() => getInitials(user.value?.name) || 'CM');
 const screenAtiva = computed(() => PAGE_SCREEN[page.component] ?? null);
 const counts = computed(() => page.props.crmCounts);
-
-function toggleColapso() {
-    colapsado.value = !colapsado.value;
-}
 </script>
 
 <template>
     <aside
-        class="flex h-full shrink-0 flex-col border-r border-[#E7E3DA] bg-white py-[14px] transition-[width] duration-150 ease-linear"
+        class="relative z-20 flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-150 ease-linear"
         :style="{
-            width: colapsado ? '68px' : '232px',
-            flexBasis: colapsado ? '68px' : '232px',
+            width: colapsado ? '70px' : '260px',
+            flexBasis: colapsado ? '70px' : '260px',
         }"
     >
         <div
-            class="mb-4 flex items-center gap-2.5 px-[14px]"
-            :class="colapsado ? 'justify-center' : 'justify-between'"
+            class="flex h-[70px] items-center border-b border-sidebar-border px-3.5"
+            :class="colapsado ? 'justify-center' : 'justify-start'"
         >
-            <Link :href="contatos()" class="flex min-w-0 items-center gap-2.5">
-                <span
-                    class="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg bg-[#171B21] font-[family-name:var(--font-crm-display)] text-[13px] tracking-[0.02em] text-[#FBF9F4]"
-                >
-                    ASF
-                </span>
+            <Link :href="dashboard()" class="flex min-w-0 items-center gap-2.5">
+                <img
+                    :src="BRAND.mark"
+                    :alt="BRAND.name"
+                    class="h-8 w-8 shrink-0 rounded-full object-contain"
+                />
                 <span
                     v-if="!colapsado"
-                    class="flex min-w-0 flex-col leading-[1.2]"
+                    class="flex min-w-0 flex-col leading-[1.15]"
                 >
                     <span
-                        class="font-[family-name:var(--font-crm-display)] text-[14px] tracking-[0.04em] whitespace-nowrap text-[#171B21] uppercase"
+                        class="truncate text-[15px] font-semibold tracking-wide text-slate-800 dark:text-sidebar-foreground"
                     >
-                        ASF Advogados
+                        {{ BRAND.name }}
                     </span>
                     <span
-                        class="font-[family-name:var(--font-crm-mono)] text-[9px] tracking-[0.12em] text-[#9AA2AE] uppercase"
+                        class="font-[family-name:var(--font-crm-mono)] text-[9px] tracking-[0.12em] text-muted-foreground uppercase"
                     >
-                        CRM Jurídico
+                        {{ BRAND.tagline }}
                     </span>
                 </span>
             </Link>
-            <button
-                v-if="!colapsado"
-                type="button"
-                title="Minimizar menu"
-                class="h-6 w-6 shrink-0 rounded-md border border-[#E7E3DA] bg-white text-[13px] leading-none text-[#77808E]"
-                @click="toggleColapso"
-            >
-                ‹
-            </button>
         </div>
 
         <nav
-            class="flex flex-1 flex-col gap-3.5 overflow-y-auto"
+            class="flex flex-1 flex-col gap-3 overflow-y-auto py-3"
             :class="colapsado ? 'px-2' : 'px-2.5'"
         >
             <div
@@ -83,7 +66,7 @@ function toggleColapso() {
             >
                 <span
                     v-if="!colapsado"
-                    class="px-3 pb-[5px] font-[family-name:var(--font-crm-mono)] text-[9px] tracking-[0.13em] text-[#A9A296] uppercase"
+                    class="px-3 pb-1.5 text-[10px] font-semibold tracking-[0.14em] text-slate-400 uppercase"
                 >
                     {{ grupo.title }}
                 </span>
@@ -92,23 +75,23 @@ function toggleColapso() {
                     :is="isNavEnabled(item.key) ? Link : 'span'"
                     v-for="item in grupo.items"
                     :key="item.key"
-                    :href="SCREEN_HREF[item.key]"
+                    :href="screenHref(item.key)"
                     :aria-disabled="isNavEnabled(item.key) ? undefined : true"
                     :title="
                         isNavEnabled(item.key)
                             ? item.label
                             : `${item.label} — em breve`
                     "
-                    class="flex w-full items-center gap-2.5 rounded-lg text-left text-[13px]"
+                    class="group/menu-link flex w-full items-center gap-2.5 rounded-md text-left text-[13.5px] transition-colors"
                     :class="[
                         colapsado
                             ? 'justify-center px-0 py-2.5'
-                            : 'justify-between px-3 py-[9px]',
+                            : 'justify-between px-3 py-2.5',
                         isNavEnabled(item.key) && screenAtiva === item.key
-                            ? 'cursor-pointer bg-[#EFEBE2] font-medium text-[#171B21]'
+                            ? 'cursor-pointer bg-primary/10 font-medium text-primary'
                             : isNavEnabled(item.key)
-                              ? 'cursor-pointer font-normal text-[#5F6875] hover:bg-[#F1EEE7]'
-                              : 'cursor-default font-normal text-[#C4BDB0]',
+                              ? 'cursor-pointer font-normal text-slate-500 hover:bg-slate-50 hover:text-primary dark:text-sidebar-foreground/80 dark:hover:bg-sidebar-accent'
+                              : 'cursor-default font-normal text-slate-300 dark:text-muted-foreground/40',
                     ]"
                 >
                     <span class="flex min-w-0 items-center gap-2.5">
@@ -119,11 +102,11 @@ function toggleColapso() {
                     </span>
                     <span
                         v-if="!colapsado && screenCount(item.key, counts)"
-                        class="font-[family-name:var(--font-crm-mono)] text-[10.5px]"
+                        class="text-[10.5px]"
                         :class="
                             isNavEnabled(item.key) && screenAtiva === item.key
-                                ? 'text-[#8C6F3F]'
-                                : 'text-[#9AA2AE]'
+                                ? 'text-primary'
+                                : 'text-slate-400'
                         "
                     >
                         {{ screenCount(item.key, counts) }}
@@ -131,44 +114,5 @@ function toggleColapso() {
                 </component>
             </div>
         </nav>
-
-        <div
-            class="mt-auto flex items-center gap-2.5 border-t border-[#EEEBE4] px-[14px] pt-3.5"
-            :class="colapsado ? 'flex-col justify-center' : 'justify-between'"
-        >
-            <Link
-                :href="edit()"
-                class="flex min-w-0 items-center gap-2.5"
-                :title="user?.name"
-            >
-                <span
-                    class="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-full bg-[#EFE7D8] text-[11.5px] font-semibold text-[#6F5730]"
-                >
-                    {{ iniciais }}
-                </span>
-                <span
-                    v-if="!colapsado"
-                    class="flex min-w-0 flex-col leading-[1.25]"
-                >
-                    <span class="truncate text-[12.5px] text-[#171B21]">
-                        {{ user?.name }}
-                    </span>
-                    <span
-                        class="text-[10.5px] whitespace-nowrap text-[#9AA2AE]"
-                    >
-                        Sócia · Gestor
-                    </span>
-                </span>
-            </Link>
-            <button
-                v-if="colapsado"
-                type="button"
-                title="Expandir menu"
-                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[#E7E3DA] bg-white text-[13px] leading-none text-[#77808E]"
-                @click="toggleColapso"
-            >
-                ›
-            </button>
-        </div>
     </aside>
 </template>

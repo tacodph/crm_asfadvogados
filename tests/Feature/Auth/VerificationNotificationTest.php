@@ -26,9 +26,15 @@ class VerificationNotificationTest extends TestCase
 
         $user = User::factory()->unverified()->create();
 
+        // Fortify's "already sent" response is a plain back(); with no
+        // Referer header it falls back to the current request's own root,
+        // which 404s on a tenant subdomain (nothing is routed at "/" there)
+        // — a real browser always sends one for same-origin navigation, so
+        // set it explicitly to get the same deterministic behavior here.
         $this->actingAs($user)
-            ->post(route('verification.send'))
-            ->assertRedirect(route('home'));
+            ->from($this->tenantUrl('dashboard'))
+            ->post($this->tenantUrl('verification.send'))
+            ->assertRedirect($this->tenantUrl('dashboard'));
 
         Notification::assertSentTo($user, VerifyEmail::class);
     }
@@ -40,8 +46,8 @@ class VerificationNotificationTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->post(route('verification.send'))
-            ->assertRedirect(route('dashboard', absolute: false));
+            ->post($this->tenantUrl('verification.send'))
+            ->assertRedirect($this->tenantUrl('dashboard'));
 
         Notification::assertNothingSent();
     }

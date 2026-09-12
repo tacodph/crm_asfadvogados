@@ -11,14 +11,14 @@ defineProps<{
         <div
             v-for="campo in campos"
             :key="campo.label"
-            class="flex flex-col gap-[3px] rounded-lg border border-[#EEEBE4] bg-[#FBFAF7] px-3 py-2.5"
+            class="flex flex-col gap-[3px] rounded-lg border border-border bg-card px-3 py-2.5"
         >
             <span
-                class="font-[family-name:var(--font-crm-mono)] text-[9.5px] tracking-[0.11em] text-[#77808E] uppercase"
+                class="font-[family-name:var(--font-crm-mono)] text-[9.5px] tracking-[0.11em] text-muted-foreground uppercase"
             >
                 {{ campo.label }}
             </span>
-            <span class="text-[13px] text-[#171B21]">{{ campo.valor }}</span>
+            <span class="text-[13px] text-foreground">{{ campo.valor }}</span>
         </div>
     </div>
 </template>

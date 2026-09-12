@@ -167,9 +167,9 @@ return [
     */
 
     'features' => [
-        /* @chisel-registration */
-        Features::registration(),
-        /* @end-chisel-registration */
+        // Public self-registration disabled: there's no tenant to assign a
+        // guest to. New tenants come from the "criar-conta" signup flow;
+        // colleagues get added by an already-logged-in admin (not built yet).
         Features::resetPasswords(),
         /* @chisel-email-verification */
         Features::emailVerification(),

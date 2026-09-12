@@ -22,7 +22,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_link_screen_can_be_rendered()
     {
-        $response = $this->get(route('password.request'));
+        $response = $this->get($this->tenantUrl('password.request'));
 
         $response->assertOk();
     }
@@ -33,7 +33,7 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post(route('password.email'), ['email' => $user->email]);
+        $this->post($this->tenantUrl('password.email'), ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class);
     }
@@ -44,10 +44,10 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post(route('password.email'), ['email' => $user->email]);
+        $this->post($this->tenantUrl('password.email'), ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
-            $response = $this->get(route('password.reset', $notification->token));
+            $response = $this->get($this->tenantUrl('password.reset', ['token' => $notification->token]));
 
             $response->assertOk();
 
@@ -61,10 +61,10 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post(route('password.email'), ['email' => $user->email]);
+        $this->post($this->tenantUrl('password.email'), ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-            $response = $this->post(route('password.update'), [
+            $response = $this->post($this->tenantUrl('password.update'), [
                 'token' => $notification->token,
                 'email' => $user->email,
                 'password' => 'password',
@@ -73,7 +73,7 @@ class PasswordResetTest extends TestCase
 
             $response
                 ->assertSessionHasNoErrors()
-                ->assertRedirect(route('login'));
+                ->assertRedirect($this->tenantUrl('login'));
 
             return true;
         });
@@ -83,7 +83,7 @@ class PasswordResetTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post(route('password.update'), [
+        $response = $this->post($this->tenantUrl('password.update'), [
             'token' => 'invalid-token',
             'email' => $user->email,
             'password' => 'newpassword123',

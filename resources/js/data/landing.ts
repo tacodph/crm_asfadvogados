@@ -1,7 +1,14 @@
 export type HeroCard = {
     nome: string;
+    assunto: string;
     canal: string;
+    status: string;
+    statusCor: string;
+    statusBg: string;
+    responsavel: string;
     valor: string;
+    previsao: string;
+    urgente?: boolean;
 };
 
 export type HeroColumn = {
@@ -61,44 +68,91 @@ export type PlanDefinition = {
     resumo: string;
     itens: string[];
     acao: string;
+    ctaType: 'self-service' | 'contact-sales';
 };
 
 export const heroColunas: HeroColumn[] = [
     {
-        nome: 'Diagnóstico',
-        qtd: 2,
+        nome: 'Novo lead',
+        qtd: 1,
         cor: '#333A45',
         cards: [
             {
-                nome: 'Metalúrgica Verano S/A',
-                canal: 'Indicação',
-                valor: '48k',
+                nome: 'Joabe Miguel',
+                assunto: 'PMDF — Discursiva',
+                canal: 'WhatsApp',
+                status: 'Análise Pendente',
+                statusCor: '#8C6F3F',
+                statusBg: '#FBF1DF',
+                responsavel: 'Dr. Bruno',
+                valor: 'R$ 3,2k',
+                previsao: '18/09',
             },
-            { nome: 'Cooperativa Vale Verde', canal: 'Maps', valor: '64k' },
         ],
     },
     {
-        nome: 'Negociação',
-        qtd: 2,
-        cor: '#6B5330',
+        nome: 'Triagem',
+        qtd: 3,
+        cor: '#31496E',
         cards: [
             {
-                nome: 'Construtora Piedade',
-                canal: 'Indicação',
-                valor: '210k',
+                nome: 'Maria Helena',
+                assunto: 'TRF1 — Recurso',
+                canal: 'Site',
+                status: 'Qualificado',
+                statusCor: '#14574F',
+                statusBg: '#E7F0EE',
+                responsavel: 'Dr. Flávio',
+                valor: 'R$ 4,8k',
+                previsao: '20/09',
             },
-            { nome: 'Instituto Farrapo', canal: 'Site', valor: '25k' },
+            {
+                nome: 'Carlos Eduardo',
+                assunto: 'PCDF — Teste físico',
+                canal: 'Instagram',
+                status: 'Retorno a agendar',
+                statusCor: '#3F5E8C',
+                statusBg: '#E8EEF6',
+                responsavel: 'Dr. Bruno',
+                valor: 'R$ 2,9k',
+                previsao: '22/09',
+            },
+        ],
+    },
+    {
+        nome: 'Envio da oferta',
+        qtd: 2,
+        cor: '#41503A',
+        cards: [
+            {
+                nome: 'Gabriel Rodrigues',
+                assunto: 'PMDF — Questões',
+                canal: 'WhatsApp',
+                status: 'Em Negociação',
+                statusCor: '#6B5330',
+                statusBg: '#F6EFE4',
+                responsavel: 'Dr. Bruno',
+                valor: 'R$ 5,1k',
+                previsao: '09/09',
+                urgente: true,
+            },
         ],
     },
     {
         nome: 'Fechamento',
-        qtd: 1,
+        qtd: 2,
         cor: '#0F4A43',
         cards: [
             {
-                nome: 'Têxtil Guaporé Ltda',
+                nome: 'Ana Beatriz',
+                assunto: 'Contrato assinado',
                 canal: 'Indicação',
-                valor: '96k',
+                status: 'Contrato Fechado',
+                statusCor: '#14574F',
+                statusBg: '#E7F0EE',
+                responsavel: 'Dr. Flávio',
+                valor: 'R$ 6,5k',
+                previsao: '01/09',
             },
         ],
     },
@@ -125,14 +179,14 @@ export const recursos: Recurso[] = [
         titulo: 'WhatsApp, site e indicação num só lugar',
         texto: 'Toda mensagem vira interação no histórico do contato, com deduplicação por telefone, e-mail e CPF/CNPJ.',
         iconeBg: '#E7F0EE',
-        iconeCor: '#14574F',
+        iconeCor: 'var(--accent)',
     },
     {
         marca: 'A',
         titulo: 'Follow-up que gera tarefa, não spam',
         texto: 'Sem resposta há três dias abre tarefa para o advogado responsável — o sistema não dispara mensagem em massa por decisão de projeto.',
         iconeBg: '#F6EFE2',
-        iconeCor: '#8C6F3F',
+        iconeCor: 'var(--primary)',
     },
     {
         marca: 'P',
@@ -208,7 +262,7 @@ export const telas: Record<AbaKey, Tela> = {
                 titulo: 'Cooperativa Vale Verde',
                 sub: 'Diagnóstico · consentimento pendente',
                 valor: 'R$ 64.000',
-                cor: '#8C6F3F',
+                cor: 'var(--primary)',
             },
         ],
     },
@@ -238,13 +292,13 @@ export const telas: Record<AbaKey, Tela> = {
                 titulo: 'PR-2026-124 vence',
                 sub: 'Validade da proposta',
                 valor: '17/08',
-                cor: '#8C6F3F',
+                cor: 'var(--primary)',
             },
             {
                 titulo: 'Coletar assinatura eletrônica',
                 sub: 'Têxtil Guaporé · hoje',
                 valor: '17:00',
-                cor: '#14574F',
+                cor: 'var(--accent)',
             },
         ],
     },
@@ -268,7 +322,7 @@ export const telas: Record<AbaKey, Tela> = {
                 titulo: 'Revogação de consentimento',
                 sub: 'Aline Cordeiro · contato suspenso',
                 valor: '09:40',
-                cor: '#8C6F3F',
+                cor: 'var(--primary)',
             },
             {
                 titulo: 'Proposta v2 gerada',
@@ -346,7 +400,8 @@ export const planosDefs: PlanDefinition[] = [
             'Histórico unificado e tarefas',
             'Trilha de auditoria completa',
         ],
-        acao: 'Falar com o time',
+        acao: 'Criar conta grátis',
+        ctaType: 'self-service',
     },
     {
         nome: 'Escritório',
@@ -362,7 +417,8 @@ export const planosDefs: PlanDefinition[] = [
             'API de tráfego (Meta, Google, site)',
             'Painel de métricas e motivos de perda',
         ],
-        acao: 'Agendar demonstração',
+        acao: 'Criar conta grátis',
+        ctaType: 'self-service',
     },
     {
         nome: 'Banca',
@@ -380,6 +436,7 @@ export const planosDefs: PlanDefinition[] = [
             'Gerente de conta nomeado',
         ],
         acao: 'Falar com o time',
+        ctaType: 'contact-sales',
     },
 ];
 

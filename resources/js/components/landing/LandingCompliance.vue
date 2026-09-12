@@ -12,8 +12,8 @@ const flags = computed(() => {
             titulo: termo.titulo,
             norma: termo.norma,
             bg: termo.nivel === 'bloqueio' ? '#FCF5F3' : '#FBF7EF',
-            borda: termo.nivel === 'bloqueio' ? '#E6C9C2' : '#E2D3B6',
-            cor: termo.nivel === 'bloqueio' ? '#9B3B2F' : '#8C6F3F',
+            borda: termo.nivel === 'bloqueio' ? '#E6C9C2' : 'color-mix(in srgb, var(--primary) 35%, transparent)',
+            cor: termo.nivel === 'bloqueio' ? '#9B3B2F' : 'var(--primary)',
         }));
 
     if (encontradas.length) {
@@ -26,8 +26,8 @@ const flags = computed(() => {
             titulo: 'Texto liberado para uso automatizado',
             norma: 'Sem promessa de resultado, comparação ou apelo mercantilista. Parecer anexado ao modelo.',
             bg: '#F1F6F4',
-            borda: '#CCE0DA',
-            cor: '#14574F',
+            borda: 'color-mix(in srgb, var(--accent) 35%, transparent)',
+            cor: 'var(--accent)',
         },
     ];
 });
@@ -40,7 +40,7 @@ const flags = computed(() => {
     >
         <div class="flex flex-col gap-5">
             <span
-                class="font-[family-name:var(--font-landing-mono)] text-[9.5px] tracking-[0.14em] text-[#8C6F3F] uppercase"
+                class="font-[family-name:var(--font-landing-mono)] text-[9.5px] tracking-[0.14em] text-primary uppercase"
             >
                 O diferencial que a OAB cobra
             </span>
@@ -49,7 +49,7 @@ const flags = computed(() => {
             >
                 Um CRM comum coloca o escritório em risco.
             </h2>
-            <p class="m-0 text-[15.5px] leading-[1.7] text-[#3C4450]">
+            <p class="m-0 text-[15.5px] leading-[1.7] text-muted-foreground">
                 Ferramentas de vendas nasceram para disparo em massa, gatilho de
                 urgência e comparação de preço — tudo o que a advocacia não pode
                 fazer. O Antessala inverte a lógica: o que é vedado simplesmente
@@ -59,19 +59,19 @@ const flags = computed(() => {
                 <div
                     v-for="trava in travas"
                     :key="trava.titulo"
-                    class="grid grid-cols-[20px_1fr] items-start gap-3 border-b border-[#E7E3DA] pb-[11px]"
+                    class="grid grid-cols-[20px_1fr] items-start gap-3 border-b border-border pb-[11px]"
                 >
                     <span
-                        class="grid h-5 w-5 place-items-center rounded-full bg-[#E7F0EE] text-[11px] text-[#14574F]"
+                        class="grid h-5 w-5 place-items-center rounded-full bg-accent/15 text-[11px] text-accent"
                     >
                         ✓
                     </span>
                     <span class="flex flex-col gap-[3px]">
-                        <span class="text-[13.5px] font-medium text-[#171B21]">
+                        <span class="text-[13.5px] font-medium text-foreground">
                             {{ trava.titulo }}
                         </span>
                         <span
-                            class="text-[12.5px] leading-[1.55] text-[#5F6875]"
+                            class="text-[12.5px] leading-[1.55] text-muted-foreground"
                         >
                             {{ trava.texto }}
                         </span>
@@ -81,7 +81,7 @@ const flags = computed(() => {
         </div>
 
         <div
-            class="flex flex-col gap-4 rounded-xl border border-[#E3DFD6] bg-white px-6 pt-6 pb-[26px]"
+            class="flex flex-col gap-4 rounded-xl border border-border bg-card px-6 pt-6 pb-[26px]"
         >
             <div class="flex flex-col gap-[5px]">
                 <h3
@@ -89,7 +89,7 @@ const flags = computed(() => {
                 >
                     Revisor ético de mensagens
                 </h3>
-                <p class="m-0 text-[13px] leading-[1.6] text-[#5F6875]">
+                <p class="m-0 text-[13px] leading-[1.6] text-muted-foreground">
                     Todo texto automatizado passa por análise antes de ir ao ar.
                     Experimente: escreva algo que um vendedor escreveria.
                 </p>
@@ -97,7 +97,7 @@ const flags = computed(() => {
             <textarea
                 v-model="msg"
                 rows="4"
-                class="resize-y rounded-[9px] border border-[#E3DFD6] bg-[#FBFAF7] px-[13px] py-3 text-[13.5px] leading-[1.6] text-[#171B21] outline-none focus:border-[#C79A4E]"
+                class="resize-y rounded-[9px] border border-border bg-card px-[13px] py-3 text-[13.5px] leading-[1.6] text-foreground outline-none focus:border-primary"
             />
             <div class="flex flex-col gap-[9px]">
                 <div
@@ -116,16 +116,16 @@ const flags = computed(() => {
                         {{ flag.nivel }}
                     </span>
                     <span class="flex flex-col gap-[3px]">
-                        <span class="text-[13px] text-[#171B21]">
+                        <span class="text-[13px] text-foreground">
                             {{ flag.titulo }}
                         </span>
-                        <span class="text-xs leading-normal text-[#5F6875]">
+                        <span class="text-xs leading-normal text-muted-foreground">
                             {{ flag.norma }}
                         </span>
                     </span>
                 </div>
             </div>
-            <span class="text-[11.5px] leading-[1.55] text-[#9AA2AE]">
+            <span class="text-[11.5px] leading-[1.55] text-muted-foreground">
                 O parecer fica anexado ao modelo e versionado — serve como trava
                 preventiva e como prova de diligência.
             </span>

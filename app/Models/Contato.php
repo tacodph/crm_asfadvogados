@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\ContatoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -13,6 +14,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int $tenant_id
  * @property string $nome
  * @property string|null $cargo
  * @property int|null $empresa_id
@@ -20,8 +22,13 @@ use Illuminate\Support\Carbon;
  * @property string|null $email
  * @property string|null $telefone
  * @property string|null $cpf
+ * @property string|null $cidade
+ * @property string|null $cep
+ * @property int|null $uf_id
+ * @property int|null $municipio_id
  * @property int $canal_contato_id
  * @property int $status_consentimento_id
+ * @property int $status_comercial_id
  * @property bool $registro_mesclado
  * @property string|null $observacao_deduplicacao
  * @property Carbon|null $created_at
@@ -36,15 +43,20 @@ use Illuminate\Support\Carbon;
     'email',
     'telefone',
     'cpf',
+    'cidade',
+    'cep',
+    'uf_id',
+    'municipio_id',
     'canal_contato_id',
     'status_consentimento_id',
+    'status_comercial_id',
     'registro_mesclado',
     'observacao_deduplicacao',
 ])]
 class Contato extends Model
 {
     /** @use HasFactory<ContatoFactory> */
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     /**
      * @var array<string, mixed>
@@ -80,6 +92,22 @@ class Contato extends Model
     }
 
     /**
+     * @return BelongsTo<Uf, $this>
+     */
+    public function uf(): BelongsTo
+    {
+        return $this->belongsTo(Uf::class);
+    }
+
+    /**
+     * @return BelongsTo<IbgeMunicipio, $this>
+     */
+    public function municipio(): BelongsTo
+    {
+        return $this->belongsTo(IbgeMunicipio::class, 'municipio_id');
+    }
+
+    /**
      * @return BelongsTo<CanalContato, $this>
      */
     public function canalContato(): BelongsTo
@@ -96,6 +124,14 @@ class Contato extends Model
     }
 
     /**
+     * @return BelongsTo<StatusComercial, $this>
+     */
+    public function statusComercial(): BelongsTo
+    {
+        return $this->belongsTo(StatusComercial::class);
+    }
+
+    /**
      * @return HasMany<ConsentimentoContato, $this>
      */
     public function consentimentos(): HasMany
@@ -109,5 +145,13 @@ class Contato extends Model
     public function negociacoes(): HasMany
     {
         return $this->hasMany(Negociacao::class);
+    }
+
+    /**
+     * @return HasMany<Proposta, $this>
+     */
+    public function propostas(): HasMany
+    {
+        return $this->hasMany(Proposta::class);
     }
 }
