@@ -25,7 +25,10 @@ return new class extends Migration
             $table->json('payload_bruto');
             $table->timestamps();
 
-            $table->unique(['meta_conversao_config_id', 'referencia']);
+            $table->unique(
+                ['meta_conversao_config_id', 'referencia'],
+                'mce_config_referencia_unique',
+            );
         });
     }
 

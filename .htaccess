@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Shared hosting fallback (Hostinger/cPanel): when the domain document
+    # root is the project folder instead of /public, route into public/.
+    # Preferred fix: in hPanel → Domains → set document root to /public.
+
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ /public/$1 [L,QSA]
+</IfModule>

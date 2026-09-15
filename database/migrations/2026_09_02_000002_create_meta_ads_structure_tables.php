@@ -98,9 +98,12 @@ return new class extends Migration
             $table->json('bruto');
             $table->timestamps();
 
-            $table->unique(['objeto_id', 'nivel', 'referencia']);
+            $table->unique(['objeto_id', 'nivel', 'referencia'], 'maid_objeto_nivel_ref_unique');
             $table->index(['tenant_id', 'referencia']);
-            $table->index(['meta_ads_conta_id', 'nivel', 'referencia']);
+            $table->index(
+                ['meta_ads_conta_id', 'nivel', 'referencia'],
+                'maid_conta_nivel_ref_index',
+            );
         });
 
         Schema::create('meta_ads_sync_execucoes', function (Blueprint $table) {

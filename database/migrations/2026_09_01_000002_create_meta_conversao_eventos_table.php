@@ -37,7 +37,10 @@ return new class extends Migration
             $table->boolean('is_teste')->default(false);
             $table->timestamps();
 
-            $table->unique(['meta_conversao_config_id', 'event_id']);
+            $table->unique(
+                ['meta_conversao_config_id', 'event_id'],
+                'mcevt_config_event_id_unique',
+            );
             $table->index(['tenant_id', 'event_name', 'created_at']);
             $table->index(['tenant_id', 'status']);
         });
