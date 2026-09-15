@@ -30,8 +30,8 @@ class QualificacaoAtendimentosSeederTest extends TestCase
             $this->assertSame(2, Negociacao::query()->count());
             $this->assertSame(1, Proposta::query()->count());
             $this->assertGreaterThan(2, HistoricoNegociacao::query()->count());
-            $this->assertTrue(User::query()->where('email', 'bruno.gabriel@asfadvogados.adv.br')->exists());
-            $this->assertTrue(User::query()->where('email', 'flavio.augusto@asfadvogados.adv.br')->exists());
+            $this->assertTrue(User::query()->where('email', 'brunogabriel@asfadvogados.com')->exists());
+            $this->assertTrue(User::query()->where('email', 'flavio.augusto@asfadvogados.com')->exists());
             $this->assertTrue(Contato::query()->where('telefone', '61999990001')->exists());
             $this->assertTrue(Negociacao::query()->where('assunto', 'PMDF - QUESTÕES')->exists());
             $this->assertTrue(Proposta::query()->where('codigo', 'PR-AGO-001')->exists());

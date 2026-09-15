@@ -51,7 +51,7 @@ export type ContatoLinha = {
 
 export type EmpresaDrawer = {
     nome: string;
-    cnpj: string;
+    cnpj: string | null;
     cidade: string;
     campos: DrawerField[];
     conflitoCor: string;
@@ -65,7 +65,7 @@ export type EmpresaDrawer = {
 export type EmpresaLinha = {
     id: number;
     nome: string;
-    cnpj: string;
+    cnpj: string | null;
     setor: string;
     uf: string;
     municipio: string;

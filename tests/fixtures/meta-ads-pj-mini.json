@@ -1,0 +1,53 @@
+[
+  {
+    "ordem": 1,
+    "data_entrada": "2026-05-07 07:40:29",
+    "nome": "Jacqueline matos",
+    "telefone": "91992001123",
+    "email": "novabiodistribuidora@gmail.com",
+    "valor_divida": "Acima de R$500k",
+    "tipo_pessoa": "Ambas",
+    "capag": null,
+    "campanha": "[REV-PJ] [LEADS] [FORMS] Gestão de Passivo PJ",
+    "publico": "00 - [MANUAL] [AD - 2] AdvantagePlus + Sul, Sudeste e Centro-Oeste (- RJ e ES) + 30-55",
+    "anuncio": "AD 2 - De 500k para 720k",
+    "nota_operacional": null,
+    "zona_status": "Ambas",
+    "em_aba_reuniao": true,
+    "etapa_sugerida": "novo_lead"
+  },
+  {
+    "ordem": 2,
+    "data_entrada": "2026-05-07 07:42:09",
+    "nome": "Rodolpho Oliveira",
+    "telefone": "61992017262",
+    "email": "dolphinho.oliveira@gmail.com",
+    "valor_divida": "Entre R$ 100k e R$300k",
+    "tipo_pessoa": "PJ",
+    "capag": null,
+    "campanha": "[REV-PJ] [LEADS] [FORMS] Gestão de Passivo PJ",
+    "publico": "00 - [MANUAL] [AD - 5] AdvantagePlus + Sul, Sudeste e Centro-Oeste (- RJ e ES) + 30-55",
+    "anuncio": "AD 5 - 6 parcelas em atraso",
+    "nota_operacional": null,
+    "zona_status": "PJ",
+    "em_aba_reuniao": true,
+    "etapa_sugerida": "follow_up_1"
+  },
+  {
+    "ordem": 3,
+    "data_entrada": "2026-05-08 12:17:29",
+    "nome": "Ilso Petinatti",
+    "telefone": "14991780040",
+    "email": "ilsojosepetinatti@gmail.com",
+    "valor_divida": "Entre R$ 100k e R$300k",
+    "tipo_pessoa": "PJ",
+    "capag": null,
+    "campanha": "[REV-PJ] [LEADS] [FORMS] Gestão de Passivo PJ",
+    "publico": "00 - [MANUAL] [AD - 3] AdvantagePlus + Sul, Sudeste e Centro-Oeste (- RJ e ES) + 30-55",
+    "anuncio": "AD 3 - CP Parcela do Pronampe subiu",
+    "nota_operacional": null,
+    "zona_status": "PJ",
+    "em_aba_reuniao": true,
+    "etapa_sugerida": "reuniao_agendada"
+  }
+]

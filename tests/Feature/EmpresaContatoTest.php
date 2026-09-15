@@ -91,7 +91,7 @@ class EmpresaContatoTest extends TestCase
 
         $this->asTenant($tenant, function () {
             $this->assertSame(7, Setor::query()->count());
-            $this->assertSame(6, CanalContato::query()->count());
+            $this->assertSame(7, CanalContato::query()->count());
             $this->assertSame(2, StatusConflito::query()->count());
             $this->assertSame(6, StatusConsentimento::query()->count());
             $this->assertSame(7, Empresa::query()->count());

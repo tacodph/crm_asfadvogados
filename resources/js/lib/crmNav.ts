@@ -72,11 +72,7 @@ const ENABLED_SCREENS = new Set<ScreenKey>([
     'contatos',
     'empresas',
     'propostas',
-    'automacoes',
     'trafego',
-    'investimento',
-    'site',
-    'compliance',
     'admin',
 ]);
 
@@ -120,8 +116,6 @@ export function screenHref(
 }
 
 export const SCREEN_COUNT: Partial<Record<ScreenKey, string>> = {
-    automacoes: '4',
-    compliance: '3',
     admin: String(FUNIS_INIT.length),
 };
 

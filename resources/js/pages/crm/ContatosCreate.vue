@@ -2,6 +2,7 @@
 import { Link, useForm, useHttp } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { store } from '@/actions/App/Http/Controllers/ContatoController';
+import { edit as empresasEdit } from '@/actions/App/Http/Controllers/EmpresaController';
 import { useContatoDuplicatas } from '@/composables/useContatoDuplicatas';
 import { edit as contatosEdit, index as contatosIndex } from '@/routes/contatos';
 import { index as municipiosIndex } from '@/routes/ibge/municipios';
@@ -25,6 +26,8 @@ const props = defineProps<{
         canal_contato_id: number | null;
         status_consentimento_id: number | null;
         status_comercial_id: number | null;
+        empresa_id: number | null;
+        return_to_empresa: boolean;
         consentimentos: ContatoConsentimento[];
     };
     opcoes: {
@@ -41,6 +44,7 @@ const props = defineProps<{
 const http = useHttp();
 const municipios = ref<Municipio[]>([...props.opcoes.municipios]);
 const carregandoMunicipios = ref(false);
+const empresaTravada = computed(() => props.defaults.return_to_empresa);
 
 const form = useForm({
     nome: '',
@@ -50,7 +54,8 @@ const form = useForm({
     cpf: '',
     cep: '',
     tipo_pessoa_id: props.defaults.tipo_pessoa_id,
-    empresa_id: null as number | null,
+    empresa_id: props.defaults.empresa_id,
+    return_to_empresa: props.defaults.return_to_empresa,
     estado_id: null as number | null,
     municipio_id: null as number | null,
     canal_contato_id: props.defaults.canal_contato_id,
@@ -133,6 +138,7 @@ const submit = (): void => {
                 data.empresa_id === 0
                     ? null
                     : Number(data.empresa_id),
+            return_to_empresa: Boolean(data.return_to_empresa),
             municipio_id:
                 data.municipio_id === null ||
                 data.municipio_id === '' ||
@@ -162,10 +168,18 @@ const submit = (): void => {
     <div class="mx-auto flex max-w-[760px] flex-col gap-4">
         <div class="flex flex-col gap-1">
             <Link
-                :href="contatosIndex()"
+                :href="
+                    empresaTravada && form.empresa_id
+                        ? empresasEdit.url(form.empresa_id)
+                        : contatosIndex()
+                "
                 class="text-[12px] text-muted-foreground hover:text-foreground"
             >
-                ← Voltar para contatos
+                {{
+                    empresaTravada
+                        ? '← Voltar para a empresa'
+                        : '← Voltar para contatos'
+                }}
             </Link>
             <h1
                 class="m-0 font-[family-name:var(--font-crm-display)] text-[22px] font-medium tracking-[-0.01em] text-foreground"
@@ -417,6 +431,7 @@ const submit = (): void => {
                         <select
                             id="empresa_id"
                             v-model="form.empresa_id"
+                            :disabled="empresaTravada"
                             :class="fieldClass"
                         >
                             <option :value="null">Não pertence a empresa</option>

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { Link, useForm, useHttp } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
+import {
+    create as createContato,
+    edit as editContato,
+} from '@/actions/App/Http/Controllers/ContatoController';
 import { update } from '@/actions/App/Http/Controllers/EmpresaController';
 import { index as empresasIndex } from '@/routes/empresas';
 import { index as municipiosIndex } from '@/routes/ibge/municipios';
@@ -8,12 +12,19 @@ import { index as municipiosIndex } from '@/routes/ibge/municipios';
 type Opcao = { id: number; nome: string; descricao?: string | null };
 type Estado = { id: number; sigla: string; nome: string };
 type Municipio = { id: number; nome: string };
+type ContatoVinculado = {
+    id: number;
+    nome: string;
+    cargo: string | null;
+    email: string | null;
+    telefone: string | null;
+};
 
 const props = defineProps<{
     empresa: {
         id: number;
         nome: string;
-        cnpj: string;
+        cnpj: string | null;
         setor_id: number;
         porte: string;
         estado_id: number | null;
@@ -23,6 +34,7 @@ const props = defineProps<{
         conflito_texto: string;
         responsavel_user_id: number | null;
     };
+    contatos: ContatoVinculado[];
     opcoes: {
         setores: Opcao[];
         statusConflitos: Opcao[];
@@ -39,7 +51,7 @@ const carregandoMunicipios = ref(false);
 
 const form = useForm({
     nome: props.empresa.nome,
-    cnpj: props.empresa.cnpj,
+    cnpj: props.empresa.cnpj ?? '',
     setor_id: props.empresa.setor_id,
     porte: props.empresa.porte,
     estado_id: props.empresa.estado_id,
@@ -139,7 +151,8 @@ const submit = (): void => {
                 Editar empresa
             </h1>
             <p class="m-0 text-[13px] text-muted-foreground">
-                Atualize os dados cadastrais e a localização IBGE.
+                Atualize os dados cadastrais, a localização IBGE e os contatos
+                vinculados.
             </p>
         </div>
 
@@ -165,11 +178,10 @@ const submit = (): void => {
                 </div>
 
                 <div class="flex flex-col gap-1.5">
-                    <label :class="labelClass">CNPJ</label>
+                    <label :class="labelClass">CNPJ (opcional)</label>
                     <input
                         v-model="form.cnpj"
                         type="text"
-                        required
                         :class="fieldClass"
                     />
                     <p
@@ -339,5 +351,65 @@ const submit = (): void => {
                 </Link>
             </div>
         </form>
+
+        <section
+            class="flex flex-col gap-3 rounded-[10px] border border-border bg-card px-5 py-5"
+        >
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex min-w-0 flex-col gap-1">
+                    <h2
+                        class="m-0 font-[family-name:var(--font-crm-display)] text-base font-medium text-foreground"
+                    >
+                        Contatos vinculados
+                    </h2>
+                    <p class="m-0 text-[12.5px] text-muted-foreground">
+                        Adicione pessoas ligadas a esta empresa.
+                    </p>
+                </div>
+                <Link
+                    :href="
+                        createContato.url(
+                            {},
+                            { query: { empresa_id: empresa.id } },
+                        )
+                    "
+                    class="shrink-0 rounded-[7px] border border-primary bg-primary px-[13px] py-[7px] text-[12.5px] text-primary-foreground"
+                >
+                    Adicionar contato
+                </Link>
+            </div>
+
+            <p
+                v-if="contatos.length === 0"
+                class="m-0 text-[12.5px] text-muted-foreground"
+            >
+                Nenhum contato vinculado.
+            </p>
+
+            <div
+                v-for="contato in contatos"
+                :key="contato.id"
+                class="flex items-center justify-between gap-3 rounded-[9px] border border-border bg-background px-[13px] py-[11px]"
+            >
+                <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span class="truncate text-[13px] text-foreground">
+                        {{ contato.nome }}
+                    </span>
+                    <span class="truncate text-[11.5px] text-muted-foreground">
+                        {{
+                            [contato.cargo, contato.email, contato.telefone]
+                                .filter(Boolean)
+                                .join(' · ') || 'Sem dados de contato'
+                        }}
+                    </span>
+                </span>
+                <Link
+                    :href="editContato.url(contato.id)"
+                    class="shrink-0 rounded-[7px] border border-border bg-card px-[11px] py-1.5 text-[12px] text-primary hover:border-primary"
+                >
+                    Editar
+                </Link>
+            </div>
+        </section>
     </div>
 </template>

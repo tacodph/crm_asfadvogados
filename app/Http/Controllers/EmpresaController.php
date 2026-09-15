@@ -154,6 +154,9 @@ class EmpresaController extends Controller
             'municipio.estado:id,txt_sigla_uf,txt_uf',
             'statusConflito:id,nome',
             'responsavel:id,name',
+            'contatos' => fn ($query) => $query
+                ->orderBy('nome')
+                ->select(['id', 'empresa_id', 'nome', 'cargo', 'email', 'telefone']),
         ]);
 
         $estadoId = $empresa->municipio?->estado_id
@@ -191,6 +194,16 @@ class EmpresaController extends Controller
                 'conflito_texto' => $empresa->conflito_texto ?? '',
                 'responsavel_user_id' => $empresa->responsavel_user_id,
             ],
+            'contatos' => $empresa->contatos
+                ->map(fn ($contato): array => [
+                    'id' => $contato->id,
+                    'nome' => $contato->nome,
+                    'cargo' => $contato->cargo,
+                    'email' => $contato->email,
+                    'telefone' => $contato->telefone,
+                ])
+                ->values()
+                ->all(),
             'opcoes' => [
                 'setores' => Setor::query()
                     ->orderBy('ordem')

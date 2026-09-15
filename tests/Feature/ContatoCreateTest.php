@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\CanalContato;
 use App\Models\Contato;
+use App\Models\Empresa;
 use App\Models\FinalidadeConsentimento;
 use App\Models\IbgeEstado;
 use App\Models\IbgeMunicipio;
@@ -108,6 +109,67 @@ class ContatoCreateTest extends TestCase
         $this->assertSame($user->tenant_id, $contato->tenant_id);
         $this->assertSame('Caxias do Sul', $contato->cidade);
         $this->assertSame(1, $contato->consentimentos()->count());
+    }
+
+    public function test_create_page_prefills_empresa_from_query(): void
+    {
+        $user = User::factory()->create();
+        $empresa = Empresa::factory()->create();
+        TipoPessoa::factory()->create();
+        CanalContato::factory()->create();
+        StatusConsentimento::factory()->create(['slug' => 'nao-concedido']);
+        StatusComercial::factory()->create(['slug' => 'novo']);
+        FinalidadeConsentimento::factory()->create();
+
+        $this->actingAs($user)
+            ->withoutVite()
+            ->get(route('contatos.create', ['empresa_id' => $empresa->id]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('crm/ContatosCreate')
+                ->where('defaults.empresa_id', $empresa->id)
+                ->where('defaults.return_to_empresa', true));
+    }
+
+    public function test_can_store_contact_and_return_to_empresa_edit(): void
+    {
+        $user = User::factory()->create();
+        $empresa = Empresa::factory()->create();
+        $tipo = TipoPessoa::factory()->create(['slug' => 'pf']);
+        $canal = CanalContato::factory()->create();
+        $status = StatusConsentimento::factory()->create(['slug' => 'nao-concedido']);
+        $statusComercial = StatusComercial::factory()->create(['slug' => 'novo']);
+        $finalidade = FinalidadeConsentimento::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('contatos.store'), [
+                'nome' => 'Lead Vinculado',
+                'cargo' => 'Diretor',
+                'email' => 'lead.vinculado@email.test',
+                'telefone' => '61988887777',
+                'cpf' => null,
+                'tipo_pessoa_id' => $tipo->id,
+                'empresa_id' => $empresa->id,
+                'municipio_id' => null,
+                'canal_contato_id' => $canal->id,
+                'status_consentimento_id' => $status->id,
+                'status_comercial_id' => $statusComercial->id,
+                'return_to_empresa' => true,
+                'consentimentos' => [
+                    [
+                        'finalidade_consentimento_id' => $finalidade->id,
+                        'status_consentimento_id' => $status->id,
+                        'concedido_em' => null,
+                        'revogado_em' => null,
+                    ],
+                ],
+            ])
+            ->assertRedirect(route('empresas.edit', $empresa));
+
+        $this->assertDatabaseHas('contatos', [
+            'email' => 'lead.vinculado@email.test',
+            'empresa_id' => $empresa->id,
+        ]);
     }
 
     public function test_guest_cannot_create_a_contact(): void

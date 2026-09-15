@@ -26,7 +26,7 @@ class UpdateEmpresaRequest extends FormRequest
         return [
             'nome' => ['required', 'string', 'max:255'],
             'cnpj' => [
-                'required',
+                'nullable',
                 'string',
                 'max:20',
                 Rule::unique('empresas', 'cnpj')
@@ -61,5 +61,20 @@ class UpdateEmpresaRequest extends FormRequest
                 Rule::exists('users', 'id')->where('tenant_id', $tenantId),
             ],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'cnpj' => $this->filled('cnpj')
+                ? $this->string('cnpj')->toString()
+                : null,
+            'conflito_texto' => $this->filled('conflito_texto')
+                ? $this->string('conflito_texto')->toString()
+                : null,
+            'responsavel_user_id' => $this->filled('responsavel_user_id')
+                ? $this->integer('responsavel_user_id')
+                : null,
+        ]);
     }
 }

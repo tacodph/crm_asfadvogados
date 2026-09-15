@@ -78,6 +78,7 @@ class StoreContatoRequest extends FormRequest
             ],
             'consentimentos.*.concedido_em' => ['nullable', 'date'],
             'consentimentos.*.revogado_em' => ['nullable', 'date', 'after_or_equal:consentimentos.*.concedido_em'],
+            'return_to_empresa' => ['sometimes', 'boolean'],
         ];
     }
 
@@ -143,7 +144,7 @@ class StoreContatoRequest extends FormRequest
 
         return [
             'contato' => [
-                ...collect($validated)->except('consentimentos')->all(),
+                ...collect($validated)->except(['consentimentos', 'return_to_empresa'])->all(),
                 'registro_mesclado' => false,
                 'observacao_deduplicacao' => null,
             ],

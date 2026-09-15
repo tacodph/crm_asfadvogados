@@ -21,7 +21,7 @@ const emit = defineEmits<{
 <template>
     <CrmDrawer
         :title="modelo.nome"
-        :subtitle="`${modelo.cnpj} · ${modelo.cidade}`"
+        :subtitle="`${modelo.cnpj ?? 'Sem CNPJ'} · ${modelo.cidade}`"
         subtitle-mono
         @close="emit('close')"
     >

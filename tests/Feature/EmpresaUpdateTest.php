@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Contato;
 use App\Models\Empresa;
 use App\Models\IbgeMunicipio;
 use App\Models\Setor;
@@ -31,7 +32,28 @@ class EmpresaUpdateTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('crm/EmpresasEdit')
                 ->where('empresa.id', $empresa->id)
-                ->where('empresa.nome', 'Empresa Com Tenant Limpo'));
+                ->where('empresa.nome', 'Empresa Com Tenant Limpo')
+                ->has('contatos'));
+    }
+
+    public function test_edit_page_lists_linked_contacts(): void
+    {
+        $user = User::factory()->create();
+        $empresa = Empresa::factory()->create();
+        $contato = Contato::factory()->create([
+            'empresa_id' => $empresa->id,
+            'nome' => 'Contato da Empresa',
+        ]);
+
+        $this->actingAs($user)
+            ->withoutVite()
+            ->get(route('empresas.edit', $empresa))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('crm/EmpresasEdit')
+                ->has('contatos', 1)
+                ->where('contatos.0.id', $contato->id)
+                ->where('contatos.0.nome', 'Contato da Empresa'));
     }
 
     public function test_edit_page_includes_ibge_estado_and_municipio_options(): void

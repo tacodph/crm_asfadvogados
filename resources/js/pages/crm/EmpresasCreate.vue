@@ -158,11 +158,10 @@ const submit = (): void => {
                 </div>
 
                 <div class="flex flex-col gap-1.5">
-                    <label :class="labelClass">CNPJ</label>
+                    <label :class="labelClass">CNPJ (opcional)</label>
                     <input
                         v-model="form.cnpj"
                         type="text"
-                        required
                         :class="fieldClass"
                     />
                     <p

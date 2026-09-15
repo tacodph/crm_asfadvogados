@@ -114,6 +114,7 @@ class SeedDefaultCatalogsForTenant
             ['slug' => 'instagram', 'nome' => 'Instagram', 'cor' => '#8C4A6B'],
             ['slug' => 'google-maps', 'nome' => 'Google Maps', 'cor' => '#7A6E3F'],
             ['slug' => 'e-mail', 'nome' => 'E-mail', 'cor' => '#3C4450'],
+            ['slug' => 'meta-ads', 'nome' => 'Meta Ads', 'cor' => '#1877F2'],
         ];
     }
 

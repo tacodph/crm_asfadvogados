@@ -213,29 +213,35 @@ class QualificacaoAtendimentosSeeder extends Seeder
     private function ensureResponsaveis(): void
     {
         $defs = [
-            'Dr. Bruno Gabriel' => [
-                'email' => 'bruno.gabriel@asfadvogados.adv.br',
-                'name' => 'Dr. Bruno Gabriel',
+            [
+                'email' => 'brunogabriel@asfadvogados.com',
+                'name' => 'Bruno Gabriel',
+                'role' => Role::ADMIN,
+                'aliases' => ['Bruno Gabriel', 'Dr. Bruno Gabriel'],
             ],
-            'Dr. Flávio Augusto' => [
-                'email' => 'flavio.augusto@asfadvogados.adv.br',
-                'name' => 'Dr. Flávio Augusto',
+            [
+                'email' => 'flavio.augusto@asfadvogados.com',
+                'name' => 'Flávio Augusto',
+                'role' => Role::VENDEDOR,
+                'aliases' => ['Flávio Augusto', 'Dr. Flávio Augusto'],
             ],
         ];
 
-        foreach ($defs as $chave => $dados) {
+        foreach ($defs as $dados) {
             $user = User::query()->updateOrCreate(
                 ['email' => $dados['email']],
                 [
                     'name' => $dados['name'],
                     'password' => 'password',
-                    'role' => Role::VENDEDOR,
+                    'role' => $dados['role'],
                     'especialidades' => ['concursos'],
                     'ausente_ate' => null,
                 ],
             );
 
-            $this->responsaveis[$this->normalizarTexto($chave)] = $user;
+            foreach ($dados['aliases'] as $alias) {
+                $this->responsaveis[$this->normalizarTexto($alias)] = $user;
+            }
         }
     }
 
@@ -248,7 +254,7 @@ class QualificacaoAtendimentosSeeder extends Seeder
         $nome = trim((string) ($linha['nome'] ?? '')) ?: 'Lead sem nome';
         $telefone = $this->telefone($linha['ddd'] ?? null, $linha['whatsapp'] ?? null);
         $campanha = trim((string) ($linha['campanha'] ?? '')) ?: 'Campanha não informada';
-        $responsavel = $this->resolverResponsavel((string) ($linha['responsavel'] ?? 'Dr. Bruno Gabriel'));
+        $responsavel = $this->resolverResponsavel((string) ($linha['responsavel'] ?? 'Bruno Gabriel'));
         $respondeu = $this->sim($linha['respondeu'] ?? null);
         $propostaSim = $this->sim($linha['proposta'] ?? null);
         $statusAtendimento = $this->normalizarTexto($linha['status_atendimento'] ?? null);
@@ -572,7 +578,7 @@ class QualificacaoAtendimentosSeeder extends Seeder
         $chave = $this->normalizarTexto($nome);
 
         return $this->responsaveis[$chave]
-            ?? $this->responsaveis[$this->normalizarTexto('Dr. Bruno Gabriel')];
+            ?? $this->responsaveis[$this->normalizarTexto('Bruno Gabriel')];
     }
 
     private function telefone(mixed $ddd, mixed $whatsapp): ?string

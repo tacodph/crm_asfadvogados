@@ -88,6 +88,53 @@ class EmpresaCreateTest extends TestCase
         $this->assertSame('RS', $empresa->uf->sigla);
     }
 
+    public function test_can_store_empresa_without_cnpj(): void
+    {
+        $user = User::factory()->create();
+        $setor = Setor::factory()->create();
+        $status = StatusConflito::factory()->create();
+        $statusComercial = StatusComercial::factory()->create(['slug' => 'novo']);
+
+        IbgeEstado::query()->updateOrCreate(
+            ['id' => 43],
+            [
+                'txt_uf' => 'Rio Grande do Sul',
+                'txt_sigla_uf' => 'RS',
+            ],
+        );
+        IbgeMunicipio::query()->updateOrCreate(
+            ['id' => 4314902],
+            [
+                'txt_nome_municipios' => 'Porto Alegre',
+                'cod_municipio_6dig' => 431490,
+                'estado_id' => 43,
+            ],
+        );
+        Uf::query()->firstOrCreate(
+            ['sigla' => 'RS'],
+            ['nome' => 'Rio Grande do Sul', 'ordem' => 21],
+        );
+
+        $this->actingAs($user)
+            ->post(route('empresas.store'), [
+                'nome' => 'Empresa Sem CNPJ',
+                'cnpj' => '',
+                'setor_id' => $setor->id,
+                'porte' => '10 funcionários',
+                'municipio_id' => 4314902,
+                'status_conflito_id' => $status->id,
+                'status_comercial_id' => $statusComercial->id,
+                'conflito_texto' => null,
+                'responsavel_user_id' => $user->id,
+            ])
+            ->assertRedirect(route('empresas.index'));
+
+        $empresa = Empresa::query()->where('nome', 'Empresa Sem CNPJ')->first();
+
+        $this->assertNotNull($empresa);
+        $this->assertNull($empresa->cnpj);
+    }
+
     public function test_guest_cannot_create_an_empresa(): void
     {
         $this->get(route('empresas.create'))->assertRedirect(route('login'));

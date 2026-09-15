@@ -25,7 +25,7 @@ class StoreEmpresaRequest extends FormRequest
         return [
             'nome' => ['required', 'string', 'max:255'],
             'cnpj' => [
-                'required',
+                'nullable',
                 'string',
                 'max:20',
                 Rule::unique('empresas', 'cnpj')->where('tenant_id', $tenantId),
@@ -63,6 +63,9 @@ class StoreEmpresaRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
+            'cnpj' => $this->filled('cnpj')
+                ? $this->string('cnpj')->toString()
+                : null,
             'conflito_texto' => $this->filled('conflito_texto')
                 ? $this->string('conflito_texto')->toString()
                 : null,

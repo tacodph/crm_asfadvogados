@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $tenant_id
  * @property string $nome
- * @property string $cnpj
+ * @property string|null $cnpj
  * @property int $setor_id
  * @property string $porte
  * @property string $cidade

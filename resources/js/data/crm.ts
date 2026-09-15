@@ -1009,16 +1009,12 @@ export const NAV_GROUPS: {
     {
         title: 'Operação',
         items: [
-            { key: 'automacoes', label: 'Automações' },
             { key: 'trafego', label: 'API de tráfego' },
-            { key: 'investimento', label: 'Investimento em anúncios' },
-            { key: 'site', label: 'Site' },
         ],
     },
     {
         title: 'Governança',
         items: [
-            { key: 'compliance', label: 'Compliance' },
             { key: 'admin', label: 'Administração' },
         ],
     },

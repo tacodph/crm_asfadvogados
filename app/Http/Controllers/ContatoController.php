@@ -56,7 +56,7 @@ class ContatoController extends Controller
     /**
      * Show the form to create a new contact.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
         $statusPadraoId = StatusConsentimento::query()
             ->where('slug', 'nao-concedido')
@@ -67,6 +67,10 @@ class ContatoController extends Controller
             ->where('slug', 'novo')
             ->value('id')
             ?? StatusComercial::query()->orderBy('ordem')->value('id');
+
+        $empresaId = $request->filled('empresa_id')
+            ? Empresa::query()->whereKey($request->integer('empresa_id'))->value('id')
+            : null;
 
         $consentimentos = FinalidadeConsentimento::query()
             ->orderBy('ordem')
@@ -94,6 +98,8 @@ class ContatoController extends Controller
                 'canal_contato_id' => $canais->first()?->id,
                 'status_consentimento_id' => $statusPadraoId ?? $statusConsentimentos->first()?->id,
                 'status_comercial_id' => $statusComercialPadraoId ?? $statusComerciais->first()?->id,
+                'empresa_id' => $empresaId,
+                'return_to_empresa' => $empresaId !== null,
                 'consentimentos' => $consentimentos,
             ],
             'opcoes' => [
@@ -197,6 +203,12 @@ class ContatoController extends Controller
             'type' => 'success',
             'message' => 'Contato cadastrado.',
         ]);
+
+        $empresaId = $payload['contato']['empresa_id'] ?? null;
+
+        if ($request->boolean('return_to_empresa') && $empresaId !== null) {
+            return redirect()->route('empresas.edit', $empresaId);
+        }
 
         return redirect()->route('contatos.index');
     }
