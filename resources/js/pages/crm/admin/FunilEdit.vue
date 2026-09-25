@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link, router, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import {
     destroy as destroyEtapa,
     edit as editEtapa,
@@ -45,10 +46,12 @@ const etapaForm = useForm({
     campos: '',
     exige_motivo: false,
     ordem: 0,
-    cor_fundo: 'var(--accent)',
-    cor_texto: 'var(--primary-foreground)',
+    cor_fundo: '#14574F',
+    cor_texto: '#FBF9F4',
     cor_suave: 'rgba(251,249,244,0.9)',
 });
+
+const maxOrdemEtapa = computed((): number => props.etapas.length);
 
 const fieldClass =
     'w-full rounded-lg border border-border bg-card px-3 py-2.5 text-[13px] text-foreground outline-none focus:border-primary';
@@ -73,8 +76,8 @@ const addEtapa = (): void => {
                 etapaForm.sla = '1d';
                 etapaForm.exige_motivo = false;
                 etapaForm.ordem = 0;
-                etapaForm.cor_fundo = 'var(--accent)';
-                etapaForm.cor_texto = 'var(--primary-foreground)';
+                etapaForm.cor_fundo = '#14574F';
+                etapaForm.cor_texto = '#FBF9F4';
                 etapaForm.cor_suave = 'rgba(251,249,244,0.9)';
             },
         });
@@ -219,6 +222,8 @@ const removeEtapa = (id: number): void => {
                     v-model.number="etapaForm.ordem"
                     type="number"
                     min="0"
+                    :max="maxOrdemEtapa"
+                    :title="`Ordem máxima: ${maxOrdemEtapa}`"
                     placeholder="Ordem"
                     :class="fieldClass"
                 />
@@ -245,12 +250,18 @@ const removeEtapa = (id: number): void => {
                 >
                     Adicionar etapa
                 </button>
-                <p
-                    v-if="etapaForm.errors.nome"
-                    class="m-0 text-[12px] text-[#9B3B2F] md:col-span-4"
+                <div
+                    v-if="Object.keys(etapaForm.errors).length > 0"
+                    class="m-0 flex flex-col gap-1 text-[12px] text-[#9B3B2F] md:col-span-4"
                 >
-                    {{ etapaForm.errors.nome }}
-                </p>
+                    <p
+                        v-for="(mensagem, campo) in etapaForm.errors"
+                        :key="campo"
+                        class="m-0"
+                    >
+                        {{ mensagem }}
+                    </p>
+                </div>
             </form>
 
             <div

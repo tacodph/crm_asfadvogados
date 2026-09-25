@@ -81,6 +81,8 @@ class NegociacaoResource extends JsonResource
             'conta' => $empresaNome
                 ? $empresaNome.($contatoNome ? ' · '.$contatoNome : '')
                 : $contatoNome,
+            'empresa' => $empresaNome,
+            'contato' => $contatoNome,
             'canal' => $resumo['canal'],
             'canalCor' => $resumo['canalCor'],
             'statusAtendimento' => $this->statusAtendimento?->nome,

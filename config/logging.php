@@ -93,6 +93,15 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // Captura de leads por e-mail (IMAP + parser + job). Nunca recebe senha/token.
+        'leads-email' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/leads-email.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Deferred, Link, router, useForm } from '@inertiajs/vue3';
 import { computed, reactive, ref } from 'vue';
-import TrafegoTabs from '@/components/crm/TrafegoTabs.vue';
 import {
     destroyConta,
     index,
@@ -141,8 +140,6 @@ function badgeToken(conta: ContaAnuncio): string {
 
 <template>
     <div class="flex max-w-[1180px] flex-col gap-4">
-        <TrafegoTabs />
-
         <div class="flex flex-wrap items-center gap-2">
             <select v-model.number="filtros.conta" :class="fieldClass" @change="aplicar()">
                 <option :value="null">Todas as contas ativas</option>

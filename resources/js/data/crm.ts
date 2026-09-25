@@ -8,7 +8,10 @@ export type ScreenKey =
     | 'propostas'
     | 'automacoes'
     | 'trafego'
+    | 'trafego_eventos'
+    | 'trafego_diagnostico'
     | 'investimento'
+    | 'trafego_email'
     | 'site'
     | 'compliance'
     | 'admin'
@@ -1007,9 +1010,13 @@ export const NAV_GROUPS: {
         ],
     },
     {
-        title: 'Operação',
+        title: 'API de tráfego',
         items: [
-            { key: 'trafego', label: 'API de tráfego' },
+            { key: 'trafego', label: 'Configuração' },
+            { key: 'trafego_eventos', label: 'Eventos' },
+            { key: 'trafego_diagnostico', label: 'Diagnóstico' },
+            { key: 'investimento', label: 'Investimento' },
+            { key: 'trafego_email', label: 'E-mail' },
         ],
     },
     {
@@ -1042,12 +1049,24 @@ export const SCREEN_TITLES: Record<ScreenKey, [string, string]> = {
     ],
     automacoes: ['Automações', 'gatilhos, condições e revisão ética de texto'],
     trafego: [
-        'API de tráfego',
-        'entrada de leads pagos e orgânicos, com consentimento na origem',
+        'Configuração',
+        'campanhas CAPI, tokens e saúde da integração Meta',
+    ],
+    trafego_eventos: [
+        'Eventos',
+        'log de envios à API de Conversões da Meta',
+    ],
+    trafego_diagnostico: [
+        'Diagnóstico',
+        'sincronização e saúde das campanhas pagas',
     ],
     investimento: [
-        'Investimento em anúncios',
+        'Investimento',
         'Meta Ads × resultados do CRM — CPL real, custo por contrato e ROAS',
+    ],
+    trafego_email: [
+        'E-mail',
+        'caixas IMAP monitoradas para captura de leads',
     ],
     site: [
         'Módulos do site',

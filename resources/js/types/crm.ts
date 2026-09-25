@@ -127,6 +127,8 @@ export type NegociacaoLinha = {
     nome: string;
     assunto: string;
     conta: string;
+    empresa: string | null;
+    contato: string;
     canal: string;
     canalCor: string;
     statusAtendimento: string | null;

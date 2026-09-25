@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { router, useForm } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import TrafegoTabs from '@/components/crm/TrafegoTabs.vue';
 import {
     destroy,
     eventoTeste,
@@ -295,8 +294,6 @@ function formatarData(iso: string | null): string {
 
 <template>
     <div class="flex max-w-[1180px] flex-col gap-4">
-        <TrafegoTabs />
-
         <div class="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
             <div
                 v-for="k in props.kpis"

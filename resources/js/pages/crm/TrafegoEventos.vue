@@ -2,7 +2,6 @@
 import { Link, router } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
 import CrmDrawer from '@/components/crm/CrmDrawer.vue';
-import TrafegoTabs from '@/components/crm/TrafegoTabs.vue';
 import { index, show } from '@/actions/App/Http/Controllers/TrafegoEventoController';
 import { reenviar } from '@/routes/trafego/eventos';
 import type {
@@ -55,8 +54,6 @@ function fmt(iso: string | null): string {
 
 <template>
     <div class="flex max-w-[1180px] flex-col gap-4">
-        <TrafegoTabs />
-
         <div class="flex flex-wrap items-center gap-2">
             <select v-model="filtros.campanha" :class="fieldClass" @change="aplicar">
                 <option value="">Todas as campanhas</option>

@@ -339,7 +339,7 @@ class AdminDominiosTest extends TestCase
                 'sla' => '2d',
                 'campos' => 'origem, interesse',
                 'exige_motivo' => false,
-                'ordem' => 1,
+                'ordem' => 0,
                 'cor_fundo' => '#14574F',
                 'cor_texto' => '#FBF9F4',
                 'cor_suave' => 'rgba(251,249,244,0.9)',
@@ -366,7 +366,7 @@ class AdminDominiosTest extends TestCase
                 ->component('crm/admin/EtapaFunilEdit')
                 ->has('etapas', 2)
                 ->where('etapas.0.nome', 'Qualificação')
-                ->where('etapas.0.ordem', 1)
+                ->where('etapas.0.ordem', 0)
                 ->where('etapas.1.nome', 'Proposta')
                 ->where('etapas.1.ordem', 2));
 
@@ -388,5 +388,109 @@ class AdminDominiosTest extends TestCase
 
         $this->assertSame('Qualificação avançada', $etapa->fresh()->nome);
         $this->assertTrue($etapa->fresh()->exige_motivo);
+    }
+
+    public function test_store_etapa_normalizes_invalid_css_color_values(): void
+    {
+        $user = User::factory()->create();
+        $funil = Funil::factory()->create();
+
+        $this->actingAs($user)
+            ->post($this->tenantUrl('admin.funis.etapas.store', ['funil' => $funil]), [
+                'nome' => 'Nova etapa',
+                'sla' => '1d',
+                'campos' => '',
+                'exige_motivo' => false,
+                'ordem' => 0,
+                'cor_fundo' => 'var(--accent)',
+                'cor_texto' => 'var(--primary-foreground)',
+                'cor_suave' => 'rgba(251,249,244,0.9)',
+            ])
+            ->assertRedirect($this->tenantUrl('admin.funis.edit', ['funil' => $funil]));
+
+        $etapa = EtapaFunil::query()->where('funil_id', $funil->id)->first();
+        $this->assertNotNull($etapa);
+        $this->assertSame('Nova etapa', $etapa->nome);
+        $this->assertSame('#14574F', $etapa->cor_fundo);
+        $this->assertSame('#FBF9F4', $etapa->cor_texto);
+    }
+
+    public function test_funil_edit_page_uses_hex_defaults_for_new_etapa_colors(): void
+    {
+        $source = file_get_contents(resource_path('js/pages/crm/admin/FunilEdit.vue'));
+
+        $this->assertNotFalse($source);
+        $this->assertStringContainsString("cor_fundo: '#14574F'", $source);
+        $this->assertStringContainsString("cor_texto: '#FBF9F4'", $source);
+        $this->assertStringNotContainsString("cor_fundo: 'var(--accent)'", $source);
+    }
+
+    public function test_store_etapa_rejects_ordem_greater_than_etapas_count(): void
+    {
+        $user = User::factory()->create();
+        $funil = Funil::factory()->create();
+
+        EtapaFunil::factory()->for($funil)->create(['ordem' => 1]);
+        EtapaFunil::factory()->for($funil)->create(['ordem' => 2]);
+
+        $this->actingAs($user)
+            ->from($this->tenantUrl('admin.funis.edit', ['funil' => $funil]))
+            ->post($this->tenantUrl('admin.funis.etapas.store', ['funil' => $funil]), [
+                'nome' => 'Etapa inválida',
+                'sla' => '1d',
+                'campos' => '',
+                'exige_motivo' => false,
+                'ordem' => 3,
+                'cor_fundo' => '#14574F',
+                'cor_texto' => '#FBF9F4',
+                'cor_suave' => 'rgba(251,249,244,0.9)',
+            ])
+            ->assertRedirect($this->tenantUrl('admin.funis.edit', ['funil' => $funil]))
+            ->assertSessionHasErrors(['ordem']);
+
+        $this->assertSame(2, EtapaFunil::query()->where('funil_id', $funil->id)->count());
+    }
+
+    public function test_store_etapa_shifts_existing_ordens_when_ordem_conflicts(): void
+    {
+        $user = User::factory()->create();
+        $funil = Funil::factory()->create();
+
+        $primeira = EtapaFunil::factory()->for($funil)->create([
+            'nome' => 'Triagem',
+            'ordem' => 1,
+        ]);
+        $segunda = EtapaFunil::factory()->for($funil)->create([
+            'nome' => 'Proposta',
+            'ordem' => 2,
+        ]);
+        $terceira = EtapaFunil::factory()->for($funil)->create([
+            'nome' => 'Fechamento',
+            'ordem' => 3,
+        ]);
+
+        $this->actingAs($user)
+            ->post($this->tenantUrl('admin.funis.etapas.store', ['funil' => $funil]), [
+                'nome' => 'Qualificação',
+                'sla' => '1d',
+                'campos' => '',
+                'exige_motivo' => false,
+                'ordem' => 2,
+                'cor_fundo' => '#14574F',
+                'cor_texto' => '#FBF9F4',
+                'cor_suave' => 'rgba(251,249,244,0.9)',
+            ])
+            ->assertRedirect($this->tenantUrl('admin.funis.edit', ['funil' => $funil]));
+
+        $nova = EtapaFunil::query()
+            ->where('funil_id', $funil->id)
+            ->where('nome', 'Qualificação')
+            ->first();
+
+        $this->assertNotNull($nova);
+        $this->assertSame(2, $nova->ordem);
+        $this->assertSame(1, $primeira->fresh()->ordem);
+        $this->assertSame(3, $segunda->fresh()->ordem);
+        $this->assertSame(4, $terceira->fresh()->ordem);
     }
 }

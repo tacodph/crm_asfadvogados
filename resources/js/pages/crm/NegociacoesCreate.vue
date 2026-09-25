@@ -201,7 +201,7 @@ const submit = (): void => {
             <h1
                 class="m-0 font-[family-name:var(--font-crm-display)] text-[22px] font-medium text-foreground"
             >
-                Nova negociação
+                Nova lead
             </h1>
             <p
                 v-if="tituloOrigem"

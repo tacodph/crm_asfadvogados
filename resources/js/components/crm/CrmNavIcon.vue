@@ -62,7 +62,7 @@ const { name } = defineProps<{
         <template v-else-if="name === 'automacoes'">
             <path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5z" />
         </template>
-        <template v-else-if="name === 'trafego'">
+        <template v-else-if="name === 'trafego' || name === 'trafego_eventos' || name === 'trafego_diagnostico'">
             <circle cx="12" cy="12" r="9" />
             <path d="M3 12h18" />
             <path d="M12 3c2.6 2.6 2.6 15.4 0 18-2.6-2.6-2.6-15.4 0-18z" />
@@ -71,6 +71,10 @@ const { name } = defineProps<{
             <ellipse cx="12" cy="6" rx="7" ry="3" />
             <path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6" />
             <path d="M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5" />
+        </template>
+        <template v-else-if="name === 'trafego_email'">
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="m3 7 9 6 9-6" />
         </template>
         <template v-else-if="name === 'site'">
             <rect x="3" y="4" width="18" height="16" rx="2" />

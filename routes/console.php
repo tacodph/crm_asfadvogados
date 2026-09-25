@@ -12,3 +12,4 @@ Schedule::command('meta:sincronizar-estatisticas')->dailyAt('05:30')->withoutOve
 Schedule::command('meta:capi-expurgar-payloads')->weeklyOn(1, '04:00')->withoutOverlapping()->onOneServer();
 Schedule::command('meta:ads-sincronizar')->dailyAt('06:00')->withoutOverlapping()->onOneServer();
 Schedule::command('meta:ads-expurgar-brutos')->weeklyOn(1, '04:30')->withoutOverlapping()->onOneServer();
+Schedule::command('leads:email-capturar')->everyFiveMinutes()->withoutOverlapping()->onOneServer();

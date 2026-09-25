@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Crm\CriarEtapaFunil;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreEtapaFunilRequest;
 use App\Http\Requests\Admin\UpdateEtapaFunilRequest;
@@ -16,8 +17,9 @@ class EtapaFunilController extends Controller
     public function store(
         StoreEtapaFunilRequest $request,
         Funil $funil,
+        CriarEtapaFunil $criarEtapaFunil,
     ): RedirectResponse {
-        $funil->etapas()->create($request->validated());
+        $criarEtapaFunil($funil, $request->validated());
 
         return redirect()->route('admin.funis.edit', ['funil' => $funil]);
     }

@@ -109,6 +109,8 @@ class CrmPagesTest extends TestCase
                 ->has('negociacoes', 1)
                 ->where('negociacoes.0.assunto', 'Compliance trabalhista')
                 ->where('negociacoes.0.responsavel', 'Bruno Gabriel')
+                ->has('negociacoes.0.contato')
+                ->where('negociacoes.0.empresa', null)
                 ->where('negociacoes.0.dataLimiteLabel', 'Previsão de fechamento')
                 ->where('negociacoes.0.dataLimite', '15/09/2026')
                 ->where('negociacoes.0.contratoAssinado', false)
@@ -211,6 +213,39 @@ class CrmPagesTest extends TestCase
         $this->assertStringContainsString('overflow-x-auto', $source);
         $this->assertStringContainsString('overflow-y-auto', $source);
         $this->assertStringContainsString('min-h-0 flex-1', $source);
+    }
+
+    public function test_negociacoes_page_has_multiselect_filters_for_lead_fields(): void
+    {
+        $source = file_get_contents(resource_path('js/pages/crm/Negociacoes.vue'));
+
+        $this->assertNotFalse($source);
+        $this->assertStringContainsString('selecionarFunil', $source);
+        $this->assertStringContainsString('funilAtivo', $source);
+        $this->assertStringContainsString('etapasSelecionadas', $source);
+        $this->assertStringContainsString('empresasSelecionadas', $source);
+        $this->assertStringContainsString('contatosSelecionados', $source);
+        $this->assertStringContainsString('canaisSelecionados', $source);
+        $this->assertStringContainsString('atendimentosSelecionados', $source);
+        $this->assertStringContainsString('qualificacoesSelecionadas', $source);
+        $this->assertStringContainsString('responsaveisSelecionados', $source);
+        $this->assertStringContainsString('negociacoesFiltradas', $source);
+        $this->assertStringContainsString('alternarQualificacao(status)', $source);
+        $this->assertStringContainsString('alternarEmpresa(empresa)', $source);
+        $this->assertStringContainsString('alternarContato(contato)', $source);
+        $this->assertStringContainsString('type="checkbox"', $source);
+        $this->assertMatchesRegularExpression('/>\s*Etapa\s*<\/span>/u', $source);
+        $this->assertMatchesRegularExpression('/>\s*Empresa\s*<\/span>/u', $source);
+        $this->assertMatchesRegularExpression('/>\s*Contato\s*<\/span>/u', $source);
+        $this->assertMatchesRegularExpression('/>\s*Canal\s*<\/span>/u', $source);
+        $this->assertMatchesRegularExpression('/>\s*Atendimento\s*<\/span>/u', $source);
+        $this->assertMatchesRegularExpression('/>\s*Qualificação\s*<\/span>/u', $source);
+        $this->assertMatchesRegularExpression('/>\s*Responsável\s*<\/span>/u', $source);
+        $this->assertStringContainsString('Nova lead', $source);
+        $this->assertStringContainsString('funil_id: funilAtivo.id', $source);
+        $this->assertStringNotContainsString('DropdownMenuCheckboxItem', $source);
+        $this->assertStringNotContainsString('funisSelecionados', $source);
+        $this->assertStringNotContainsString('funisVisiveis', $source);
     }
 
     public function test_authenticated_users_can_visit_empresas(): void

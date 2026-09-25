@@ -21,6 +21,7 @@ use App\Http\Controllers\NegociacaoTarefaController;
 use App\Http\Controllers\PropostaController;
 use App\Http\Controllers\TrafegoController;
 use App\Http\Controllers\TrafegoDiagnosticoController;
+use App\Http\Controllers\TrafegoEmailController;
 use App\Http\Controllers\TrafegoEventoController;
 use App\Http\Controllers\TrafegoInvestimentoController;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('trafego.investimento.contas.testar-conexao');
     Route::post('trafego/investimento/sincronizar', [TrafegoInvestimentoController::class, 'sincronizar'])
         ->name('trafego.investimento.sincronizar');
+
+    Route::get('trafego/email', [TrafegoEmailController::class, 'index'])->name('trafego.email.index');
+    Route::post('trafego/email', [TrafegoEmailController::class, 'store'])->name('trafego.email.store');
+    Route::patch('trafego/email/{conta}', [TrafegoEmailController::class, 'update'])->name('trafego.email.update');
+    Route::delete('trafego/email/{conta}', [TrafegoEmailController::class, 'destroy'])->name('trafego.email.destroy');
+    Route::post('trafego/email/{conta}/testar-conexao', [TrafegoEmailController::class, 'testarConexao'])
+        ->name('trafego.email.testar-conexao');
+
     Route::inertia('site', 'crm/Site')->name('site.index');
     Route::get('landing-export', [LandingExportController::class, 'index'])->name('landing-export.index');
     Route::get('landing-export/download', [LandingExportController::class, 'download'])->name('landing-export.download');

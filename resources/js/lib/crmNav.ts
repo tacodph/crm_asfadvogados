@@ -12,6 +12,9 @@ import { index as negociacoes } from '@/routes/negociacoes';
 import { index as propostas } from '@/routes/propostas';
 import { index as site } from '@/routes/site';
 import { index as trafego } from '@/routes/trafego';
+import { index as trafegoDiagnostico } from '@/routes/trafego/diagnostico';
+import { index as trafegoEmail } from '@/routes/trafego/email';
+import { index as trafegoEventos } from '@/routes/trafego/eventos';
 import { index as investimento } from '@/routes/trafego/investimento';
 import type { CrmCounts } from '@/types/crm';
 
@@ -32,9 +35,10 @@ export const PAGE_SCREEN: Record<string, ScreenKey> = {
     'crm/PropostasShow': 'propostas',
     'crm/Automacoes': 'automacoes',
     'crm/Trafego': 'trafego',
-    'crm/TrafegoEventos': 'trafego',
-    'crm/TrafegoDiagnostico': 'trafego',
+    'crm/TrafegoEventos': 'trafego_eventos',
+    'crm/TrafegoDiagnostico': 'trafego_diagnostico',
     'crm/TrafegoInvestimento': 'investimento',
+    'crm/TrafegoEmail': 'trafego_email',
     'crm/Site': 'site',
     'crm/LandingExport': 'site',
     'crm/Compliance': 'compliance',
@@ -73,6 +77,10 @@ const ENABLED_SCREENS = new Set<ScreenKey>([
     'empresas',
     'propostas',
     'trafego',
+    'trafego_eventos',
+    'trafego_diagnostico',
+    'investimento',
+    'trafego_email',
     'admin',
 ]);
 
@@ -102,8 +110,14 @@ export function screenHref(
             return automacoes();
         case 'trafego':
             return trafego();
+        case 'trafego_eventos':
+            return trafegoEventos();
+        case 'trafego_diagnostico':
+            return trafegoDiagnostico();
         case 'investimento':
             return investimento();
+        case 'trafego_email':
+            return trafegoEmail();
         case 'site':
             return site();
         case 'compliance':

@@ -104,7 +104,10 @@ class NegociacaoController extends Controller
             ->orderBy('ordem')
             ->get(['id', 'nome']);
 
-        $funilPadrao = $funis->first();
+        $funilPadrao = $request->filled('funil_id')
+            ? $funis->firstWhere('id', $request->integer('funil_id'))
+            : null;
+        $funilPadrao ??= $funis->first();
         $etapaPadrao = $funilPadrao?->etapas->first();
 
         $contatos = Contato::query()

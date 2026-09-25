@@ -95,6 +95,24 @@ class NegociacaoCreateTest extends TestCase
         ]));
     }
 
+    public function test_create_page_prefills_funil_from_query_string(): void
+    {
+        $user = User::factory()->create();
+        Funil::factory()->create(['ordem' => 1]);
+        $funilAlvo = Funil::factory()->create(['ordem' => 2]);
+        $etapaAlvo = EtapaFunil::factory()->for($funilAlvo)->create(['ordem' => 1]);
+
+        $this->actingAs($user);
+
+        $this->withoutVite()
+            ->get($this->tenantUrl('negociacoes.create', ['funil_id' => $funilAlvo->id]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('crm/NegociacoesCreate')
+                ->where('defaults.funil_id', $funilAlvo->id)
+                ->where('defaults.etapa_funil_id', $etapaAlvo->id));
+    }
+
     public function test_create_page_prefills_origem_from_query_string(): void
     {
         $user = User::factory()->create();

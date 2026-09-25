@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Deferred, router } from '@inertiajs/vue3';
-import TrafegoTabs from '@/components/crm/TrafegoTabs.vue';
 import { sincronizar } from '@/routes/trafego/diagnostico';
 import type { DiagnosticoCampanha, DiagnosticoMeta } from '@/types/trafego';
 
@@ -34,8 +33,6 @@ function serieMax(c: DiagnosticoCampanha): number {
 
 <template>
     <div class="flex max-w-[1180px] flex-col gap-4">
-        <TrafegoTabs />
-
         <div class="flex items-center justify-between">
             <p class="m-0 max-w-[680px] text-[12px] text-muted-foreground">
                 Os números de "servidor" e "navegador" vêm da Meta e podem atrasar 24–72h. Os totais
