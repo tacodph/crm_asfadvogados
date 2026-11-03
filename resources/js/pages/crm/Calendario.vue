@@ -15,6 +15,8 @@ type StatusVisual =
 type CalendarioEvento = {
     id: string;
     tipo: TipoEvento;
+    tipoTarefa?: string;
+    tipoTarefaLabel?: string;
     data: string;
     hora: string;
     titulo: string;
@@ -478,6 +480,9 @@ function voltarHoje(): void {
                                 </span>
                             </div>
                             <p class="m-0 text-[13px] leading-snug font-semibold">
+                                <span v-if="e.tipoTarefaLabel" class="opacity-70">
+                                    {{ e.tipoTarefaLabel }} ·
+                                </span>
                                 {{ e.titulo }}
                             </p>
                             <p class="mt-1 mb-0 text-[11.5px] opacity-80">

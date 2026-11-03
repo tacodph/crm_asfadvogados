@@ -7,6 +7,7 @@ use App\Actions\Crm\RegistrarHistoricoNegociacao;
 use App\Actions\Crm\SyncConclusaoNegociacao;
 use App\Actions\Crm\SyncProximaTarefaNegociacao;
 use App\Enums\StatusTarefaNegociacao;
+use App\Enums\TipoTarefaNegociacao;
 use App\Http\Requests\MoveNegociacaoEtapaRequest;
 use App\Http\Requests\StoreNegociacaoRequest;
 use App\Http\Requests\UpdateNegociacaoRequest;
@@ -269,7 +270,9 @@ class NegociacaoController extends Controller
                 'descricao' => $descricaoTarefa,
                 'data' => $dataTarefa,
                 'hora' => $payload['proxima_tarefa_hora'] ?? null,
+                'tipo' => TipoTarefaNegociacao::FollowUp,
                 'status' => StatusTarefaNegociacao::Pendente,
+                'responsavel_user_id' => $negociacao->responsavel_user_id,
                 'criado_por_user_id' => $request->user()?->id,
             ]);
 
@@ -299,7 +302,7 @@ class NegociacaoController extends Controller
             'responsavel:id,name',
             'etapaFunil:id,nome',
             'funil:id,nome,slug',
-            'tarefas',
+            'tarefas.responsavel:id,name',
             'historicos',
         ]);
 
@@ -393,6 +396,10 @@ class NegociacaoController extends Controller
                 'tarefas' => $negociacao->tarefas->map(fn (TarefaNegociacao $tarefa): array => [
                     'id' => $tarefa->id,
                     'descricao' => $tarefa->descricao,
+                    'tipo' => $tarefa->tipo->value,
+                    'tipoLabel' => $tarefa->tipo->label(),
+                    'responsavel_user_id' => $tarefa->responsavel_user_id,
+                    'responsavelNome' => $tarefa->responsavel?->name,
                     'data' => $tarefa->data->format('Y-m-d'),
                     'hora' => $tarefa->hora?->format('H:i') ?? '',
                     'status' => $tarefa->status->value,
@@ -419,6 +426,13 @@ class NegociacaoController extends Controller
                 'responsaveis' => $responsaveis,
                 'statusAtendimentos' => $statusAtendimentos,
                 'statusQualificacoes' => $statusQualificacoes,
+                'tiposTarefa' => collect(TipoTarefaNegociacao::cases())
+                    ->map(fn (TipoTarefaNegociacao $tipo): array => [
+                        'value' => $tipo->value,
+                        'label' => $tipo->label(),
+                    ])
+                    ->values()
+                    ->all(),
                 'statusTarefa' => collect(StatusTarefaNegociacao::cases())
                     ->map(fn (StatusTarefaNegociacao $status): array => [
                         'value' => $status->value,

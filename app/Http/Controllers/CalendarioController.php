@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatusTarefaNegociacao;
 use App\Models\Funil;
 use App\Models\Negociacao;
+use App\Models\TarefaNegociacao;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class CalendarioController extends Controller
 {
     /**
-     * Display the CRM calendar with negotiation tasks and close dates.
+     * Display the CRM calendar with open negotiation tasks and close dates.
      */
     public function index(): Response
     {
@@ -18,65 +20,63 @@ class CalendarioController extends Controller
             ->orderBy('ordem')
             ->get(['id', 'nome', 'slug']);
 
-        $negociacoes = Negociacao::query()
-            ->with([
-                'funil:id,nome,slug',
-                'etapaFunil:id,nome',
-                'empresa:id,nome',
-                'contato:id,nome',
-                'responsavel:id,name',
-            ])
-            ->where(function ($query): void {
-                $query->whereNotNull('proxima_tarefa_em')
-                    ->orWhereNotNull('previsao_fechamento');
-            })
-            ->orderByDesc('id')
-            ->get();
+        $relacoes = [
+            'funil:id,nome,slug',
+            'etapaFunil:id,nome',
+            'empresa:id,nome',
+            'contato:id,nome',
+            'responsavel:id,name',
+        ];
 
         $eventos = [];
 
+        // Todas as tarefas abertas (não só a próxima de cada negociação).
+        $tarefas = TarefaNegociacao::query()
+            ->with([
+                'responsavel:id,name',
+                ...array_map(fn (string $relacao): string => 'negociacao.'.$relacao, $relacoes),
+            ])
+            ->whereIn('status', StatusTarefaNegociacao::abertos())
+            ->orderBy('data')
+            ->orderByRaw('hora is null')
+            ->orderBy('hora')
+            ->get();
+
+        foreach ($tarefas as $tarefa) {
+            $eventos[] = [
+                ...$this->dadosNegociacao($tarefa->negociacao),
+                'id' => 'tarefa-'.$tarefa->id,
+                'tipo' => 'tarefa',
+                'tipoTarefa' => $tarefa->tipo->value,
+                'tipoTarefaLabel' => $tarefa->tipo->label(),
+                'data' => $tarefa->data->format('Y-m-d'),
+                'hora' => $tarefa->hora?->format('H:i') ?? '—',
+                'titulo' => $tarefa->descricao,
+                'responsavelNome' => $tarefa->responsavel?->name
+                    ?? $tarefa->negociacao->responsavel?->name
+                    ?? 'Sem responsável',
+            ];
+        }
+
+        $negociacoes = Negociacao::query()
+            ->with($relacoes)
+            ->whereNotNull('previsao_fechamento')
+            ->orderByDesc('id')
+            ->get();
+
         foreach ($negociacoes as $negociacao) {
-            $contatoNome = $negociacao->contato->nome;
-            $lead = $negociacao->empresa?->nome ?: $contatoNome;
-            $funilNome = $negociacao->funil->slug === 'b2b'
-                ? 'B2B consultivo'
-                : $negociacao->funil->nome;
-            $etapaNome = $negociacao->etapaFunil->nome;
-            $responsavelNome = $negociacao->responsavel?->name ?? 'Sem responsável';
-
-            if ($negociacao->proxima_tarefa_em !== null) {
-                $eventos[] = [
-                    'id' => 'tarefa-'.$negociacao->id,
-                    'tipo' => 'tarefa',
-                    'data' => $negociacao->proxima_tarefa_em->format('Y-m-d'),
-                    'hora' => $negociacao->proxima_tarefa_hora?->format('H:i') ?? '—',
-                    'titulo' => $negociacao->proxima_tarefa ?: 'Próxima tarefa',
-                    'lead' => $lead,
-                    'contatoNome' => $contatoNome,
-                    'etapaNome' => $etapaNome,
-                    'responsavelNome' => $responsavelNome,
-                    'funilId' => $negociacao->funil_id,
-                    'funilNome' => $funilNome,
-                    'negociacaoId' => $negociacao->id,
-                ];
+            if ($negociacao->previsao_fechamento === null) {
+                continue;
             }
 
-            if ($negociacao->previsao_fechamento !== null) {
-                $eventos[] = [
-                    'id' => 'previsao-'.$negociacao->id,
-                    'tipo' => 'previsao',
-                    'data' => $negociacao->previsao_fechamento->format('Y-m-d'),
-                    'hora' => '—',
-                    'titulo' => 'Previsão de fechamento',
-                    'lead' => $lead,
-                    'contatoNome' => $contatoNome,
-                    'etapaNome' => $etapaNome,
-                    'responsavelNome' => $responsavelNome,
-                    'funilId' => $negociacao->funil_id,
-                    'funilNome' => $funilNome,
-                    'negociacaoId' => $negociacao->id,
-                ];
-            }
+            $eventos[] = [
+                ...$this->dadosNegociacao($negociacao),
+                'id' => 'previsao-'.$negociacao->id,
+                'tipo' => 'previsao',
+                'data' => $negociacao->previsao_fechamento->format('Y-m-d'),
+                'hora' => '—',
+                'titulo' => 'Previsão de fechamento',
+            ];
         }
 
         return Inertia::render('crm/Calendario', [
@@ -88,5 +88,25 @@ class CalendarioController extends Controller
             ])->values()->all(),
             'eventos' => $eventos,
         ]);
+    }
+
+    /**
+     * @return array{lead: string, contatoNome: string, etapaNome: string, responsavelNome: string, funilId: int, funilNome: string, negociacaoId: int}
+     */
+    private function dadosNegociacao(Negociacao $negociacao): array
+    {
+        $contatoNome = $negociacao->contato->nome;
+
+        return [
+            'lead' => $negociacao->empresa?->nome ?: $contatoNome,
+            'contatoNome' => $contatoNome,
+            'etapaNome' => $negociacao->etapaFunil->nome,
+            'responsavelNome' => $negociacao->responsavel?->name ?? 'Sem responsável',
+            'funilId' => $negociacao->funil_id,
+            'funilNome' => $negociacao->funil->slug === 'b2b'
+                ? 'B2B consultivo'
+                : $negociacao->funil->nome,
+            'negociacaoId' => $negociacao->id,
+        ];
     }
 }
