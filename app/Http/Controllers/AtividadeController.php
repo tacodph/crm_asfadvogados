@@ -18,10 +18,16 @@ class AtividadeController extends Controller
 
     /**
      * Lista completa das tarefas (minhas ou da equipe), com filtros.
+     *
+     * Sem escopo na URL, admin e gestor abrem na visão da equipe.
      */
     public function index(Request $request): Response
     {
-        $escopo = $request->query('escopo') === 'equipe' ? 'equipe' : 'minhas';
+        $escopo = match ($request->query('escopo')) {
+            'equipe' => 'equipe',
+            'minhas' => 'minhas',
+            default => Gate::allows('ver-agenda-equipe') ? 'equipe' : 'minhas',
+        };
         $filtro = in_array($request->query('filtro'), self::FILTROS, true) ? (string) $request->query('filtro') : 'atuais';
 
         if ($escopo === 'equipe') {

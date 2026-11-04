@@ -137,7 +137,7 @@ function navegar(filtro: Filtro, escopo: Escopo): void {
         atividadesIndex.url(),
         {
             ...(filtro !== 'atuais' ? { filtro } : {}),
-            ...(escopo === 'equipe' ? { escopo } : {}),
+            escopo,
         },
         { preserveScroll: true, preserveState: true },
     );

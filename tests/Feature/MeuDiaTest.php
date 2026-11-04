@@ -91,6 +91,30 @@ class MeuDiaTest extends TestCase
                 ->where('agenda.followUpsHoje.0.descricao', 'Do colega'));
     }
 
+    public function test_atividades_opens_on_team_view_for_gerente(): void
+    {
+        $gerente = User::factory()->create(['role_id' => Role::idFor(Role::GERENTE)]);
+        $colega = User::factory()->create();
+
+        $this->tarefa($colega, 'Do colega', '2026-11-04');
+
+        $this->actingAs($gerente)
+            ->withoutVite()
+            ->get($this->tenantUrl('atividades.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('escopo', 'equipe')
+                ->has('atividades', 1)
+                ->where('atividades.0.descricao', 'Do colega'));
+
+        $this->actingAs($gerente)
+            ->withoutVite()
+            ->get($this->tenantUrl('atividades.index', ['escopo' => 'minhas']))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('escopo', 'minhas')
+                ->has('atividades', 0));
+    }
+
     public function test_concluir_marks_tarefa_done_and_records_contact(): void
     {
         $user = User::factory()->create();
