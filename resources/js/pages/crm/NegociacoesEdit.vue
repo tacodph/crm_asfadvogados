@@ -26,6 +26,10 @@ type StatusTarefaOpcao = { value: string; label: string };
 type TarefaItem = {
     id: number;
     descricao: string;
+    tipo: string;
+    tipoLabel: string;
+    responsavel_user_id: number | null;
+    responsavelNome: string | null;
     data: string;
     hora: string;
     status: string;
@@ -85,6 +89,7 @@ const props = defineProps<{
         statusAtendimentos: Opcao[];
         statusQualificacoes: Opcao[];
         regrasDistribuicao: string[];
+        tiposTarefa: StatusTarefaOpcao[];
         statusTarefa: StatusTarefaOpcao[];
     };
 }>();
@@ -111,10 +116,22 @@ const tarefaEditando = ref<TarefaItem | null>(null);
 
 const tarefaForm = useForm({
     descricao: '',
+    tipo: 'follow_up',
+    responsavel_user_id: null as number | null,
     data: '',
     hora: '',
     status: 'pendente',
+    proximo_follow_up_data: '',
+    proximo_follow_up_hora: '',
+    proximo_follow_up_descricao: '',
 });
+
+const concluindoTarefa = computed(
+    () =>
+        tarefaEditando.value !== null &&
+        tarefaEditando.value.status !== 'concluida' &&
+        tarefaForm.status === 'concluida',
+);
 
 const fieldClass =
     'w-full rounded-lg border border-border bg-card px-3 py-2.5 text-[13px] text-foreground outline-none focus:border-primary';
@@ -188,6 +205,8 @@ function abrirNovaTarefa(): void {
     tarefaForm.reset();
     tarefaForm.clearErrors();
     tarefaForm.descricao = '';
+    tarefaForm.tipo = 'follow_up';
+    tarefaForm.responsavel_user_id = props.negociacao.responsavel_user_id;
     tarefaForm.data = new Date().toISOString().slice(0, 10);
     tarefaForm.hora = '09:00';
     tarefaForm.status = 'pendente';
@@ -198,9 +217,15 @@ function abrirEditarTarefa(tarefa: TarefaItem): void {
     tarefaEditando.value = tarefa;
     tarefaForm.clearErrors();
     tarefaForm.descricao = tarefa.descricao;
+    tarefaForm.tipo = tarefa.tipo;
+    tarefaForm.responsavel_user_id =
+        tarefa.responsavel_user_id ?? props.negociacao.responsavel_user_id;
     tarefaForm.data = tarefa.data;
     tarefaForm.hora = tarefa.hora;
     tarefaForm.status = tarefa.status;
+    tarefaForm.proximo_follow_up_data = '';
+    tarefaForm.proximo_follow_up_hora = '';
+    tarefaForm.proximo_follow_up_descricao = '';
     modalAberto.value = true;
 }
 
@@ -689,9 +714,15 @@ const submit = (): void => {
                             tarefa.descricao
                         }}</span>
                         <span class="text-[12px] text-muted-foreground">
+                            {{ tarefa.tipoLabel }} ·
                             {{ formatarData(tarefa.data)
                             }}{{ tarefa.hora ? ` · ${tarefa.hora}` : '' }}
-                            · {{ tarefa.statusLabel }}
+                            · {{ tarefa.statusLabel
+                            }}{{
+                                tarefa.responsavelNome
+                                    ? ` · ${tarefa.responsavelNome}`
+                                    : ''
+                            }}
                         </span>
                     </div>
                     <div class="flex gap-2">
@@ -801,7 +832,8 @@ const submit = (): void => {
                         {{ tituloModal }}
                     </DialogTitle>
                     <DialogDescription class="text-muted-foreground">
-                        Informe descrição, data, hora e status da tarefa.
+                        Informe tipo, descrição, data, hora, responsável e
+                        status da tarefa.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -809,6 +841,53 @@ const submit = (): void => {
                     class="flex flex-col gap-3.5"
                     @submit.prevent="salvarTarefa"
                 >
+                    <div class="grid gap-3.5 sm:grid-cols-2">
+                        <label class="flex flex-col gap-1.5">
+                            <span :class="labelClass">Tipo</span>
+                            <select
+                                v-model="tarefaForm.tipo"
+                                required
+                                :class="fieldClass"
+                            >
+                                <option
+                                    v-for="tipo in opcoes.tiposTarefa"
+                                    :key="tipo.value"
+                                    :value="tipo.value"
+                                >
+                                    {{ tipo.label }}
+                                </option>
+                            </select>
+                            <span
+                                v-if="tarefaForm.errors.tipo"
+                                class="text-[12px] text-[#9B3B2F]"
+                            >
+                                {{ tarefaForm.errors.tipo }}
+                            </span>
+                        </label>
+
+                        <label class="flex flex-col gap-1.5">
+                            <span :class="labelClass">Responsável</span>
+                            <select
+                                v-model="tarefaForm.responsavel_user_id"
+                                :class="fieldClass"
+                            >
+                                <option
+                                    v-for="responsavel in opcoes.responsaveis"
+                                    :key="responsavel.id"
+                                    :value="responsavel.id"
+                                >
+                                    {{ responsavel.nome }}
+                                </option>
+                            </select>
+                            <span
+                                v-if="tarefaForm.errors.responsavel_user_id"
+                                class="text-[12px] text-[#9B3B2F]"
+                            >
+                                {{ tarefaForm.errors.responsavel_user_id }}
+                            </span>
+                        </label>
+                    </div>
+
                     <label class="flex flex-col gap-1.5">
                         <span :class="labelClass">Descrição</span>
                         <input
@@ -881,6 +960,55 @@ const submit = (): void => {
                             {{ tarefaForm.errors.status }}
                         </span>
                     </label>
+
+                    <div
+                        v-if="concluindoTarefa"
+                        class="flex flex-col gap-3 rounded-lg border border-border bg-card px-3.5 py-3"
+                    >
+                        <div class="flex flex-col gap-0.5">
+                            <span class="text-[13px] font-medium text-foreground">
+                                Agendar próximo follow-up
+                            </span>
+                            <span class="text-[12px] text-muted-foreground">
+                                Opcional. Evita que a negociação fique sem
+                                próximo passo.
+                            </span>
+                        </div>
+                        <div class="grid gap-3.5 sm:grid-cols-2">
+                            <label class="flex flex-col gap-1.5">
+                                <span :class="labelClass">Data</span>
+                                <input
+                                    v-model="tarefaForm.proximo_follow_up_data"
+                                    type="date"
+                                    :class="fieldClass"
+                                />
+                            </label>
+                            <label class="flex flex-col gap-1.5">
+                                <span :class="labelClass">Hora</span>
+                                <input
+                                    v-model="tarefaForm.proximo_follow_up_hora"
+                                    type="time"
+                                    :class="fieldClass"
+                                />
+                            </label>
+                        </div>
+                        <label class="flex flex-col gap-1.5">
+                            <span :class="labelClass">Descrição</span>
+                            <input
+                                v-model="tarefaForm.proximo_follow_up_descricao"
+                                type="text"
+                                maxlength="255"
+                                placeholder="Follow-up"
+                                :class="fieldClass"
+                            />
+                        </label>
+                        <span
+                            v-if="tarefaForm.errors.proximo_follow_up_data"
+                            class="text-[12px] text-[#9B3B2F]"
+                        >
+                            {{ tarefaForm.errors.proximo_follow_up_data }}
+                        </span>
+                    </div>
 
                     <DialogFooter class="gap-2 sm:justify-end">
                         <button

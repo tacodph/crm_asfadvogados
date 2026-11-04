@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
 use App\Observers\NegociacaoObserver;
+use App\Observers\NegociacaoTarefasObserver;
 use Database\Factories\NegociacaoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -33,6 +34,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $previsao_fechamento
  * @property Carbon $etapa_desde
  * @property Carbon|null $concluida_em
+ * @property Carbon|null $ultimo_contato_em
  * @property string|null $proxima_tarefa
  * @property Carbon|null $proxima_tarefa_em
  * @property Carbon|null $proxima_tarefa_hora
@@ -53,7 +55,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  */
 #[Table('negociacoes')]
-#[ObservedBy([NegociacaoObserver::class])]
+#[ObservedBy([NegociacaoObserver::class, NegociacaoTarefasObserver::class])]
 #[Fillable([
     'funil_id',
     'etapa_funil_id',
@@ -71,6 +73,7 @@ use Illuminate\Support\Carbon;
     'previsao_fechamento',
     'etapa_desde',
     'concluida_em',
+    'ultimo_contato_em',
     'proxima_tarefa',
     'proxima_tarefa_em',
     'proxima_tarefa_hora',
@@ -104,6 +107,7 @@ class Negociacao extends Model
             'previsao_fechamento' => 'date',
             'etapa_desde' => 'datetime',
             'concluida_em' => 'datetime',
+            'ultimo_contato_em' => 'datetime',
             'proxima_tarefa_em' => 'date',
             'proxima_tarefa_hora' => 'datetime:H:i',
             'meta_captado_em' => 'datetime',

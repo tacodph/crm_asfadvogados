@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusTarefaNegociacao;
+use App\Enums\TipoTarefaNegociacao;
 use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\TarefaNegociacaoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -17,10 +18,13 @@ use Illuminate\Support\Carbon;
  * @property int $tenant_id
  * @property int $negociacao_id
  * @property string $descricao
+ * @property TipoTarefaNegociacao $tipo
  * @property Carbon $data
  * @property Carbon|null $hora
  * @property StatusTarefaNegociacao $status
+ * @property int|null $responsavel_user_id
  * @property Carbon|null $concluida_em
+ * @property Carbon|null $lembrete_enviado_em
  * @property int|null $criado_por_user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -29,10 +33,13 @@ use Illuminate\Support\Carbon;
 #[Fillable([
     'negociacao_id',
     'descricao',
+    'tipo',
     'data',
     'hora',
     'status',
+    'responsavel_user_id',
     'concluida_em',
+    'lembrete_enviado_em',
     'criado_por_user_id',
 ])]
 class TarefaNegociacao extends Model
@@ -45,6 +52,7 @@ class TarefaNegociacao extends Model
      */
     protected $attributes = [
         'status' => StatusTarefaNegociacao::Pendente->value,
+        'tipo' => TipoTarefaNegociacao::FollowUp->value,
     ];
 
     /**
@@ -55,8 +63,10 @@ class TarefaNegociacao extends Model
         return [
             'data' => 'date',
             'hora' => 'datetime:H:i',
+            'tipo' => TipoTarefaNegociacao::class,
             'status' => StatusTarefaNegociacao::class,
             'concluida_em' => 'datetime',
+            'lembrete_enviado_em' => 'datetime',
         ];
     }
 
@@ -74,5 +84,13 @@ class TarefaNegociacao extends Model
     public function criadoPor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'criado_por_user_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function responsavel(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'responsavel_user_id');
     }
 }

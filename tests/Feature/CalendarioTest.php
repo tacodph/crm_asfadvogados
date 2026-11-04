@@ -6,6 +6,7 @@ use App\Models\Contato;
 use App\Models\EtapaFunil;
 use App\Models\Funil;
 use App\Models\Negociacao;
+use App\Models\TarefaNegociacao;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -51,7 +52,7 @@ class CalendarioTest extends TestCase
             'nome' => 'Camila Moraes',
         ]);
 
-        Negociacao::factory()->create([
+        $negociacao = Negociacao::factory()->create([
             'funil_id' => $funil->id,
             'etapa_funil_id' => $etapa->id,
             'contato_id' => $contato->id,
@@ -60,6 +61,14 @@ class CalendarioTest extends TestCase
             'proxima_tarefa_em' => '2026-08-20',
             'proxima_tarefa_hora' => '10:30',
             'previsao_fechamento' => '2026-09-15',
+            'responsavel_user_id' => $user->id,
+        ]);
+
+        TarefaNegociacao::factory()->create([
+            'negociacao_id' => $negociacao->id,
+            'descricao' => 'Ligar para decisor',
+            'data' => '2026-08-20',
+            'hora' => '10:30',
             'responsavel_user_id' => $user->id,
         ]);
 
@@ -83,6 +92,7 @@ class CalendarioTest extends TestCase
                 ->has('eventos', 2)
                 ->where('eventos.0.tipo', 'tarefa')
                 ->where('eventos.0.titulo', 'Ligar para decisor')
+                ->where('eventos.0.tipoTarefa', 'follow_up')
                 ->where('eventos.0.data', '2026-08-20')
                 ->where('eventos.0.hora', '10:30')
                 ->where('eventos.0.funilNome', 'B2B consultivo')
@@ -95,6 +105,28 @@ class CalendarioTest extends TestCase
                 ->where('eventos.1.contatoNome', 'Camila Moraes')
                 ->where('eventos.1.etapaNome', 'Diagnóstico')
                 ->where('eventos.1.responsavelNome', $user->name));
+    }
+
+    public function test_calendario_lists_every_open_tarefa_of_a_negociacao(): void
+    {
+        $user = User::factory()->create();
+        $negociacao = Negociacao::factory()->create([
+            'responsavel_user_id' => $user->id,
+            'previsao_fechamento' => null,
+        ]);
+
+        TarefaNegociacao::factory()->create(['negociacao_id' => $negociacao->id, 'descricao' => 'Primeira', 'data' => '2026-11-04']);
+        TarefaNegociacao::factory()->create(['negociacao_id' => $negociacao->id, 'descricao' => 'Segunda', 'data' => '2026-11-06']);
+        TarefaNegociacao::factory()->concluida()->create(['negociacao_id' => $negociacao->id, 'descricao' => 'Concluída', 'data' => '2026-11-02']);
+
+        $this->actingAs($user)
+            ->withoutVite()
+            ->get($this->tenantUrl('calendario.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('eventos', 2)
+                ->where('eventos.0.titulo', 'Primeira')
+                ->where('eventos.1.titulo', 'Segunda'));
     }
 
     public function test_calendario_page_component_uses_tailwick_event_palette(): void

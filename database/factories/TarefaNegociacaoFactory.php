@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\StatusTarefaNegociacao;
+use App\Enums\TipoTarefaNegociacao;
 use App\Models\Negociacao;
 use App\Models\TarefaNegociacao;
 use App\Models\User;
@@ -21,12 +22,20 @@ class TarefaNegociacaoFactory extends Factory
         return [
             'negociacao_id' => Negociacao::factory(),
             'descricao' => fake()->sentence(4),
+            'tipo' => TipoTarefaNegociacao::FollowUp,
             'data' => now()->toDateString(),
             'hora' => '09:00',
             'status' => StatusTarefaNegociacao::Pendente,
             'concluida_em' => null,
             'criado_por_user_id' => User::factory(),
         ];
+    }
+
+    public function tipo(TipoTarefaNegociacao $tipo): static
+    {
+        return $this->state(fn (): array => [
+            'tipo' => $tipo,
+        ]);
     }
 
     public function concluida(): static
