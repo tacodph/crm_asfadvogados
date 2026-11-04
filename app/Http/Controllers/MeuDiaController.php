@@ -25,7 +25,7 @@ class MeuDiaController extends Controller
         return Inertia::render('crm/MeuDia', [
             'escopo' => $escopo,
             'podeVerEquipe' => Gate::allows('ver-agenda-equipe'),
-            'agenda' => $agenda($escopo === 'equipe' ? null : $request->user(), now()),
+            'agenda' => $agenda($escopo === 'equipe' ? null : $request->user(), now(config('crm.timezone'))),
         ]);
     }
 }

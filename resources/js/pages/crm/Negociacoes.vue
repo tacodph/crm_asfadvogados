@@ -39,6 +39,13 @@ const canaisSelecionados = ref<string[]>([]);
 const atendimentosSelecionados = ref<string[]>([]);
 const qualificacoesSelecionadas = ref<string[]>([]);
 const responsaveisSelecionados = ref<string[]>([]);
+const somentePrecisaRetorno = ref(false);
+
+const RETORNO_VISUAL = {
+    atrasado: { cor: '#9B3B2F', rotulo: 'Follow-up atrasado' },
+    hoje: { cor: '#B7791F', rotulo: 'Follow-up hoje' },
+    sem_proximo_passo: { cor: '#77808E', rotulo: 'Sem próximo passo' },
+} as const;
 
 onMounted(() => {
     const parametro = new URLSearchParams(window.location.search).get(
@@ -191,6 +198,10 @@ const negociacoesFiltradas = computed(() => {
             return false;
         }
 
+        if (somentePrecisaRetorno.value && negociacao.retorno === null) {
+            return false;
+        }
+
         return true;
     });
 });
@@ -239,7 +250,8 @@ const filtrosAtivos = computed(
         canaisSelecionados.value.length > 0 ||
         atendimentosSelecionados.value.length > 0 ||
         qualificacoesSelecionadas.value.length > 0 ||
-        responsaveisSelecionados.value.length > 0,
+        responsaveisSelecionados.value.length > 0 ||
+        somentePrecisaRetorno.value,
 );
 
 const rotuloFiltro = (
@@ -393,6 +405,7 @@ const limparFiltros = (): void => {
     atendimentosSelecionados.value = [];
     qualificacoesSelecionadas.value = [];
     responsaveisSelecionados.value = [];
+    somentePrecisaRetorno.value = false;
 };
 
 const iniciarArraste = (event: DragEvent, id: number): void => {
@@ -864,6 +877,21 @@ const alterarRegra = (): void => {
                 </div>
 
                 <button
+                    type="button"
+                    class="mb-0.5 flex cursor-pointer items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[12px] font-medium transition-colors"
+                    :class="
+                        somentePrecisaRetorno
+                            ? 'border-[#9B3B2F] bg-[#FDF3F2] text-[#9B3B2F]'
+                            : 'border-border bg-card text-muted-foreground'
+                    "
+                    title="Negociações com follow-up atrasado, para hoje ou sem próximo passo"
+                    @click="somentePrecisaRetorno = !somentePrecisaRetorno"
+                >
+                    <span class="h-2 w-2 rounded-full bg-[#9B3B2F]" />
+                    Precisa de retorno
+                </button>
+
+                <button
                     v-if="filtrosAtivos"
                     type="button"
                     class="mb-0.5 cursor-pointer rounded-md px-2.5 py-1.5 text-[12px] font-medium text-[#9B3B2F] transition-colors hover:bg-[#FDF3F2]"
@@ -949,8 +977,33 @@ const alterarRegra = (): void => {
                     >
                         <div class="flex flex-col gap-[3px]">
                             <span
-                                class="text-[13px] leading-snug font-medium text-foreground"
+                                class="flex items-center gap-1.5 text-[13px] leading-snug font-medium text-foreground"
                             >
+                                <span
+                                    v-if="card.retorno"
+                                    class="h-2 w-2 shrink-0 rounded-full"
+                                    :class="
+                                        card.retorno === 'sem_proximo_passo'
+                                            ? 'border border-dashed'
+                                            : ''
+                                    "
+                                    :style="
+                                        card.retorno === 'sem_proximo_passo'
+                                            ? {
+                                                  borderColor:
+                                                      RETORNO_VISUAL[
+                                                          card.retorno
+                                                      ].cor,
+                                              }
+                                            : {
+                                                  background:
+                                                      RETORNO_VISUAL[
+                                                          card.retorno
+                                                      ].cor,
+                                              }
+                                    "
+                                    :title="RETORNO_VISUAL[card.retorno].rotulo"
+                                />
                                 {{ card.nome }}
                             </span>
                             <span class="text-[11.5px] text-muted-foreground">

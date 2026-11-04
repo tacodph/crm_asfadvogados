@@ -87,6 +87,26 @@ export type CrmCounts = {
     negociacoes?: string;
     propostas?: string;
     trafego?: string;
+    meuDia?: string;
+};
+
+export type NotificacaoLembrete = {
+    id: string;
+    criadaEm: string | null;
+    tarefaId: number;
+    negociacaoId: number;
+    tipo: string;
+    tipoLabel: string;
+    descricao: string;
+    data: string;
+    hora: string | null;
+    lead: string | null;
+    assunto: string;
+};
+
+export type Notificacoes = {
+    naoLidas: number;
+    itens: NotificacaoLembrete[];
 };
 
 export type TimelineNegociacao = {
@@ -152,6 +172,7 @@ export type NegociacaoLinha = {
     dataLimiteCor: string;
     tarefa: string;
     tarefaCor: string;
+    retorno: 'atrasado' | 'hoje' | 'sem_proximo_passo' | null;
     slaLabel: string;
     slaCor: string;
     slaBg: string;

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
-    Bell,
     ChevronsLeft,
     ChevronsRight,
     LogOut,
@@ -15,6 +14,7 @@ import {
     Users,
 } from '@lucide/vue';
 import { computed } from 'vue';
+import CrmNotificacoes from '@/components/crm/CrmNotificacoes.vue';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,13 +26,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAppearance } from '@/composables/useAppearance';
 import { getInitials } from '@/composables/useInitials';
-import { SCREEN_TITLES, type ScreenKey } from '@/data/crm';
+import { SCREEN_TITLES  } from '@/data/crm';
+import type {ScreenKey} from '@/data/crm';
+import type { User } from '@/types';
 import { logout } from '@/routes';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import { index as usersIndex } from '@/routes/settings/users';
-import type { User } from '@/types';
 
 const colapsado = defineModel<boolean>('colapsado', { default: false });
 
@@ -126,9 +127,7 @@ function handleLogout() {
                 <Sun v-else class="size-[18px]" />
             </button>
 
-            <button type="button" class="topbar-icon-btn" title="Notificações">
-                <Bell class="size-[18px]" />
-            </button>
+            <CrmNotificacoes />
 
             <Link
                 :href="editAppearance()"

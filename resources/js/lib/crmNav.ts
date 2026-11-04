@@ -156,5 +156,9 @@ export function screenCount(
         return crmCounts?.[key] ?? '0';
     }
 
+    if (key === 'meu_dia') {
+        return crmCounts?.meuDia ?? '0';
+    }
+
     return SCREEN_COUNT[key];
 }

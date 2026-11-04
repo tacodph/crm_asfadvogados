@@ -2,13 +2,19 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\EtapaFunilResultado;
+use App\Enums\StatusTarefaNegociacao;
+use App\Enums\TipoTarefaNegociacao;
 use App\Models\Contato;
 use App\Models\Empresa;
 use App\Models\MetaConversaoConfig;
 use App\Models\Negociacao;
 use App\Models\Proposta;
+use App\Models\TarefaNegociacao;
 use App\Support\Tenancy\CurrentTenant;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -67,6 +73,30 @@ class HandleInertiaRequests extends Middleware
                     'negociacoes' => (string) Negociacao::query()->count(),
                     'propostas' => (string) Proposta::query()->count(),
                     'trafego' => (string) MetaConversaoConfig::query()->ativas()->count(),
+                    // Follow-ups do usuário vencidos ou de hoje (badge do "Meu dia").
+                    'meuDia' => (string) TarefaNegociacao::query()
+                        ->where('responsavel_user_id', $request->user()->id)
+                        ->where('tipo', TipoTarefaNegociacao::FollowUp->value)
+                        ->whereIn('status', StatusTarefaNegociacao::abertos())
+                        ->whereDate('data', '<=', now(config('crm.timezone'))->toDateString())
+                        ->whereHas('negociacao.etapaFunil', fn (Builder $query) => $query->where('resultado', EtapaFunilResultado::Aberta->value))
+                        ->count(),
+                ];
+            },
+            'notificacoes' => function () use ($request): ?array {
+                if ($request->user() === null) {
+                    return null;
+                }
+
+                $naoLidas = $request->user()->unreadNotifications();
+
+                return [
+                    'naoLidas' => $naoLidas->count(),
+                    'itens' => $naoLidas->limit(8)->get()->map(fn (DatabaseNotification $notificacao): array => [
+                        'id' => $notificacao->id,
+                        'criadaEm' => $notificacao->created_at?->toIso8601String(),
+                        ...$notificacao->data,
+                    ])->values()->all(),
                 ];
             },
         ];

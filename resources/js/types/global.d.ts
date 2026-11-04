@@ -1,5 +1,5 @@
 import type { Auth } from '@/types/auth';
-import type { CrmCounts } from '@/types/crm';
+import type { CrmCounts, Notificacoes } from '@/types/crm';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -21,6 +21,7 @@ declare module '@inertiajs/core' {
             auth: Auth;
             sidebarOpen: boolean;
             crmCounts: CrmCounts | null;
+            notificacoes: Notificacoes | null;
             tenant: { name: string; slug: string } | null;
             [key: string]: unknown;
         };
