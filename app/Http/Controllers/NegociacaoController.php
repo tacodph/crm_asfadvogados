@@ -74,6 +74,17 @@ class NegociacaoController extends Controller
                 ])->values()->all(),
             ])->values()->all(),
             'negociacoes' => NegociacaoResource::collection($negociacoes)->resolve(),
+            'opcoesBusca' => [
+                'responsaveis' => User::query()->orderBy('name')->get(['id', 'name'])
+                    ->map(fn (User $item): array => ['id' => $item->id, 'nome' => $item->name])
+                    ->values()->all(),
+                'statusAtendimentos' => StatusAtendimento::query()->orderBy('ordem')->orderBy('nome')->get(['id', 'nome'])
+                    ->map(fn (StatusAtendimento $item): array => ['id' => $item->id, 'nome' => $item->nome])
+                    ->values()->all(),
+                'statusQualificacoes' => StatusQualificacao::query()->orderBy('ordem')->orderBy('nome')->get(['id', 'nome'])
+                    ->map(fn (StatusQualificacao $item): array => ['id' => $item->id, 'nome' => $item->nome])
+                    ->values()->all(),
+            ],
         ]);
     }
 

@@ -6,6 +6,7 @@ import {
     cycleDistribuicao,
     updateEtapa,
 } from '@/actions/App/Http/Controllers/NegociacaoController';
+import CrmBuscaFunil from '@/components/crm/CrmBuscaFunil.vue';
 import CrmNegociacaoDrawer from '@/components/crm/CrmNegociacaoDrawer.vue';
 import {
     DropdownMenu,
@@ -15,12 +16,26 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { index as funisIndex } from '@/routes/admin/funis';
-import type { FunilView, NegociacaoLinha } from '@/types/crm';
+import type {
+    FunilView,
+    NegociacaoLinha,
+    ResultadoBusca,
+} from '@/types/crm';
 
 const props = defineProps<{
     funis: FunilView[];
     negociacoes: NegociacaoLinha[];
+    opcoesBusca: {
+        responsaveis: { id: number; nome: string }[];
+        statusAtendimentos: { id: number; nome: string }[];
+        statusQualificacoes: { id: number; nome: string }[];
+    };
 }>();
+
+const abrirResultadoBusca = (resultado: ResultadoBusca): void => {
+    funilId.value = resultado.funilId;
+    negociacaoId.value = resultado.id;
+};
 
 const SEM_STATUS = '—';
 
@@ -595,6 +610,12 @@ const alterarRegra = (): void => {
                     </Link>
                 </div>
             </div>
+
+            <CrmBuscaFunil
+                :funis="funis"
+                :opcoes="opcoesBusca"
+                @selecionar="abrirResultadoBusca"
+            />
 
             <div
                 class="border-border bg-card flex flex-wrap items-end gap-x-2 gap-y-2.5 rounded-[10px] border px-3 py-2.5"

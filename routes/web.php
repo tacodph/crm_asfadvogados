@@ -19,6 +19,7 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\IbgeMunicipioController;
 use App\Http\Controllers\LandingExportController;
 use App\Http\Controllers\MeuDiaController;
+use App\Http\Controllers\NegociacaoBuscaController;
 use App\Http\Controllers\NegociacaoController;
 use App\Http\Controllers\NegociacaoTarefaController;
 use App\Http\Controllers\NotificacaoController;
@@ -103,6 +104,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('empresas/{empresa}', [EmpresaController::class, 'update'])->name('empresas.update');
     Route::get('ibge/municipios', [IbgeMunicipioController::class, 'index'])->name('ibge.municipios.index');
     Route::get('negociacoes', [NegociacaoController::class, 'index'])->name('negociacoes.index');
+    Route::get('negociacoes/busca', NegociacaoBuscaController::class)->name('negociacoes.busca');
     Route::get('negociacoes/create', [NegociacaoController::class, 'create'])->name('negociacoes.create');
     Route::post('negociacoes', [NegociacaoController::class, 'store'])->name('negociacoes.store');
     Route::get('negociacoes/{negociacao}/edit', [NegociacaoController::class, 'edit'])->name('negociacoes.edit');
