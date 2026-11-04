@@ -18,7 +18,13 @@ const { name } = defineProps<{
         stroke-linejoin="round"
         class="shrink-0"
     >
-        <template v-if="name === 'painel'">
+        <template v-if="name === 'meu_dia'">
+            <circle cx="12" cy="12" r="4" />
+            <path
+                d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"
+            />
+        </template>
+        <template v-else-if="name === 'painel'">
             <rect x="3" y="3" width="7" height="9" rx="1.5" />
             <rect x="14" y="3" width="7" height="5" rx="1.5" />
             <rect x="14" y="12" width="7" height="9" rx="1.5" />

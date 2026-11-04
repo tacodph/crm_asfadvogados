@@ -1,4 +1,5 @@
 export type ScreenKey =
+    | 'meu_dia'
     | 'painel'
     | 'negociacoes'
     | 'atividades'
@@ -1000,6 +1001,7 @@ export const NAV_GROUPS: {
     {
         title: 'Comercial',
         items: [
+            { key: 'meu_dia', label: 'Meu dia', novo: true },
             { key: 'painel', label: 'Painel' },
             { key: 'negociacoes', label: 'Funil' },
             { key: 'contatos', label: 'Contatos' },
@@ -1028,12 +1030,13 @@ export const NAV_GROUPS: {
 ];
 
 export const SCREEN_TITLES: Record<ScreenKey, [string, string]> = {
+    meu_dia: ['Meu dia', 'follow-ups, atrasos e compromissos de hoje'],
     painel: ['Painel comercial', 'últimos {periodo} · 2 funis ativos'],
     negociacoes: [
         'Funil',
         'visão em quadro ou lista — abra um card para avançar etapa',
     ],
-    atividades: ['Minhas atividades', 'tarefas atribuídas a Camila Moraes'],
+    atividades: ['Atividades', 'todas as tarefas das negociações'],
     calendario: [
         'Calendário',
         'compromissos, tarefas e prazos das negociações',

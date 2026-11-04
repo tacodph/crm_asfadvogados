@@ -1,128 +1,126 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
-import { CONTATOS, EMPRESAS, LEADS } from '@/data/crm';
+import { Link, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import AgendaTarefaController from '@/actions/App/Http/Controllers/AgendaTarefaController';
+import { edit as editNegociacao } from '@/actions/App/Http/Controllers/NegociacaoController';
+import { index as atividadesIndex } from '@/routes/atividades';
 
 type Filtro = 'atuais' | 'atrasadas' | 'concluidas' | 'todas';
-type Escopo = 'minhas' | 'time';
+type Escopo = 'minhas' | 'equipe';
 
-const USUARIO = 'Camila Moraes';
-const filtro = ref<Filtro>('atuais');
-const escopo = ref<Escopo>('minhas');
-const feitas = reactive<Record<number, boolean>>({});
+type Atividade = {
+    id: number;
+    negociacaoId: number;
+    descricao: string;
+    tipo: string;
+    tipoLabel: string;
+    status: string;
+    statusLabel: string;
+    aberta: boolean;
+    data: string;
+    hora: string | null;
+    assunto: string;
+    cliente: string | null;
+    responsavelNome: string | null;
+};
 
-const TIPOS = [
-    { label: 'Ligação', cor: '#3F5E8C' },
-    { label: 'Reunião', cor: '#8C4A6B' },
-    { label: 'E-mail', cor: 'var(--primary)' },
-    { label: 'Tarefa', cor: '#5F6E52' },
-];
+const props = defineProps<{
+    escopo: Escopo;
+    filtro: Filtro;
+    hoje: string;
+    podeVerEquipe: boolean;
+    kpis: {
+        pendentes: number;
+        atrasadas: number;
+        hoje: number;
+        concluidas: number;
+    };
+    atividades: Atividade[];
+    limite: number;
+}>();
 
-const hoje = new Date(2026, 7, 17);
+const CORES_TIPO: Record<string, string> = {
+    follow_up: 'var(--primary)',
+    ligacao: '#3F5E8C',
+    reuniao: '#8C4A6B',
+    tarefa: '#5F6E52',
+};
 
-const todas = computed(() =>
-    LEADS.map((l) => {
-        const t = TIPOS[l.id % 4];
-        const off = l.tarefaOff || 0;
-        const prazo = new Date(
-            hoje.getFullYear(),
-            hoje.getMonth(),
-            hoje.getDate() + off,
-        );
-        const dias = Math.round((prazo.getTime() - hoje.getTime()) / 86400000);
-        const feita = !!feitas[l.id];
-        const contato = CONTATOS.find((c) => c.id === l.contatoId);
-        const emp = EMPRESAS.find((e) => e.id === l.empresaId);
-        const atrasada = !feita && dias < 0;
+function diasAte(iso: string): number {
+    const [y, m, d] = iso.split('-').map(Number);
+    const [hy, hm, hd] = props.hoje.split('-').map(Number);
+
+    return Math.round(
+        (Date.UTC(y, m - 1, d) - Date.UTC(hy, hm - 1, hd)) / 86400000,
+    );
+}
+
+const lista = computed(() =>
+    props.atividades.map((a) => {
+        const dias = diasAte(a.data);
+        const feita = a.status === 'concluida';
+        const atrasada = a.aberta && dias < 0;
+        const [, m, d] = a.data.split('-');
 
         return {
-            id: l.id,
-            resp: l.resp,
+            ...a,
             feita,
             atrasada,
-            nome: l.tarefa,
-            tipo: t.label,
-            tipoCor: t.cor,
-            negocio: l.assunto,
-            cliente: emp?.nome ?? contato?.nome ?? l.nome,
-            prazo:
-                String(prazo.getDate()).padStart(2, '0') +
-                '/' +
-                String(prazo.getMonth() + 1).padStart(2, '0') +
-                ' · ' +
-                (l.tarefaHora || '09:00'),
-            prazoRel: feita
-                ? 'concluída'
+            tipoCor: CORES_TIPO[a.tipo] ?? 'var(--muted-foreground)',
+            prazo: `${d}/${m} · ${a.hora ?? '—'}`,
+            prazoRel: !a.aberta
+                ? a.statusLabel.toLowerCase()
                 : dias < 0
                   ? `${Math.abs(dias)}d em atraso`
                   : dias === 0
                     ? 'hoje'
                     : `em ${dias}d`,
-            prazoCor: feita
+            prazoCor: !a.aberta
                 ? 'var(--muted-foreground)'
                 : dias < 0
                   ? '#9B3B2F'
                   : dias === 0
                     ? 'var(--primary)'
                     : '#3C4450',
-            status: feita ? 'Concluída' : atrasada ? 'Atrasada' : 'Pendente',
-            statusBg: feita ? '#E7F0EE' : atrasada ? 'color-mix(in srgb, var(--destructive) 18%, transparent)' : '#EEF1F6',
-            statusCor: feita ? 'var(--accent)' : atrasada ? '#9B3B2F' : '#3F5E8C',
+            statusTexto: atrasada ? 'Atrasada' : a.statusLabel,
+            statusBg: feita
+                ? '#E7F0EE'
+                : atrasada
+                  ? 'color-mix(in srgb, var(--destructive) 18%, transparent)'
+                  : '#EEF1F6',
+            statusCor: feita
+                ? 'var(--accent)'
+                : atrasada
+                  ? '#9B3B2F'
+                  : '#3F5E8C',
             marcaBg: feita ? 'var(--accent)' : '#FFFFFF',
             marcaBorda: feita ? 'var(--accent)' : '#D6D1C6',
             marca: feita ? '✓' : '',
             nomeDeco: feita ? 'line-through' : 'none',
             nomeCor: feita ? '#9AA2AE' : 'var(--foreground)',
-            prazoSort: prazo.getTime(),
         };
     }),
 );
 
-const minhas = computed(() => todas.value.filter((a) => a.resp === USUARIO));
-
-const lista = computed(() => {
-    const doEscopo = todas.value.filter(
-        (a) => escopo.value === 'time' || a.resp === USUARIO,
-    );
-
-    return doEscopo
-        .filter((a) => {
-            if (filtro.value === 'atuais') {
-                return !a.feita;
-            }
-            if (filtro.value === 'atrasadas') {
-                return a.atrasada;
-            }
-            if (filtro.value === 'concluidas') {
-                return a.feita;
-            }
-
-            return true;
-        })
-        .sort((a, b) => a.prazoSort - b.prazoSort);
-});
-
 const kpis = computed(() => [
     {
         label: 'Pendentes',
-        value: String(minhas.value.filter((a) => !a.feita).length),
+        value: String(props.kpis.pendentes),
         cor: 'var(--foreground)',
     },
     {
         label: 'Em atraso',
-        value: String(minhas.value.filter((a) => a.atrasada).length),
+        value: String(props.kpis.atrasadas),
         cor: '#9B3B2F',
     },
     {
         label: 'Para hoje',
-        value: String(
-            minhas.value.filter((a) => !a.feita && a.prazoRel === 'hoje')
-                .length,
-        ),
+        value: String(props.kpis.hoje),
         cor: 'var(--primary)',
     },
     {
         label: 'Concluídas',
-        value: String(minhas.value.filter((a) => a.feita).length),
+        value: String(props.kpis.concluidas),
         cor: 'var(--accent)',
     },
 ]);
@@ -134,8 +132,27 @@ const filtros: { k: Filtro; label: string }[] = [
     { k: 'todas', label: 'Todas' },
 ];
 
-function toggleFeita(id: number): void {
-    feitas[id] = !feitas[id];
+function navegar(filtro: Filtro, escopo: Escopo): void {
+    router.get(
+        atividadesIndex.url(),
+        {
+            ...(filtro !== 'atuais' ? { filtro } : {}),
+            ...(escopo === 'equipe' ? { escopo } : {}),
+        },
+        { preserveScroll: true, preserveState: true },
+    );
+}
+
+function concluir(a: Atividade): void {
+    if (!a.aberta) {
+        return;
+    }
+
+    router.patch(
+        AgendaTarefaController.concluir.url({ tarefa: a.id }),
+        {},
+        { preserveScroll: true },
+    );
 }
 </script>
 
@@ -145,15 +162,15 @@ function toggleFeita(id: number): void {
             <div
                 v-for="k in kpis"
                 :key="k.label"
-                class="flex flex-col gap-1.5 rounded-[10px] border border-border bg-card px-[17px] py-[15px]"
+                class="border-border bg-card flex flex-col gap-1.5 rounded-[10px] border px-[17px] py-[15px]"
             >
                 <span
-                    class="font-[family-name:var(--font-crm-mono)] text-[10px] tracking-[0.12em] text-muted-foreground uppercase"
+                    class="text-muted-foreground font-[family-name:var(--font-crm-mono)] text-[10px] uppercase tracking-[0.12em]"
                 >
                     {{ k.label }}
                 </span>
                 <span
-                    class="font-[family-name:var(--font-crm-display)] text-[28px] leading-none font-medium"
+                    class="font-[family-name:var(--font-crm-display)] text-[28px] font-medium leading-none"
                     :style="{ color: k.cor }"
                 >
                     {{ k.value }}
@@ -173,20 +190,21 @@ function toggleFeita(id: number): void {
                             ? 'border-primary bg-primary text-primary-foreground'
                             : 'border-border bg-card text-muted-foreground'
                     "
-                    @click="filtro = f.k"
+                    @click="navegar(f.k, escopo)"
                 >
                     {{ f.label }}
                 </button>
             </div>
             <div class="flex items-center gap-2.5">
                 <span
-                    class="font-[family-name:var(--font-crm-mono)] text-[11.5px] text-muted-foreground"
+                    class="text-muted-foreground font-[family-name:var(--font-crm-mono)] text-[11.5px]"
                 >
                     {{ lista.length }}
                     {{ lista.length === 1 ? 'atividade' : 'atividades' }}
                 </span>
                 <div
-                    class="flex gap-0.5 rounded-lg border border-border bg-card p-0.5"
+                    v-if="podeVerEquipe"
+                    class="border-border bg-card flex gap-0.5 rounded-lg border p-0.5"
                 >
                     <button
                         type="button"
@@ -194,9 +212,9 @@ function toggleFeita(id: number): void {
                         :class="
                             escopo === 'minhas'
                                 ? 'bg-primary text-primary-foreground'
-                                : 'bg-transparent text-muted-foreground'
+                                : 'text-muted-foreground bg-transparent'
                         "
-                        @click="escopo = 'minhas'"
+                        @click="navegar(filtro, 'minhas')"
                     >
                         Minhas
                     </button>
@@ -204,102 +222,107 @@ function toggleFeita(id: number): void {
                         type="button"
                         class="cursor-pointer rounded-md border-0 px-3 py-[5px] text-xs"
                         :class="
-                            escopo === 'time'
+                            escopo === 'equipe'
                                 ? 'bg-primary text-primary-foreground'
-                                : 'bg-transparent text-muted-foreground'
+                                : 'text-muted-foreground bg-transparent'
                         "
-                        @click="escopo = 'time'"
+                        @click="navegar(filtro, 'equipe')"
                     >
-                        Do time
+                        Equipe
                     </button>
                 </div>
             </div>
         </div>
 
+        <p
+            v-if="atividades.length >= limite"
+            class="text-muted-foreground m-0 text-[12px]"
+        >
+            Mostrando as primeiras {{ limite }} atividades deste filtro.
+        </p>
+
         <div
-            class="overflow-x-auto rounded-[10px] border border-border bg-card"
+            class="border-border bg-card overflow-x-auto rounded-[10px] border"
         >
             <table class="w-full border-collapse">
                 <thead>
                     <tr class="bg-card">
-                        <th class="w-[38px] py-[11px] pr-0 pl-4" />
+                        <th class="w-[38px] py-[11px] pl-4 pr-0" />
                         <th
-                            class="py-[11px] pr-4 pl-0 text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal tracking-[0.1em] text-muted-foreground uppercase"
+                            class="text-muted-foreground py-[11px] pl-0 pr-4 text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal uppercase tracking-[0.1em]"
                         >
                             Atividade
                         </th>
                         <th
-                            class="px-4 py-[11px] text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal tracking-[0.1em] text-muted-foreground uppercase"
+                            class="text-muted-foreground px-4 py-[11px] text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal uppercase tracking-[0.1em]"
                         >
                             Prazo
                         </th>
                         <th
-                            class="px-4 py-[11px] text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal tracking-[0.1em] text-muted-foreground uppercase"
+                            class="text-muted-foreground px-4 py-[11px] text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal uppercase tracking-[0.1em]"
                         >
                             Negociação
                         </th>
                         <th
-                            class="px-4 py-[11px] text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal tracking-[0.1em] text-muted-foreground uppercase"
+                            class="text-muted-foreground px-4 py-[11px] text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal uppercase tracking-[0.1em]"
                         >
                             Cliente
                         </th>
                         <th
-                            class="px-4 py-[11px] text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal tracking-[0.1em] text-muted-foreground uppercase"
+                            class="text-muted-foreground px-4 py-[11px] text-left font-[family-name:var(--font-crm-mono)] text-[10px] font-normal uppercase tracking-[0.1em]"
                         >
                             Responsável
                         </th>
                         <th
-                            class="px-4 py-[11px] text-right font-[family-name:var(--font-crm-mono)] text-[10px] font-normal tracking-[0.1em] text-muted-foreground uppercase"
+                            class="text-muted-foreground px-4 py-[11px] text-right font-[family-name:var(--font-crm-mono)] text-[10px] font-normal uppercase tracking-[0.1em]"
                         >
                             Status
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr
-                        v-for="a in lista"
-                        :key="a.id"
-                        class="hover:bg-card"
-                    >
+                    <tr v-for="a in lista" :key="a.id" class="hover:bg-card">
                         <td
-                            class="border-t border-[#F2EFE8] py-3 pr-0 pl-4 align-top"
+                            class="border-t border-[#F2EFE8] py-3 pl-4 pr-0 align-top"
                         >
                             <button
                                 type="button"
                                 title="Concluir atividade"
-                                class="grid h-[18px] w-[18px] cursor-pointer place-items-center rounded-[5px] border-[1.5px] text-[11px] leading-none text-primary-foreground"
+                                :disabled="!a.aberta"
+                                class="text-primary-foreground grid h-[18px] w-[18px] cursor-pointer place-items-center rounded-[5px] border-[1.5px] text-[11px] leading-none"
                                 :style="{
                                     borderColor: a.marcaBorda,
                                     background: a.marcaBg,
                                 }"
-                                @click="toggleFeita(a.id)"
+                                @click="concluir(a)"
                             >
                                 {{ a.marca }}
                             </button>
                         </td>
-                        <td class="border-t border-[#F2EFE8] py-3 pr-4 pl-0">
+                        <td class="border-t border-[#F2EFE8] py-3 pl-0 pr-4">
                             <div class="flex flex-col gap-0.5">
-                                <span
-                                    class="text-[13px]"
+                                <Link
+                                    :href="editNegociacao.url(a.negociacaoId)"
+                                    class="text-[13px] no-underline hover:underline"
                                     :style="{
                                         color: a.nomeCor,
                                         textDecoration: a.nomeDeco,
                                     }"
                                 >
-                                    {{ a.nome }}
-                                </span>
+                                    {{ a.descricao }}
+                                </Link>
                                 <span
                                     class="text-[10.5px]"
                                     :style="{ color: a.tipoCor }"
                                 >
-                                    {{ a.tipo }}
+                                    {{ a.tipoLabel }}
                                 </span>
                             </div>
                         </td>
                         <td class="border-t border-[#F2EFE8] px-4 py-3">
                             <div class="flex flex-col gap-0.5">
                                 <span
-                                    class="font-[family-name:var(--font-crm-mono)] text-xs text-muted-foreground"
+                                    class="text-muted-foreground font-[family-name:var(--font-crm-mono)] text-xs"
                                 >
                                     {{ a.prazo }}
                                 </span>
@@ -312,21 +335,23 @@ function toggleFeita(id: number): void {
                             </div>
                         </td>
                         <td
-                            class="border-t border-[#F2EFE8] px-4 py-3 text-[12.5px] text-muted-foreground"
+                            class="text-muted-foreground border-t border-[#F2EFE8] px-4 py-3 text-[12.5px]"
                         >
-                            {{ a.negocio }}
+                            {{ a.assunto }}
                         </td>
                         <td
-                            class="border-t border-[#F2EFE8] px-4 py-3 text-[12.5px] text-muted-foreground"
+                            class="text-muted-foreground border-t border-[#F2EFE8] px-4 py-3 text-[12.5px]"
                         >
                             {{ a.cliente }}
                         </td>
                         <td
-                            class="border-t border-[#F2EFE8] px-4 py-3 text-[12.5px] text-muted-foreground"
+                            class="text-muted-foreground border-t border-[#F2EFE8] px-4 py-3 text-[12.5px]"
                         >
-                            {{ a.resp }}
+                            {{ a.responsavelNome ?? '—' }}
                         </td>
-                        <td class="border-t border-[#F2EFE8] px-4 py-3 text-right">
+                        <td
+                            class="border-t border-[#F2EFE8] px-4 py-3 text-right"
+                        >
                             <span
                                 class="rounded-full px-[9px] py-[3px] text-[11px]"
                                 :style="{
@@ -334,7 +359,7 @@ function toggleFeita(id: number): void {
                                     color: a.statusCor,
                                 }"
                             >
-                                {{ a.status }}
+                                {{ a.statusTexto }}
                             </span>
                         </td>
                     </tr>
@@ -345,11 +370,13 @@ function toggleFeita(id: number): void {
                 class="flex flex-col items-center gap-[7px] px-5 py-[46px]"
             >
                 <span
-                    class="font-[family-name:var(--font-crm-display)] text-[17px] text-muted-foreground"
+                    class="text-muted-foreground font-[family-name:var(--font-crm-display)] text-[17px]"
                 >
                     Nenhuma atividade neste filtro
                 </span>
-                <span class="text-xs text-muted-foreground">Tudo em dia por aqui.</span>
+                <span class="text-muted-foreground text-xs"
+                    >Tudo em dia por aqui.</span
+                >
             </div>
         </div>
     </div>

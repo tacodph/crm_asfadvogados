@@ -19,6 +19,7 @@ class CrmPrototypePagesTest extends TestCase
     {
         return [
             'painel' => ['dashboard', 'Dashboard'],
+            'meu_dia' => ['meu-dia', 'crm/MeuDia'],
             'atividades' => ['atividades.index', 'crm/Atividades'],
             'calendario' => ['calendario.index', 'crm/Calendario'],
             'propostas' => ['propostas.index', 'crm/Propostas'],
@@ -40,6 +41,7 @@ class CrmPrototypePagesTest extends TestCase
     {
         return [
             'painel' => ['dashboard'],
+            'meu_dia' => ['meu-dia'],
             'atividades' => ['atividades.index'],
             'calendario' => ['calendario.index'],
             'propostas' => ['propostas.index'],
