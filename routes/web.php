@@ -21,6 +21,7 @@ use App\Http\Controllers\LandingExportController;
 use App\Http\Controllers\MeuDiaController;
 use App\Http\Controllers\NegociacaoController;
 use App\Http\Controllers\NegociacaoTarefaController;
+use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PropostaController;
 use App\Http\Controllers\TrafegoController;
 use App\Http\Controllers\TrafegoDiagnosticoController;
@@ -39,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('atividades', [AtividadeController::class, 'index'])->name('atividades.index');
     Route::patch('tarefas/{tarefa}/concluir', [AgendaTarefaController::class, 'concluir'])->name('tarefas.concluir');
     Route::patch('tarefas/{tarefa}/adiar', [AgendaTarefaController::class, 'adiar'])->name('tarefas.adiar');
+    Route::patch('notificacoes/{notificacao}/abrir', [NotificacaoController::class, 'abrir'])->name('notificacoes.abrir');
+    Route::post('notificacoes/lidas', [NotificacaoController::class, 'marcarTodasComoLidas'])->name('notificacoes.lidas');
     Route::get('calendario', [CalendarioController::class, 'index'])->name('calendario.index');
     Route::get('propostas', [PropostaController::class, 'index'])->name('propostas.index');
     Route::get('propostas/{proposta}', [PropostaController::class, 'show'])->name('propostas.show');

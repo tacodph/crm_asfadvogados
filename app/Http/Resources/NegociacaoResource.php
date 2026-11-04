@@ -46,6 +46,15 @@ class NegociacaoResource extends JsonResource
         $resumo = self::resumoComercial($this->resource);
         $capi = self::capi($this->resource);
         $cardFundo = $this->fundoUrgenciaPrevisao();
+        $hojeLocal = now(config('crm.timezone'))->toDateString();
+        $proximaTarefaEm = $this->proxima_tarefa_em?->toDateString();
+        $retorno = match (true) {
+            $ganho, $perdido => null,
+            $proximaTarefaEm === null => 'sem_proximo_passo',
+            $proximaTarefaEm < $hojeLocal => 'atrasado',
+            $proximaTarefaEm === $hojeLocal => 'hoje',
+            default => null,
+        };
 
         if ($ganho) {
             $dataLimiteEm = $this->concluida_em ?? $this->etapa_desde;
@@ -110,6 +119,7 @@ class NegociacaoResource extends JsonResource
             'dataLimiteCor' => $dataLimiteCor,
             'tarefa' => $this->proxima_tarefa ?: '—',
             'tarefaCor' => $tarefaAtrasada ? '#9B3B2F' : '#3C4450',
+            'retorno' => $retorno,
             'slaLabel' => $dias === 0 ? 'hoje' : $dias.'d na etapa',
             'slaCor' => $atrasado ? '#9B3B2F' : ($atencao ? '#8C6F3F' : '#77808E'),
             'slaBg' => $atrasado ? '#F8ECE9' : ($atencao ? '#FBF1DF' : '#F4F2EC'),

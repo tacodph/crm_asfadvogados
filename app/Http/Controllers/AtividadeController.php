@@ -28,7 +28,7 @@ class AtividadeController extends Controller
             Gate::authorize('ver-agenda-equipe');
         }
 
-        $hoje = now()->toDateString();
+        $hoje = now(config('crm.timezone'))->toDateString();
         $doEscopo = fn (): Builder => TarefaNegociacao::query()
             ->when($escopo === 'minhas', fn (Builder $query) => $query->where('responsavel_user_id', $request->user()->id));
 

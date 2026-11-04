@@ -154,7 +154,7 @@ class BuildAgendaDoDia
     {
         return $negociacao->ultimo_contato_em === null
             ? null
-            : (int) $negociacao->ultimo_contato_em->copy()->startOfDay()->diffInDays($agora->copy()->startOfDay());
+            : (int) $negociacao->ultimo_contato_em->copy()->setTimezone($agora->getTimezone())->startOfDay()->diffInDays($agora->copy()->startOfDay());
     }
 
     /**

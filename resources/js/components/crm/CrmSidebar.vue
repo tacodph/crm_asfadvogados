@@ -114,7 +114,22 @@ const counts = computed(() => page.props.crmCounts);
                         </span>
                     </span>
                     <span
-                        v-if="!colapsado && screenCount(item.key, counts)"
+                        v-if="
+                            !colapsado &&
+                            item.key === 'meu_dia' &&
+                            screenCount(item.key, counts) !== '0'
+                        "
+                        class="rounded-full bg-[#9B3B2F] px-1.5 py-px text-[10.5px] font-semibold text-white"
+                        title="Follow-ups vencidos ou para hoje"
+                    >
+                        {{ screenCount(item.key, counts) }}
+                    </span>
+                    <span
+                        v-else-if="
+                            !colapsado &&
+                            item.key !== 'meu_dia' &&
+                            screenCount(item.key, counts)
+                        "
                         class="text-[10.5px]"
                         :class="
                             isNavEnabled(item.key) && screenAtiva === item.key
