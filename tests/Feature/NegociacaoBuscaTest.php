@@ -19,7 +19,7 @@ class NegociacaoBuscaTest extends TestCase
     public function test_guest_cannot_search(): void
     {
         $this->getJson($this->tenantUrl('negociacoes.busca', ['q' => 'maria']))
-            ->assertUnauthorized();
+            ->assertRedirect(route('login'));
     }
 
     public function test_finds_by_contact_name_in_any_funil_and_etapa(): void
