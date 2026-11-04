@@ -1004,7 +1004,7 @@ export const NAV_GROUPS: {
             { key: 'negociacoes', label: 'Funil' },
             { key: 'contatos', label: 'Contatos' },
             { key: 'empresas', label: 'Empresas' },
-            { key: 'atividades', label: 'Atividades' },
+            { key: 'atividades', label: 'Atividades', novo: true },
             { key: 'calendario', label: 'Calendário', novo: true },
             { key: 'propostas', label: 'Propostas' },
         ],
