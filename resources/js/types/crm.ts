@@ -197,3 +197,22 @@ export type FunilView = {
     distribuicao: string;
     etapas: FunilEtapaView[];
 };
+
+export type ResultadoBusca = {
+    id: number;
+    assunto: string;
+    nome: string | null;
+    contatoNome: string | null;
+    telefone: string | null;
+    funilId: number;
+    funilNome: string;
+    etapaId: number;
+    etapaNome: string;
+    etapaCorFundo: string | null;
+    etapaCorTexto: string | null;
+    resultado: 'aberta' | 'ganho' | 'perdido';
+    responsavel: string | null;
+    statusAtendimento: string | null;
+    statusQualificacao: string | null;
+    proximaTarefa: string | null;
+};
