@@ -34,6 +34,6 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect($this->tenantUrl('dashboard'));
+        $response->assertRedirect($this->tenantUrl('meu-dia'));
     }
 }

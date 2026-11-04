@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Crm\RegistrarContatoPorTarefa;
 use App\Actions\Crm\RegistrarHistoricoNegociacao;
 use App\Actions\Crm\SyncProximaTarefaNegociacao;
 use App\Enums\StatusTarefaNegociacao;
@@ -23,6 +24,7 @@ class NegociacaoTarefaController extends Controller
         Negociacao $negociacao,
         SyncProximaTarefaNegociacao $syncProximaTarefa,
         RegistrarHistoricoNegociacao $registrarHistorico,
+        RegistrarContatoPorTarefa $registrarContato,
     ): RedirectResponse {
         $dados = $request->validated();
         $status = StatusTarefaNegociacao::from($dados['status']);
@@ -36,7 +38,7 @@ class NegociacaoTarefaController extends Controller
             'concluida_em' => $status === StatusTarefaNegociacao::Concluida ? now() : null,
         ]);
 
-        $this->registrarContatoSeConcluida($negociacao, $tarefa);
+        $registrarContato($negociacao, $tarefa);
         $syncProximaTarefa($negociacao);
         $registrarHistorico->tarefaCriada($negociacao, $tarefa, $request->user());
 
@@ -57,6 +59,7 @@ class NegociacaoTarefaController extends Controller
         TarefaNegociacao $tarefa,
         SyncProximaTarefaNegociacao $syncProximaTarefa,
         RegistrarHistoricoNegociacao $registrarHistorico,
+        RegistrarContatoPorTarefa $registrarContato,
     ): RedirectResponse {
         abort_unless($tarefa->negociacao_id === $negociacao->id, 404);
 
@@ -81,7 +84,7 @@ class NegociacaoTarefaController extends Controller
         ]);
 
         if (! $estavaConcluida) {
-            $this->registrarContatoSeConcluida($negociacao, $tarefa);
+            $registrarContato($negociacao, $tarefa);
         }
 
         $proxima = null;
@@ -138,19 +141,5 @@ class NegociacaoTarefaController extends Controller
         ]);
 
         return redirect()->route('negociacoes.edit', $negociacao);
-    }
-
-    /**
-     * Concluir follow-up, ligação ou reunião conta como contato com o lead.
-     */
-    private function registrarContatoSeConcluida(Negociacao $negociacao, TarefaNegociacao $tarefa): void
-    {
-        if ($tarefa->status !== StatusTarefaNegociacao::Concluida || ! $tarefa->tipo->registraContato()) {
-            return;
-        }
-
-        $negociacao->forceFill([
-            'ultimo_contato_em' => $tarefa->concluida_em ?? now(),
-        ])->save();
     }
 }

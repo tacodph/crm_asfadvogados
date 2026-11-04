@@ -47,7 +47,7 @@ class VerificationNotificationTest extends TestCase
 
         $this->actingAs($user)
             ->post($this->tenantUrl('verification.send'))
-            ->assertRedirect($this->tenantUrl('dashboard'));
+            ->assertRedirect($this->tenantUrl('meu-dia'));
 
         Notification::assertNothingSent();
     }

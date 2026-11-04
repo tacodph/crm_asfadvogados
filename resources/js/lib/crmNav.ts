@@ -1,6 +1,8 @@
 import type { InertiaLinkProps } from '@inertiajs/vue3';
-import { FUNIS_INIT, type ScreenKey } from '@/data/crm';
-import { dashboard } from '@/routes';
+import { FUNIS_INIT  } from '@/data/crm';
+import type {ScreenKey} from '@/data/crm';
+import type { CrmCounts } from '@/types/crm';
+import { dashboard, meuDia } from '@/routes';
 import { index as adminIndex } from '@/routes/admin';
 import { index as atividades } from '@/routes/atividades';
 import { index as automacoes } from '@/routes/automacoes';
@@ -16,9 +18,9 @@ import { index as trafegoDiagnostico } from '@/routes/trafego/diagnostico';
 import { index as trafegoEmail } from '@/routes/trafego/email';
 import { index as trafegoEventos } from '@/routes/trafego/eventos';
 import { index as investimento } from '@/routes/trafego/investimento';
-import type { CrmCounts } from '@/types/crm';
 
 export const PAGE_SCREEN: Record<string, ScreenKey> = {
+    'crm/MeuDia': 'meu_dia',
     Dashboard: 'painel',
     'crm/Contatos': 'contatos',
     'crm/ContatosCreate': 'contatos',
@@ -69,6 +71,7 @@ export const PAGE_SCREEN: Record<string, ScreenKey> = {
 
 /** Todas as telas do menu lateral estão navegáveis. */
 const ENABLED_SCREENS = new Set<ScreenKey>([
+    'meu_dia',
     'painel',
     'negociacoes',
     'atividades',
@@ -92,6 +95,8 @@ export function screenHref(
     key: ScreenKey,
 ): NonNullable<InertiaLinkProps['href']> | undefined {
     switch (key) {
+        case 'meu_dia':
+            return meuDia();
         case 'painel':
             return dashboard();
         case 'contatos':
