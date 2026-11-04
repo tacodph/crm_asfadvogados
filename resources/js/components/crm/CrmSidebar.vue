@@ -95,7 +95,14 @@ const counts = computed(() => page.props.crmCounts);
                     ]"
                 >
                     <span class="flex min-w-0 items-center gap-2.5">
-                        <CrmNavIcon :name="item.key" />
+                        <span class="relative flex">
+                            <CrmNavIcon :name="item.key" />
+                            <span
+                                v-if="colapsado && item.novo"
+                                class="absolute -top-1 -right-1.5 size-2 rounded-full bg-primary ring-2 ring-card"
+                                aria-label="Novo"
+                            />
+                        </span>
                         <span v-if="!colapsado" class="whitespace-nowrap">
                             {{ item.label }}
                         </span>
