@@ -995,7 +995,7 @@ export const SITE_INIT: SiteContent = {
 
 export const NAV_GROUPS: {
     title: string;
-    items: { key: ScreenKey; label: string }[];
+    items: { key: ScreenKey; label: string; novo?: boolean }[];
 }[] = [
     {
         title: 'Comercial',
@@ -1005,7 +1005,7 @@ export const NAV_GROUPS: {
             { key: 'contatos', label: 'Contatos' },
             { key: 'empresas', label: 'Empresas' },
             { key: 'atividades', label: 'Atividades' },
-            { key: 'calendario', label: 'Calendário' },
+            { key: 'calendario', label: 'Calendário', novo: true },
             { key: 'propostas', label: 'Propostas' },
         ],
     },

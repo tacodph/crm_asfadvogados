@@ -99,6 +99,12 @@ const counts = computed(() => page.props.crmCounts);
                         <span v-if="!colapsado" class="whitespace-nowrap">
                             {{ item.label }}
                         </span>
+                        <span
+                            v-if="!colapsado && item.novo"
+                            class="rounded-full bg-primary px-1.5 py-px text-[9.5px] font-semibold tracking-wide text-primary-foreground uppercase"
+                        >
+                            Novo
+                        </span>
                     </span>
                     <span
                         v-if="!colapsado && screenCount(item.key, counts)"
